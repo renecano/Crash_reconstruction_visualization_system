@@ -24,6 +24,12 @@ namespace Croquis.Visor
         /// <summary>La capa del marcador de la cámara: solo la ve el minimapa.</summary>
         public const int CapaMinimapa = 31;
 
+        /// <summary>
+        /// Las copas de los árboles (del caso, del entorno y del camellón): «Desde arriba» no las dibuja para
+        /// que no tapen los vehículos (prueba como perito, 2026-11-27); el tronco y la sombra sí se ven.
+        /// </summary>
+        public const int CapaCopas = 30;
+
         /// <summary>La elevación de la órbita (grados): alta, para ver la calle por encima de las azoteas.</summary>
         private const float ElevacionOrbita = 50f;
 
@@ -179,6 +185,32 @@ namespace Croquis.Visor
 
         /// <summary>Las copas de los árboles en planta (x, y, radio): la cinematográfica no mira a través.</summary>
         public List<Vector3> Copas { get; } = new List<Vector3>();
+
+        /// <summary>
+        /// Lo delgado y alto que tapa (troncos, postes, luminarias; x, y, radio, alto): ninguna cámara mira a
+        /// través de uno (prueba como perito, 2026-11-27: un tronco tapaba el choque).
+        /// </summary>
+        public List<Vector4> Troncos { get; } = new List<Vector4>();
+
+        /// <summary>Si `p` cae en un tronco que no sea el de lo que se mira (el árbol o poste golpeado).</summary>
+        private bool EnTronco(Vector3 p, float holgura, Vector3 mira)
+        {
+            foreach (var t in Troncos)
+            {
+                var c = new Vector2(t.x, t.y);
+                if ((new Vector2(mira.x, mira.z) - c).magnitude < t.z + 2.5f)
+                {
+                    continue;
+                }
+
+                if (p.y <= t.w && (new Vector2(p.x, p.z) - c).magnitude < t.z + holgura)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
         private float azBase = float.NaN;
         private float giroMax = 8f;
@@ -366,7 +398,7 @@ namespace Croquis.Visor
             for (var k = 0; k < 24; k++)
             {
                 var p = Vector3.Lerp(ojo, mira, k / 24f);
-                if (k > 0 && EnBulto(p, 0.2f))
+                if (k > 0 && (EnBulto(p, 0.2f) || EnTronco(p, 0.15f, mira)))
                 {
                     return false;
                 }
@@ -518,6 +550,7 @@ namespace Croquis.Visor
             inicio = resultado.TInicio;
             azBase = float.NaN;
             tomaImpacto = null;
+            tomaVuelo = null;
             desvioDespeje = 0f;
             orbitaTocada = false;
             cenitalTocada = false;
@@ -1147,6 +1180,9 @@ namespace Croquis.Visor
         }
 
         private Toma? tomaImpacto;
+
+        /// <summary>La toma del vuelo del motociclista (se elige una vez por caso).</summary>
+        private Toma? tomaVuelo;
         private List<Estorbo> fijos;
 
         /// <summary>Lo construido y las copas, como estorbos de `CamaraAutomatica`.</summary>
@@ -1161,6 +1197,17 @@ namespace Croquis.Visor
             foreach (var c in Copas)
             {
                 lista.Add(new Estorbo { Cx = c.x, Cz = c.y, MedioLargo = c.z, Y0 = 2.0, Y1 = 10.0, Cilindro = true });
+            }
+
+            foreach (var t in Troncos)
+            {
+                // El árbol o el poste golpeado no estorba: es lo que se quiere ver.
+                if (resultado?.PuntoImpacto != null && (new Vector2((float)resultado.PuntoImpacto.X, (float)resultado.PuntoImpacto.Y) - new Vector2(t.x, t.y)).magnitude < t.z + 2.5f)
+                {
+                    continue;
+                }
+
+                lista.Add(new Estorbo { Cx = t.x, Cz = t.y, MedioLargo = t.z, Y0 = -1.0, Y1 = t.w, Cilindro = true });
             }
 
             return lista;
@@ -1219,15 +1266,49 @@ namespace Croquis.Visor
                 var todos = new List<Estorbo>(fijos);
                 todos.AddRange(enImpacto);
                 todos.AddRange(CamaraAutomatica.Vehiculos(resultado, tI + 0.5, Suelo));
-                tomaImpacto = CamaraAutomatica.Impacto(Contacto, a, b, todos);
+                // Si alguien sale volando de su moto, que también se vea dónde cae.
+                V3? cae = null;
+                foreach (var pv in Peatones)
+                {
+                    if (pv != null && pv.Vuelo != null)
+                    {
+                        cae = new V3(pv.Vuelo.XFinal, Suelo + 0.3, pv.Vuelo.YFinal);
+                        break;
+                    }
+                }
+
+                tomaImpacto = CamaraAutomatica.Impacto(Contacto, a, b, todos, cae);
                 Debug.Log("[cámara automática] impacto desde " + tomaImpacto.Value.Ojo.X.ToString("0.0") + ", " + tomaImpacto.Value.Ojo.Y.ToString("0.0") + ", " + tomaImpacto.Value.Ojo.Z.ToString("0.0"));
             }
 
             var aspecto = camara != null ? camara.aspect : 16f / 9f;
             var impacto = tomaImpacto.Value;
             var llegada = CamaraAutomatica.Panorama(CajaVehiculos(t), Contacto, impacto, 45.0, aspecto, new[] { 32.0, 45.0, 60.0, 80.0 }, fijos);
-            var final = CamaraAutomatica.Panorama(Lente.VehiculosEn(resultado, resultado.TFin), Contacto, impacto, 45.0, aspecto, new[] { 62.0, 75.0, 88.0 }, fijos);
+            var cajaFinal = Lente.VehiculosEn(resultado, resultado.TFin);
+            // Donde quedó el motociclista o el ciclista, también en la toma final.
+            foreach (var pv in Peatones)
+            {
+                if (pv != null && pv.Vuelo != null)
+                {
+                    cajaFinal.Agregar(pv.Vuelo.XFinal, pv.Vuelo.YFinal);
+                }
+            }
+
+            var final = CamaraAutomatica.Panorama(cajaFinal, Contacto, impacto, 45.0, aspecto, new[] { 62.0, 75.0, 88.0 }, fijos);
             var toma = CamaraAutomatica.En(t, tI, llegada, impacto, final);
+            // El motociclista o el ciclista que sale volando, siempre a la vista (René, 2026-11-28): una
+            // toma fija de lado a su vuelo, del impacto hasta la toma final.
+            foreach (var pv in Peatones)
+            {
+                var peso = pv != null && pv.Vuelo != null ? pv.Vuelo.PesoCamara(t) : 0.0;
+                if (peso > 0.0)
+                {
+                    tomaVuelo ??= VueloOcupante.TomaVuelo(Contacto, new V3(pv.Vuelo.XFinal, Suelo + 0.3, pv.Vuelo.YFinal), fijos, 45.0, aspecto);
+                    toma = CamaraAutomatica.Mezclar(toma, tomaVuelo.Value, peso);
+                    break;
+                }
+            }
+
             // Con trayecto previo, sigue al que viene de más lejos hasta que empieza la reconstrucción.
             VehiculoVista seguido = null;
             foreach (var v in Vehiculos)
@@ -1336,6 +1417,13 @@ namespace Croquis.Visor
         /// <summary>El minimapa se ve salvo en la cenital, que ya es la vista desde arriba.</summary>
         private void ActualizarMinimapa()
         {
+            if (camara != null)
+            {
+                camara.cullingMask = modo == "cenital"
+                    ? camara.cullingMask & ~(1 << CapaCopas)
+                    : camara.cullingMask | (1 << CapaCopas);
+            }
+
             if (minimapa == null)
             {
                 return;

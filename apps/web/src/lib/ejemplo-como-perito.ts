@@ -27,6 +27,7 @@ import {
   contraNarracion,
   elegirDireccion,
   finalDeLaNarracion,
+  conReposoNarradoDePersonas,
   flechaPropuesta,
   flechasDeLlegada,
   marcarFinal,
@@ -43,6 +44,7 @@ import {
   type Punto,
 } from "./escena-facil";
 import { proponerEscena, rumboDelSentido } from "./escena-propuesta";
+import { callesDelNivel } from "./nivel-via";
 import { impactosAColocar } from "./pasos-caso";
 
 /**
@@ -108,6 +110,8 @@ export interface EscenaComoPerito {
   puntos: Record<number, Punto>;
   /** La escena que propuso La escena, antes de corregirla (para compararla con la de la app). */
   propuesta: { expediente: Expediente; puntos: Record<number, Punto> };
+  /** Lo que La escena dice que propuso, con su porqué (y sus avisos), como lo ve el perito. */
+  propuestos: { clave: string; texto: string }[];
   /** Qué corrigió el perito sobre la propuesta, en palabras. */
   notas: string[];
   /** Lo que hizo, en orden, para repetirlo en el navegador. */
@@ -154,7 +158,13 @@ export function escenaComoPerito(
   const coords = lugar?.coordenadas;
   if (!coords || !lugar?.calles_del_mapa)
     throw new Error(`${receta.clave}: sin el lugar o las calles guardadas del ejemplo.`);
-  const calles = callesDe(respuestaDeGuardadas(lugar.calles_del_mapa));
+  // Las del nivel narrado, como La escena (René, 2026-11-27, #380).
+  const calles = callesDe(
+    callesDelNivel(
+      respuestaDeGuardadas(lugar.calles_del_mapa),
+      Boolean(e0.caso.condiciones?.estructura),
+    ),
+  );
   const impactos = impactosAColocar(e0);
   const vs = e0.vehiculos;
   const nombre = (id: string) =>
@@ -302,7 +312,7 @@ export function escenaComoPerito(
       toques.push({ accion: "final", vehiculo: v.id, como: "junto" });
     } else if (q === "narracion") {
       const n = finales.find((p) => p.vehiculo === v.id);
-      const f = n ? finalDeLaNarracion(e, v.id, n.descripcion, finales) : null;
+      const f = n ? finalDeLaNarracion(e, v.id, n.descripcion, finales, new Set(), calles) : null;
       if (!f) throw new Error(`${receta.clave}: La escena no lee dónde quedó ${nombre(v.id)}.`);
       e = marcarFinal(e, v.id, f.punto, f.rumbo);
       toques.push({ accion: "final", vehiculo: v.id, como: "narracion" });
@@ -340,10 +350,12 @@ export function escenaComoPerito(
     });
   }
   return {
-    expediente: e,
+    // Como La escena tras cada cambio: el peatón donde la narración dice que quedó (supuesto).
+    expediente: conReposoNarradoDePersonas(e, narracion),
     choque,
     puntos,
     propuesta: { expediente: prop.expediente, puntos: { ...prop.puntos } },
+    propuestos: prop.propuestos.map(({ clave, texto }) => ({ clave, texto })),
     notas,
     toques,
   };

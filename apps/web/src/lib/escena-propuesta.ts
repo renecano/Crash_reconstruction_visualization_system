@@ -19,6 +19,7 @@ import { contraLaOrilla } from "./objeto-orilla";
 import {
   avanzar,
   conPosicion,
+  distanciaM,
   formato as F,
   impactosEncimados,
   medidasDe,
@@ -35,6 +36,9 @@ import {
   sobreCalle,
   callesNarradas,
   calzadaEnSuSentido,
+  conReposoNarradoDePersonas,
+  distanciaNarradaDePersona,
+  crucesDe,
   cardinal,
   elegirDireccion,
   flechaPropuesta,
@@ -54,6 +58,10 @@ import {
 const DE_CRUCE =
   /\b(?:cruce|crucero|esquina|intersecci[oó]n|entronque|glorieta|a la altura de|entre (?:las|la) calles?)\b/i;
 
+/** «a la altura de la colonia X» (con su nombre): un tramo de la calle, no un cruce. */
+const A_LA_ALTURA_DE_COLONIA =
+  /\ba\s+la\s+altura\s+de\s+la\s+colonia\s+[A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚÑáéíóúñ.'-]*(?:\s+(?:de\s+(?:la\s+|los\s+|las\s+)?|del\s+)?[A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚÑáéíóúñ.'-]*)*/;
+
 /**
  * Si la frase del lugar nombra una sola calle y ningún cruce, y esa calle pasa a menos de 25 m del
  * lugar: el punto sobre ella. null si no.
@@ -63,11 +71,15 @@ export function calleNarradaSinCruce(
   narracion: string,
   lugar: Punto,
 ): ReturnType<typeof ajustarACalle> {
-  const frase = narracion.split(/(?<=\.)\s/)[0] ?? "";
-  // Solo frente a una casa o un negocio («frente al acceso vehicular…»): a la mitad de la cuadra.
-  // Sobre una carretera o una avenida sin más, el choque sigue en el cruce más cercano (un camino de
-  // los 205 reportes cambiaba de calle a su vehículo que llega de lado).
-  if (DE_CRUCE.test(frase) || !/\bfrente\s+a(?:l)?\b/i.test(frase)) return null;
+  const frase0 = narracion.split(/(?<=\.)\s/)[0] ?? "";
+  // «a la altura de la colonia Ciprés» es un tramo de la calle, no un cruce (René, 2026-11-28, caso 1:
+  // el choque iba al cruce más cercano, con otra avenida, y el Jetta llegaba por ella).
+  const enColonia = A_LA_ALTURA_DE_COLONIA.test(frase0);
+  const frase = frase0.replace(A_LA_ALTURA_DE_COLONIA, " ");
+  // Solo frente a una casa o un negocio («frente al acceso vehicular…») o a la altura de una colonia:
+  // a la mitad de la cuadra. Sobre una carretera o una avenida sin más, el choque sigue en el cruce
+  // más cercano (un camino de los 205 reportes cambiaba de calle a su vehículo que llega de lado).
+  if (DE_CRUCE.test(frase) || !(enColonia || /\bfrente\s+a(?:l)?\b/i.test(frase))) return null;
   const nombradas = callesNarradas(frase);
   if (nombradas.length !== 1) return null;
   const suyas = calles.filter((c) => c.nombre && esLaCalleNarrada(nombradas[0]!.nombre, c.nombre));
@@ -104,6 +116,8 @@ const POR_QUE_CHOQUE: Record<string, string> = {
   narracion: "la narración nombra las dos calles del cruce",
   una_calle: "la narración nombra una de las calles; es su cruce más cercano al lugar",
   cercania: "es el cruce más cercano al lugar del caso",
+  carretera:
+    "la narración nombra la carretera: el choque va sobre ella, en su punto más cercano al lugar encontrado",
   a_la_altura:
     "la narración nombra las dos calles y no se cruzan a nivel (un paso a desnivel): va sobre la primera, a la altura de la segunda",
 };
@@ -143,7 +157,7 @@ export function proponerEscena(o: {
   propuestos.push({
     clave: "choque-1",
     texto: cruce?.calles.length
-      ? `El choque, en ${cruce.calles.length > 1 ? `el cruce de ${cruce.calles.join(" y ")}` : cruce.calles[0]}`
+      ? `El choque, ${cruce.segun === "carretera" ? "sobre" : "en"} ${cruce.calles.length > 1 ? `el cruce de ${cruce.calles.join(" y ")}` : cruce.calles[0]}`
       : sobre
         ? `El choque, sobre ${sobre.calle.nombre ?? "la calle más cercana"}`
         : "El choque, en el lugar del caso",
@@ -380,6 +394,28 @@ export function proponerEscena(o: {
       porque: `con la dirección de cada uno quedaban encimados ${F.metros(enc.traslape_m)}: Croquis los separó lo mínimo`,
     });
   }
+  // La vuelta narrada necesita una esquina (René, 2026-11-28: el camión del caso 2 «dio vuelta a la
+  // derecha» y, en un lugar sin cruce, iba recto en silencio). Si no hay un cruce del mapa cerca del
+  // choque, se dice; no se inventa la esquina.
+  for (const sinCruce of calles.length ? vueltasSinCruce(e, crucesDe(calles), puntos) : []) {
+    propuestos.push({
+      clave: `vuelta-sin-cruce-${sinCruce.vehiculo}`,
+      texto: `${o.nombreDe(sinCruce.vehiculo)}: ${AVISO_VUELTA_SIN_CRUCE}`,
+      porque: `la narración dice «${sinCruce.cita}» y no hay una esquina del mapa a menos de ${VUELTA_CRUCE_M} m del choque`,
+    });
+  }
+  // El peatón o el ciclista, donde la narración dice que quedó (René, 2026-11-28).
+  const conReposo = conReposoNarradoDePersonas(e, narracion);
+  if (conReposo !== e) {
+    e = conReposo;
+    const m = distanciaNarradaDePersona(narracion)!;
+    for (const per of (e.personas ?? []).filter((x) => x.fuente === "supuesto" && x.final))
+      propuestos.push({
+        clave: `persona-final-${per.id}`,
+        texto: `${per.rol === "ciclista" ? "El ciclista" : "El peatón"} quedó a ${F.metros(m, 1)} de donde lo golpearon, hacia donde avanzaba el vehículo`,
+        porque: `la narración da la distancia; el lado es un supuesto (hacia donde lo proyectó el golpe): muévelo si quedó en otro lugar`,
+      });
+  }
   for (const v of vs) {
     if (!poseDe(e, v.id, "final"))
       faltan.push({
@@ -389,6 +425,39 @@ export function proponerEscena(o: {
       });
   }
   return { expediente: e, puntos, propuestos, faltan };
+}
+
+/** Lo que dice La escena cuando la narración da una vuelta y el lugar no tiene cruce (René, 2026-11-28). */
+export const AVISO_VUELTA_SIN_CRUCE =
+  "la narración dice que dio vuelta, pero aquí no hay un cruce: revisa el lugar";
+/** m: a lo más esto del choque, la esquina de la vuelta (el choque es al entrar o al salir de ella). */
+export const VUELTA_CRUCE_M = 40;
+
+/**
+ * Los vehículos que dan vuelta según la narración (vira a la izquierda o a la derecha) y no tienen un
+ * cruce del mapa a menos de `VUELTA_CRUCE_M` del choque. Sin calles del mapa no se juzga.
+ */
+export function vueltasSinCruce(
+  e: Expediente,
+  cruces: readonly { punto: Punto }[],
+  puntos: Record<number, Punto>,
+): { vehiculo: string; cita: string }[] {
+  const ev = e.versiones?.find((x) => x.tipo === "evidencia");
+  const out: { vehiculo: string; cita: string }[] = [];
+  for (const m of ev?.maniobras ?? []) {
+    if (m.tipo !== "vira_derecha" && m.tipo !== "vira_izquierda") continue;
+    if (out.some((x) => x.vehiculo === m.vehiculo)) continue;
+    const imp = (e.impactos ?? [])
+      .filter((i) => (i.vehiculos ?? []).includes(m.vehiculo))
+      .sort((a, b) => a.orden - b.orden)[0];
+    const choque = (imp && puntos[imp.orden]) ?? poseDe(e, m.vehiculo, "impacto")?.punto ?? null;
+    if (!choque) continue;
+    const cerca = cruces.some(
+      (c) => distanciaM([c.punto.lon, c.punto.lat], [choque.lon, choque.lat]) <= VUELTA_CRUCE_M,
+    );
+    if (!cerca) out.push({ vehiculo: m.vehiculo, cita: m.cita?.texto ?? "dio vuelta" });
+  }
+  return out;
 }
 
 /** Hacia dónde mira cada cara respecto al frente (grados, en el sentido del reloj). */

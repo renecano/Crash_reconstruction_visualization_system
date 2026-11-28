@@ -91,3 +91,5 @@ apps/web/src/styles/tokens.css
 # Datos generados del tráiler (tools/trailer/datos-caso.mts): una sola línea, no se formatean.
 apps/trailer/src/datos/
 packages/croquis-2d/fixtures/
+# Las respuestas de Nominatim y Overpass grabadas para las pruebas de los cruces (#388).
+apps/web/src/server/__fixtures__/

@@ -13,6 +13,7 @@ import {
 import type { OverpassResponse } from "@croquis/croquis-2d";
 import type { EscenaSpec } from "@croquis/scene-schema";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { flushSync } from "react-dom";
 import { conCallesDelMapa } from "@/lib/calles-del-mapa";
 import { useSearchParams } from "next/navigation";
 import type { Canal } from "@/lib/canal";
@@ -299,7 +300,10 @@ function ConLineaDeTiempo({
       ultimo.current = ahora;
       const n = Math.min(actual.current + dt, fin);
       actual.current = n;
-      setT(n);
+      // Un solo reloj (René, 2026-11-28: el 2D temblaba): el instante se dibuja en este mismo cuadro.
+      // Sin `flushSync`, React lo aplicaba en una tarea aparte, a veces después de pintar: unos
+      // cuadros repetían el instante anterior y el siguiente saltaba doble.
+      flushSync(() => setT(n));
       if (n >= fin) setCorre(false);
       else id = requestAnimationFrame(paso);
     };

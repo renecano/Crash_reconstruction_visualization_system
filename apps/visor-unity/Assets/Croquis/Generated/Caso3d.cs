@@ -1063,6 +1063,13 @@ namespace Croquis.Generated
         [JsonProperty("consultado")]
         public DateTimeOffset Consultado { get; set; }
 
+        /// <summary>
+        /// Las calles de un ejemplo publicado o de AXA (René, 2026-11-27): centradas en el choque y
+        /// nunca reemplazadas por las que lleguen de la red, para que su cifra no dependa de ella.
+        /// </summary>
+        [JsonProperty("fija", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? Fija { get; set; }
+
         [JsonProperty("fuente")]
         public CallesDelMapaFuente Fuente { get; set; }
 
@@ -1102,6 +1109,14 @@ namespace Croquis.Generated
 
     public partial class Via
     {
+        /// <summary>
+        /// El ancho del acotamiento (René, 2026-11-27): `shoulder:width` de OpenStreetMap (o
+        /// `shoulder:right:width`, `shoulder:both:width`), tal como viene.
+        /// </summary>
+        [JsonProperty("acotamiento", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonConverter(typeof(CunningMinMaxLengthCheckConverter))]
+        public string Acotamiento { get; set; }
+
         [JsonProperty("ancho", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(CunningMinMaxLengthCheckConverter))]
         public string Ancho { get; set; }
@@ -1116,6 +1131,14 @@ namespace Croquis.Generated
         [JsonProperty("maxspeed", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(MagentaMinMaxLengthCheckConverter))]
         public string Maxspeed { get; set; }
+
+        /// <summary>
+        /// El nivel de la vía (René, 2026-11-27): `layer` de OpenStreetMap; un `bridge` sin `layer`,
+        /// 1; un `tunnel`, -1. Sin el campo, a ras del piso. Un vehículo narrado abajo no queda en
+        /// la vía de arriba, ni al revés.
+        /// </summary>
+        [JsonProperty("nivel", NullValueHandling = NullValueHandling.Ignore)]
+        public long? Nivel { get; set; }
 
         [JsonProperty("nombre", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(StickyMinMaxLengthCheckConverter))]
@@ -1473,7 +1496,9 @@ namespace Croquis.Generated
     /// <summary>
     /// Un peatón o un ciclista que el perito coloca en la escena (ronda 4, A3): dónde estaba
     /// cuando lo golpearon, hacia dónde iba y, si se sabe, dónde quedó. De lo golpeado a donde
-    /// quedó es la distancia de proyección.
+    /// quedó es la distancia de proyección. Un motociclista o un ciclista que va en un vehículo
+    /// del expediente lleva `vehiculo` (2026-11-28): va con él hasta el impacto y de ahí sale;
+    /// `final` es donde quedó.
     /// </summary>
     public partial class ExpedientePersona
     {
@@ -1510,6 +1535,14 @@ namespace Croquis.Generated
         [JsonProperty("rumbo_deg", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(FluffyMinMaxValueCheckConverter))]
         public double? RumboDeg { get; set; }
+
+        /// <summary>
+        /// El vehículo del expediente en que iba (la moto del motociclista o la bicicleta del
+        /// ciclista), si va en uno (2026-11-28, opcional): llega con él al impacto y de ahí sale.
+        /// Sin el campo, va a pie o en una bicicleta que no es vehículo del expediente.
+        /// </summary>
+        [JsonProperty("vehiculo", NullValueHandling = NullValueHandling.Ignore)]
+        public string Vehiculo { get; set; }
     }
 
     /// <summary>
@@ -1810,6 +1843,14 @@ namespace Croquis.Generated
         public string Cita { get; set; }
 
         /// <summary>
+        /// La respuesta del perito (René, 2026-11-27) a «¿cómo lo sabes?»: medida (cámara, GPS,
+        /// tacógrafo) entra como restricción dura; declarada (conductor, testigo) se compara con la
+        /// física y queda como versión. Sin este campo, declarada.
+        /// </summary>
+        [JsonProperty("como_se_sabe", NullValueHandling = NullValueHandling.Ignore)]
+        public ComoSeSabe? ComoSeSabe { get; set; }
+
+        /// <summary>
         /// «a más de X»: X es el mínimo; «a menos de X»: el máximo (ronda 4). Es una cota, no un
         /// valor: `kmh` es X y el solver solo la hace cumplir.
         /// </summary>
@@ -1844,6 +1885,13 @@ namespace Croquis.Generated
         [JsonProperty("limite_kmh", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(MinMaxValueCheckConverter4))]
         public double? LimiteKmh { get; set; }
+
+        /// <summary>
+        /// De dónde sale (René, 2026-11-27). Cámara, GPS o tacógrafo van con `como_se_sabe: medida`;
+        /// conductor o testigo, con `declarada`.
+        /// </summary>
+        [JsonProperty("medio", NullValueHandling = NullValueHandling.Ignore)]
+        public Medio? Medio { get; set; }
 
         /// <summary>
         /// narración: la cifra o la descripción de la narración; perito: la contestó el perito; via:
@@ -2179,6 +2227,14 @@ namespace Croquis.Generated
 
         [JsonProperty("fuente")]
         public VisibilidadFuente Fuente { get; set; }
+
+        /// <summary>
+        /// Solo en `velocidad_previa` (René, 2026-11-27): la midió un instrumento (cámara, GPS,
+        /// tacógrafo). Es una restricción dura: el solver no la ajusta, ajusta lo demás y avisa si
+        /// la evidencia no cuadra con ella. No va junto con `a_priori`.
+        /// </summary>
+        [JsonProperty("medida", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? Medida { get; set; }
 
         [JsonProperty("nota", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(FluffyMinMaxLengthCheckConverter))]
@@ -5812,7 +5868,7 @@ namespace Croquis.Generated
 
     public enum TentacledTipo { Arbol, Barrera, Guarnicion, Muro, Poste, Senal, VehiculoEstacionado };
 
-    public enum PersonaRolEnum { Ciclista, Peaton };
+    public enum PersonaRolEnum { Ciclista, Motociclista, Peaton };
 
     public enum Veredicto { NoSeSostiene, Parcial, SeSostiene, SinJuicio };
 
@@ -5828,6 +5884,13 @@ namespace Croquis.Generated
     public enum FluffyFuente { Dictamen, NhtsaE2, Perito, TablaCesvi };
 
     /// <summary>
+    /// La respuesta del perito (René, 2026-11-27) a «¿cómo lo sabes?»: medida (cámara, GPS,
+    /// tacógrafo) entra como restricción dura; declarada (conductor, testigo) se compara con la
+    /// física y queda como versión. Sin este campo, declarada.
+    /// </summary>
+    public enum ComoSeSabe { Declarada, Medida };
+
+    /// <summary>
     /// «a más de X»: X es el mínimo; «a menos de X»: el máximo (ronda 4). Es una cota, no un
     /// valor: `kmh` es X y el solver solo la hace cumplir.
     ///
@@ -5835,6 +5898,12 @@ namespace Croquis.Generated
     /// `valor`), no un valor con su rango; el solver la hace cumplir sin empujar hacia ella.
     /// </summary>
     public enum Cota { Maximo, Minimo };
+
+    /// <summary>
+    /// De dónde sale (René, 2026-11-27). Cámara, GPS o tacógrafo van con `como_se_sabe: medida`;
+    /// conductor o testigo, con `declarada`.
+    /// </summary>
+    public enum Medio { Camara, Conductor, Gps, Tacografo, Testigo };
 
     /// <summary>
     /// narración: la cifra o la descripción de la narración; perito: la contestó el perito; via:
@@ -6063,7 +6132,9 @@ namespace Croquis.Generated
                 PurpleFuenteConverter.Singleton,
                 TipoSuperficieConverter.Singleton,
                 FluffyFuenteConverter.Singleton,
+                ComoSeSabeConverter.Singleton,
                 CotaConverter.Singleton,
+                MedioConverter.Singleton,
                 VelocidadNarradaOrigenConverter.Singleton,
                 RespectoAlLimiteConverter.Singleton,
                 SentidoMarchaEnumConverter.Singleton,
@@ -9550,6 +9621,8 @@ namespace Croquis.Generated
             {
                 case "ciclista":
                     return PersonaRolEnum.Ciclista;
+                case "motociclista":
+                    return PersonaRolEnum.Motociclista;
                 case "peaton":
                     return PersonaRolEnum.Peaton;
             }
@@ -9568,6 +9641,9 @@ namespace Croquis.Generated
             {
                 case PersonaRolEnum.Ciclista:
                     serializer.Serialize(writer, "ciclista");
+                    return;
+                case PersonaRolEnum.Motociclista:
+                    serializer.Serialize(writer, "motociclista");
                     return;
                 case PersonaRolEnum.Peaton:
                     serializer.Serialize(writer, "peaton");
@@ -10070,6 +10146,47 @@ namespace Croquis.Generated
         public static readonly FluffyFuenteConverter Singleton = new FluffyFuenteConverter();
     }
 
+    internal class ComoSeSabeConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(ComoSeSabe) || t == typeof(ComoSeSabe?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "declarada":
+                    return ComoSeSabe.Declarada;
+                case "medida":
+                    return ComoSeSabe.Medida;
+            }
+            throw new Exception("Cannot unmarshal type ComoSeSabe");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (ComoSeSabe)untypedValue;
+            switch (value)
+            {
+                case ComoSeSabe.Declarada:
+                    serializer.Serialize(writer, "declarada");
+                    return;
+                case ComoSeSabe.Medida:
+                    serializer.Serialize(writer, "medida");
+                    return;
+            }
+            throw new Exception("Cannot marshal type ComoSeSabe");
+        }
+
+        public static readonly ComoSeSabeConverter Singleton = new ComoSeSabeConverter();
+    }
+
     internal class CotaConverter : JsonConverter
     {
         public override bool CanConvert(Type t) => t == typeof(Cota) || t == typeof(Cota?);
@@ -10143,6 +10260,62 @@ namespace Croquis.Generated
         }
 
         public static readonly MinMaxValueCheckConverter4 Singleton = new MinMaxValueCheckConverter4();
+    }
+
+    internal class MedioConverter : JsonConverter
+    {
+        public override bool CanConvert(Type t) => t == typeof(Medio) || t == typeof(Medio?);
+
+        public override object ReadJson(JsonReader reader, Type t, object existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null) return null;
+            var value = serializer.Deserialize<string>(reader);
+            switch (value)
+            {
+                case "camara":
+                    return Medio.Camara;
+                case "conductor":
+                    return Medio.Conductor;
+                case "gps":
+                    return Medio.Gps;
+                case "tacografo":
+                    return Medio.Tacografo;
+                case "testigo":
+                    return Medio.Testigo;
+            }
+            throw new Exception("Cannot unmarshal type Medio");
+        }
+
+        public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)
+        {
+            if (untypedValue == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+            var value = (Medio)untypedValue;
+            switch (value)
+            {
+                case Medio.Camara:
+                    serializer.Serialize(writer, "camara");
+                    return;
+                case Medio.Conductor:
+                    serializer.Serialize(writer, "conductor");
+                    return;
+                case Medio.Gps:
+                    serializer.Serialize(writer, "gps");
+                    return;
+                case Medio.Tacografo:
+                    serializer.Serialize(writer, "tacografo");
+                    return;
+                case Medio.Testigo:
+                    serializer.Serialize(writer, "testigo");
+                    return;
+            }
+            throw new Exception("Cannot marshal type Medio");
+        }
+
+        public static readonly MedioConverter Singleton = new MedioConverter();
     }
 
     internal class VelocidadNarradaOrigenConverter : JsonConverter

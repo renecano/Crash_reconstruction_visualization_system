@@ -6,7 +6,7 @@ Para la demo en vivo con los peritos de CESVI. El video grabado tiene su propio 
 - **Actualizado** el 2026-11-17 con lo que cambió en la ronda 2 y el respaldo sin red (la demo local).
 - **Cifras:** solo las que muestra la pantalla. Las de abajo son las del 2026-11-15; si la pantalla dice otra cosa, manda la pantalla.
 - **Nada juzga al conductor:** el perito concluye. Croquis es una reconstrucción de apoyo.
-- **Antes de empezar:** Chrome con caché (no incógnito), la laptop conectada a la corriente, y el 3D de AXA abierto una vez antes (así el build ya está en caché: la primera carga tarda unos 10 s; las siguientes, 3 a 4 s).
+- **Antes de empezar:** Chrome con caché (no incógnito), la laptop conectada a la corriente, y el 3D de AXA abierto una vez antes (así el build ya está en caché: en esta laptop, con AXA, la primera carga tardó 13.5 s y la segunda, con caché, 7.5 s; mediana de 3, 2026-11-18, `eval/results/ronda4_unity_arranque_despues_*.json`).
 - **Actualizado** el 2026-11-18 con el acto «Versiones» (ronda 4, punto 8).
 - **Los actos** (la barra de arriba): «El hecho», «La escena», «Reconstrucción», «Versiones», «Análisis», «Contra CESVI» y «Dictamen». En ventanas de menos de 1280 px de ancho, la barra muestra el nombre del acto actual y los demás con su número.
 
@@ -23,7 +23,7 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 - **La incógnita (A6):** a la izquierda, el croquis de lo que se colocó, con el origen de cada cosa («lo marcaste», «narración» o «supuesto») y por dónde llegó cada vehículo, punteado, con su «? km/h». A la derecha, la pregunta («¿A qué velocidad venían?»), «Reconstruir» y lo marcado contra lo supuesto. Antes de calcular no aparece ningún número; la cifra sale en el lugar del signo.
 
 - **La cifra:** V2 a 57 km/h, con su rango de 55 a 78. Es el mejor ajuste de la física, no un promedio. Debajo, a la vista, la nube de puntos: cada punto es una simulación del caso, el corchete bajo el eje es el rango (donde cae el 80 %) y el punto naranja, el mejor ajuste. Los percentiles siguen plegados.
-- **Dos hipótesis:** el reposo que el reporte no da (supuesto) y la deformación medida no caben juntos. Se ve «La más cercana al daño medido»; la otra, «Cuadra con el reposo supuesto» (34 km/h), va marcada como supuesto. El perito elige.
+- **Dos hipótesis:** el reposo que el reporte no da (supuesto) y la deformación medida no caben juntos. Se ve «La más cercana al daño medido»; la otra, «Cuadra con el reposo supuesto» (36 km/h, 29–64; `eval/results/axa_hipotesis.json`), va marcada como supuesto. El perito elige.
 - **Lo que explica el daño:** queda en el borde bajo de la energía que da la deformación medida. Croquis lo dice; no lo esconde.
 
 > Pestaña «3D» → Unity → «Ir al impacto» (unos 14 s con la carga). La pestaña «2D» es el croquis del perito (ronda 4): girado con la vía horizontal, cada vehículo en A1 (antes), A2 (impacto) y A3 (reposo), el punto de impacto, el norte y la escala. «Mapa» o «Foto» lo ponen sobre el lugar real; «Color por velocidad» colorea los recorridos. Es el mismo croquis del dictamen.
@@ -33,7 +33,7 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 - **Cámara** (el selector arriba a la izquierda del 3D): las cuatro generales a un clic («Alrededor», «Desde arriba», «Cinematográfica», «Desde la acera»); un botón por vehículo («B · Tacoma») abre sus tres vistas («Detrás, siguiéndolo», «Lo que veía su conductor», «Su daño, en el impacto»), a dos clics; las personas a pie, en bici o en moto, a un clic. «Detrás, siguiéndolo» se aleja más en las camionetas grandes. Esc cierra el menú.
 - **Leyenda:** reconstrucción ilustrativa; el entorno es procedural, no el lugar real.
 - **«Descargar video»** (arriba a la derecha, junto a «Ocultar minimapa»): graba la reproducción completa con la cámara elegida, en MP4 de 1920×1080, con la leyenda y el logo, y dice cuánto falta. Mientras graba, la escena se tapa con un panel; «Cancelar» o Esc lo paran. En la demo conviene hacerlo con una cámara ya elegida y no esperar a que termine: con unos segundos basta para mostrarlo. Funciona en Chrome y Edge.
-- **La nota bajo el 3D** dice de qué vehículo y qué velocidad es, con el nombre del panel: «B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–78) · CESVI 63.15 km/h de barrera equivalente por la deformación (EBS)» y «A · Silverado 2500 (V1) al salir del impacto: Croquis 31 km/h · CESVI 60.27 km/h por los restos». Presentar y el dictamen lo nombran igual.
+- **La nota bajo el 3D** dice de qué vehículo y qué velocidad es, con el nombre del panel: «B · Tacoma (V2) antes del impacto: Croquis 57 km/h (55–79) · CESVI 63.15 km/h de barrera equivalente por la deformación (EBS)» y «A · Silverado 2500 (V1) al salir del impacto: Croquis 31 km/h · CESVI 60.27 km/h por los restos». Presentar y el dictamen lo nombran igual.
 
 > «Comparar con una versión» (bajo la cifra, en Reconstrucción) → acto «Versiones».
 
@@ -74,8 +74,8 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 | Ejemplo                                         | Qué muestra                                                                 | Lo que da                                                                |
 | ----------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | Crucero de noche en Iztapalapa                  | Lectura con citas y preguntas; de noche                                     | A · Jetta a <!--cifra:ejemplos.crucero-->20 km/h (1–27)<!--/cifra-->     |
-| Alcance en carretera con la deformación medida  | Las medidas C1–C6 de los dos vehículos, su energía y su cambio de velocidad | A · NP300 a <!--cifra:ejemplos.alcance-->54 km/h (44–54)<!--/cifra-->    |
-| Carambola de noche con lluvia                   | Tres vehículos, dos impactos en orden, pavimento mojado                     | A · Ranger a <!--cifra:ejemplos.carambola-->25 km/h (20–32)<!--/cifra--> |
+| Alcance en carretera con la deformación medida  | Las medidas C1–C6 de los dos vehículos, su energía y su cambio de velocidad | A · NP300 a <!--cifra:ejemplos.alcance-->53 km/h (44–53)<!--/cifra-->    |
+| Carambola de noche con lluvia                   | Tres vehículos, dos impactos en orden, pavimento mojado                     | A · Ranger a <!--cifra:ejemplos.carambola-->24 km/h (20–32)<!--/cifra--> |
 | Reversa en una calle con tope                   | La reversa como supuesto con su fuente; un tope con las medidas de la norma | B · Versa a <!--cifra:ejemplos.reversa-->20 km/h (17–26)<!--/cifra-->    |
 | Choque en un entronque y salida contra un poste | Punto de paso, terracería y un objeto fijo                                  | B · Sentra a <!--cifra:ejemplos.poste-->50 km/h (47–57)<!--/cifra-->     |
 

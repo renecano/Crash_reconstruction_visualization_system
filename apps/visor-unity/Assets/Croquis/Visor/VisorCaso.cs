@@ -202,6 +202,7 @@ namespace Croquis.Visor
         {
             var mio = ++turnoDeCarga;
             leyendaVisible = true;
+            ocupanteNarrado = null;
             danoMedido = Array.Exists(caso.Resultado?.Vehiculos ?? new ResultadoVehiculo[0], v => DanoDelCaso.UsaMedido(v.Dano));
             Omisiones.Limpiar();
             PasosDeCarga.Clear();
@@ -334,6 +335,11 @@ namespace Croquis.Visor
             });
             Omisiones.Intentar("el paisaje árido", () => Paisaje.Arido(e));
             Omisiones.Intentar("la calzada despejada", () => Calzada.Despejar(e));
+            // Y donde pasa un vehículo del caso, sin defensas atravesadas en su recorrido.
+            Omisiones.Intentar("las defensas fuera del recorrido", () => Calzada.AbrirPasoEnBarreras(e, (r.Vehiculos ?? new ResultadoVehiculo[0])
+                .Where(v => v.Trayectoria?.X != null && v.Dimensiones != null)
+                .Select(v => new Calzada.Recorrido { X = v.Trayectoria.X, Y = v.Trayectoria.Y, Medio = v.Dimensiones.AnchoM / 2.0 + Calzada.HolguraRecorrido })
+                .ToList()));
             Omisiones.Intentar("el escenario", () => EscenarioVista.Construir(raiz, e, sol, Camera.main, terreno));
             Omisiones.Intentar("el camellón", () => CamellonVista.Construir(raiz.Find("escenario"), camellones, terreno, e.Ambiente, e.Semilla));
             Paso("escenario");
@@ -428,6 +434,20 @@ namespace Croquis.Visor
                 {
                     var persona = await PersonaVista.ConTrayectoriaAsync(raiz, p, terreno, cuerpos);
                     Vigente(mio);
+                    // El motociclista o el ciclista: después del impacto, su vuelo ilustrativo hasta la
+                    // posición final narrada (René, 2026-11-28; `VueloOcupante`).
+                    persona.Vuelo = VueloOcupante.Armar(
+                        p,
+                        Array.Find(r.Vehiculos, v => v.Id == p.VehiculoId),
+                        Array.Find(caso.Escena?.Personas ?? new EscenaPersona[0], x => x.Id == p.Id),
+                        tImpacto,
+                        Array.FindAll(r.Vehiculos, v => v.Id != p.VehiculoId));
+                    if (persona.Vuelo != null)
+                    {
+                        // Si alguno es supuesto, la leyenda lo dice.
+                        ocupanteNarrado = (ocupanteNarrado ?? true) && !persona.Vuelo.Supuesta;
+                    }
+
                     personas.Add(persona);
                     continue;
                 }
@@ -465,11 +485,45 @@ namespace Croquis.Visor
             Camara.Estorbos.Clear();
             Camara.Bultos.Clear();
             Camara.Copas.Clear();
+            Camara.Troncos.Clear();
             foreach (var arbol in e?.Entorno?.Arboles ?? new ArbolEscenario[0])
             {
                 if (arbol.Tipo != 2)
                 {
                     Camara.Copas.Add(new Vector3((float)arbol.X, (float)arbol.Y, Mathf.Max(1.6f, (float)arbol.CopaM * 1.3f)));
+                }
+
+                Camara.Troncos.Add(new Vector4((float)arbol.X, (float)arbol.Y, 0.35f, (float)(arbol.AlturaM ?? 6.0) * 0.5f));
+            }
+
+            // Lo del caso (el árbol, el poste, el muro del choque) también tapa: las cámaras lo rodean.
+            foreach (var o in r.Objetos ?? new ResultadoObjeto[0])
+            {
+                switch (o.Forma)
+                {
+                    case Forma.Arbol:
+                        // Solo el tronco: la copa del árbol del choque está sobre el contacto y descartaría
+                        // toda toma hacia él.
+                        Camara.Troncos.Add(new Vector4((float)o.X, (float)o.Y, Mathf.Max(0.3f, (float)(o.RadioM ?? 0.2) * 1.5f), (float)(o.Copa?.TroncoAltoM ?? o.AltoM * 0.4)));
+                        break;
+                    case Forma.Cilindro:
+                        Camara.Troncos.Add(new Vector4((float)o.X, (float)o.Y, Mathf.Max(0.3f, (float)(o.RadioM ?? 0.2) * 1.5f), (float)o.AltoM));
+                        break;
+                    default:
+                        if (o.LargoM > 0.5 && o.AltoM > 1.0)
+                        {
+                            var rumbo = (float)(o.RumboDeg * Math.PI / 180.0);
+                            Camara.Bultos.Add(new CamaraVisor.Bulto
+                            {
+                                C = new Vector2((float)o.X, (float)o.Y),
+                                U = new Vector2(Mathf.Cos(rumbo), Mathf.Sin(rumbo)),
+                                Hw = (float)o.LargoM / 2f,
+                                Hd = (float)Math.Max(o.AnchoM, 0.2) / 2f,
+                                Alto = (float)o.AltoM,
+                            });
+                        }
+
+                        break;
                 }
             }
 
@@ -488,11 +542,13 @@ namespace Croquis.Visor
             foreach (var l in e?.Luminarias ?? new LuminariaEscenario[0])
             {
                 Camara.Estorbos.Add(new Vector2((float)l.X, (float)l.Y));
+                Camara.Troncos.Add(new Vector4((float)l.X, (float)l.Y, 0.3f, (float)l.AlturaM));
             }
 
             foreach (var p in e?.Entorno?.Postes ?? new PosteEscenario[0])
             {
                 Camara.Estorbos.Add(new Vector2((float)p.X, (float)p.Y));
+                Camara.Troncos.Add(new Vector4((float)p.X, (float)p.Y, 0.3f, 9f)); // el poste del entorno no trae su altura
             }
             Fijar(inicio);
             // Lo que se mueve o cambia con el tiempo va en su capa: el minimapa lo dibuja por cuadro
@@ -503,7 +559,11 @@ namespace Croquis.Visor
                 {
                     foreach (var t in hijo.GetComponentsInChildren<Transform>(true))
                     {
-                        t.gameObject.layer = CamaraVisor.CapaDinamica;
+                        // Las copas conservan su capa: «Desde arriba» no las dibuja.
+                        if (t.gameObject.layer != CamaraVisor.CapaCopas)
+                        {
+                            t.gameObject.layer = CamaraVisor.CapaDinamica;
+                        }
                     }
                 }
             }
@@ -839,12 +899,15 @@ namespace Croquis.Visor
             var texto = EscenarioVista.TextoDeLeyenda(raiz);
             if (texto != null)
             {
-                texto.text = Leyenda3d.Mensaje(conEscenario, pisoMapa.Puesto ? pisoMapa.Atribucion : null, etiquetaFantasma, danoMedido);
+                texto.text = Leyenda3d.Mensaje(conEscenario, pisoMapa.Puesto ? pisoMapa.Atribucion : null, etiquetaFantasma, danoMedido, ocupanteNarrado);
             }
         }
 
         /// <summary>Si algún vehículo del caso se dibuja con los C1–C6 que midió el perito.</summary>
         private bool danoMedido;
+
+        /// <summary>Con un ocupante que sale de su moto o bicicleta: si su posición final es la narrada (o supuesta); null, sin él.</summary>
+        private bool? ocupanteNarrado;
 
         public void Fijar(double t)
         {

@@ -11,7 +11,8 @@ import type { Capacidades } from "@/lib/seleccion-escena";
 import { IconoPersona } from "./figura-persona";
 
 /** Con artículo y en minúsculas: «el peatón», «el ciclista». */
-export const articuloPersona = (r: RolPersona) => (r === "ciclista" ? "el ciclista" : "el peatón");
+export const articuloPersona = (r: RolPersona) =>
+  r === "ciclista" ? "el ciclista" : r === "motociclista" ? "el motociclista" : "el peatón";
 /** Tras «a»: «al peatón», «al ciclista». */
 export const alPersona = (r: RolPersona) => `al ${articuloPersona(r).slice(3)}`;
 

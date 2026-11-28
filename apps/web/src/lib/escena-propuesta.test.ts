@@ -235,6 +235,24 @@ describe("una sola calle narrada, sin cruce (René, 2026-11-25)", () => {
     expect(p!.distancia).toBeLessThan(1);
   });
 
+  it("«sobre la calle Olivos, a la altura de la colonia Lomas del Valle»: sobre Olivos, no en un cruce", () => {
+    // René, 2026-11-28 (caso 1): la colonia no es una calle; el choque va sobre la calle narrada.
+    const p = calleNarradaSinCruce(
+      [laureles, olivos],
+      "El hecho se ubica sobre la calle Olivos, a la altura de la colonia Lomas del Valle, en Atlixco, Puebla.",
+      lugar,
+    );
+    expect(p?.calle.nombre).toBe("Calle Olivos");
+    // «a la altura de la calle Laureles» sí es un cruce.
+    expect(
+      calleNarradaSinCruce(
+        [laureles, olivos],
+        "El hecho se ubica sobre la calle Olivos, a la altura de la calle Laureles.",
+        lugar,
+      ),
+    ).toBeNull();
+  });
+
   it("con un cruce en la frase, no", () => {
     expect(
       calleNarradaSinCruce(

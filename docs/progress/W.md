@@ -1635,6 +1635,127 @@ Narración de prueba en la carretera estatal 100 (SON 100), Hermosillo–Bahía 
 - **2026-11-27 · 2D limpio en casos nuevos (Alberto, `fix/w-2d-casos-nuevos`).** El croquis solo dibuja las calles que recorre alguien o que pasan a ≤ 10 m del choque (más los tramos de OSM que las continúan). Las rayas de una calle se cortan donde entra otra, pero no en las uniones de tramos de una misma calle. Se dibujan los objetos del caso (árbol con copa, poste, muro) con su etiqueta. «P1·2» cuando la persona no se movió antes del impacto. Sin calles de OSM, la vía de la escena (franjas, anillo de glorieta y arcos). La prueba visual suma curva, carretera (SON 100), glorieta y atropello. Capturas antes/después en `docs/cesvi/ronda-4/evidencia/2d-casos-nuevos/`. La colocación y las cifras no cambian.
 
 - **2026-11-27 · Punto 9: el detalle de las calles de OSM llega al 3D (Alberto, `feat/w-calles-detalle`, sobre el contrato #385).** `red_vial` guarda `lanes:forward`/`backward`, `turn:lanes`, `sidewalk` y los nodos de semáforos y pasos peatonales. La consulta de producción pide las etiquetas de los nodos (`out body`). El paquete caso-3d dibuja los pasos peatonales de OSM, las banquetas del lado que dice OSM, la raya central recorrida si hay más carriles de un sentido, las flechas de cada carril y los semáforos (en la orilla, fuera de la calzada y apagados, porque OSM no dice su fase). Unity ya dibujaba capas y dispositivos: no hace falta un build nuevo. Batería: 11 paquetes de ciudad regenerados, con `resultado` y vehículos idénticos. AXA no se tocó: el generador da hoy otro `resultado` para AXA, por un cambio en `main` que no es de este frente (para René). Capturas en `docs/cesvi/ronda-4/evidencia/calles-osm/`.
+
+## t12: puntos 1–5, posiciones a lo largo de la calle, acotamiento y cruces narrados (2026-11-27) · #382, `contract/velocidad-medida`
+
+**Qué se hizo:**
+
+- **1 · Velocidad medida o declarada** (`velocidad_previa.medida`, `VelocidadNarrada.como_se_sabe`/`medio`): la medida queda fija y no la ajusta el solver (Python y TS); la declarada se compara con la física («declaró 50; la física da 15–25») y el dictamen elige cuál usa.
+- **2 · «¿Y si…?» con edificios, muros y bardas como obstáculos rígidos** (`contraObstaculos`).
+- **3 · La vuelta del camión, en un cruce real** (`cruceDeLaVuelta`).
+- **4 · Vías elevadas** (`nivel` desde `layer`/`bridge`/`tunnel`; `viasDelNivel`, `callesDelNivel`).
+- **5 · El toque se ajusta al carril** (`alCarril`, 0.75 m, solo a lo ancho).
+- **A lo largo de la calle:**
+  - Las distancias narradas («N m adelante del área de restos») se miden desde el primer choque.
+  - Las posiciones se pueden escribir en metros («Escribir las posiciones en metros»).
+  - La Reconstrucción muestra cuánto mueve la cifra cada metro de toque (`sensibilidadDeReposos`).
+- **Acotamiento (René):** «sobre el acotamiento» corre medio carril más medio acotamiento. El carril sale de la calle; el acotamiento, de `shoulder:width` de OSM (se guarda con el caso: contrato `acotamiento`) o del supuesto de 2.5 m. El texto lo dice y dice dónde corregirlo.
+- **Cruces narrados (#388, Alberto):**
+  - **Cómo se encuentra el cruce:**
+    - Se busca en Overpass (`server/cruces.ts`) los nodos que comparten las dos calles dentro del municipio, por `name`, `alt_name`, `official_name`, `old_name`, `short_name` y `ref`. Un eje se busca también por sus dos partes («Eje Central Lázaro Cárdenas» es «Avenida Lázaro Cárdenas» en OSM).
+    - **Si las calles se cruzan en un solo lugar,** ese es el lugar.
+    - **Si se cruzan en varios,** se ofrecen al perito en un orden que no es arbitrario, y el aviso dice cuál es:
+      - «centro» en la narración: el más cercano al centro del municipio va primero.
+      - Una colonia que OSM tiene: los cruces dentro de ella van primero.
+      - Una colonia que OSM no tiene, o ninguna: se dice y el perito elige.
+    - Cada opción lleva su colonia o, donde OSM no tiene colonias (Toluca), su código postal y su localidad.
+    - **Si no se cruzan:** «No encontré el cruce de X con Y: márcalo tú». **Si Overpass no responde:** «No pude comprobar…».
+  - **La Escena busca solo el cruce cuando la narración nombra uno.** Antes probaba primero la descripción, y `separarLugarYSentido` le quitaba «hacia el cruce con…». También probaba una sola de las calles, cuyo punto medio daba otra esquina.
+  - La revisión de la cadena hace lo mismo y guarda en caché las consultas POST por su cuerpo.
+
+**Evidencia:**
+
+- **Respaldo three.js sin cambios por #387** (`packages/viewer/src/respaldo-calles.test.ts`): 84 huellas (21 escenas × 4 opciones) grabadas con el código de `90d7e7fa`. El código de hoy las reproduce bit a bit sin los datos nuevos de OSM, y la prueba falla si se dejan.
+- **Cruces reales** (`server/cruces-reales.test.ts`, respuestas grabadas): fallan a más de 30 m del nodo de OSM.
+  - Lerdo de Tejada y Nicolás Bravo, con «centro» (sale primero el del centro, C.P. 50000) y sin colonia (el cruce real está entre las opciones).
+  - Independencia y Juárez, Toluca.
+  - Eje Central y Juárez, CDMX.
+  - Tecnológico y Estado de México, Metepec.
+- **Medición** (`eval/cruces_narrados.mts` → `eval/results/cruces_narrados_{antes,despues}.json`): el choque propuesto contra el cruce real de OSM más cercano, dentro del municipio. Es una cota optimista: si hay varios cruces, cuenta el más cercano.
+
+|                                           | 205 reportes | 42 narraciones |
+| ----------------------------------------- | ------------ | -------------- |
+| Nombran un cruce                          | 99           | 25             |
+| OSM tiene el cruce                        | 29           | 15             |
+| A más de 30 m, antes → después            | 6 → 1        | 12 → 0         |
+| A 30 m o menos, antes → después           | 16 → 21      | 2 → 10         |
+| La escena pregunta, antes → después       | 13 → 14      | 2 → 8          |
+| Sin lugar («márcalo tú»), antes → después | 21 → 40      | 0 → 4          |
+
+- **El que queda a más de 30 m** (`cesvi-ec1c390b10`, Boulevard Independencia y Calzada Abastos): el lugar propuesto está a 4.7 km del cruce de OSM. Falta confirmar la causa; puede ser la ruta de respaldo de Nominatim cuando Overpass no responde.
+- **Lo que no sale gratis:** los «sin lugar» suben. Son casos donde OSM no tiene el cruce y antes se proponía un punto de alguna calle; ahora se le pide al perito que lo marque.
+
+**Pendiente (después de la demo; René, 2026-11-27):** ordenar los cruces por colonia donde OSM no tiene colonias, con el catálogo de colonias por código postal de SEPOMEX o con el Marco Geoestadístico del INEGI. Ver «Endurecimiento pendiente» en `docs/PROGRESS.md`.
+
+**Siguiente paso concreto:** publicar #369 (ya en esta rama), subir el build `visor-web-9b485d0574678674` (puente 1.5.0) a Blob, ponerlo en el manifiesto y fijar la t12 con esta rama. La t12 confirma en el navegador la carambola 24 (20–32), la única cifra que mueve esta rama en Node (por el acotamiento).
+
+- **2026-11-28 · El 2D limpio en AXA, los cinco ejemplos y los casos nuevos (Alberto, `fix/w-2d-croquis-limpio`).** El quiebre de la orilla en AXA no lo introdujo #384: sale igual antes de ese cambio, en cuanto el caso trae las calles de OSM. Ahí la MEX-15D llega en dos tramos con un ligero ángulo y anchos distintos. Cambios:
+  - los tramos continuos de una calle se unen en una sola, con un solo ancho, recta si cabe en 1.5 m y con curva suave si curva;
+  - las rayas de carril, finas y grises, no van bajo un recorrido;
+  - cada recorrido, una línea continua de su color con flechas;
+  - en el impacto, cada vehículo con su contorno y su color semitransparente, sin flechas dentro de otro vehículo y con una flecha por vehículo;
+  - las líneas de etiqueta no se cruzan ni pasan por un vehículo ajeno;
+  - la leyenda «1 inicio · 2 impacto · 3 reposo» con la letra de cada vehículo;
+  - el norte, arriba a la izquierda (lejos del zoom), y la escala con margen.
+
+  La prueba visual revisa todo eso en AXA (con y sin calles de OSM), los cinco ejemplos y los casos nuevos. Capturas lado a lado en `docs/cesvi/ronda-4/evidencia/2d-limpio/`; las de AXA, solo en local.
+
+## La velocidad del perito, el lugar sin respuesta, el poste narrado y la vuelta sin cruce (2026-11-28) · #409, #410, #411, #412, #413
+
+**Qué se hizo** (pedidos de René del 2026-11-28):
+
+- **#409 (en producción) · Velocidad del perito.**
+  - **La DECLARADA nunca entra al solver.** Cuenta como «No sé», es decir, la típica de la vía, y solo se compara con la física en la hoja. En el poste, la declarada del Sentra llevaba el ajuste a un edificio y salía «no cuadra».
+  - **La MEDIDA que no cabe** deja ver la reconstrucción física sin ella, marcada, con el conflicto escrito («Con la velocidad medida de X km/h no cuadra: …; revisa la medida o las posiciones»). En Node y en el navegador.
+  - **Pruebas:** en los cinco ejemplos y AXA, con la cifra publicada y con 200 km/h (un archivo por caso para que corran en paralelo). No se mueve ninguna cifra publicada.
+- **#410 (en producción) · «No respondió» no es «no encontrado».** Si el mapa no contesta (Overpass o Nominatim), la búsqueda se detiene y dice «No pude comprobar el cruce de X con Y (el mapa no respondió): reintenta», con un botón «Reintentar».
+  - No se pasa al km, a la referencia ni a la calle, y no se usa la geometría de Nominatim.
+  - El lugar confirmado se guarda con el caso, así que reabrir o reconstruir no lo vuelve a buscar.
+  - Prueba con respuestas grabadas: Overpass caído en la primera vuelta y de vuelta en la segunda da el cruce correcto.
+- **#411 (abierto, espera a René: cambia la cifra) · El poste narrado aparece solo.**
+  - **Por qué no salía.** No es una regresión de #331 ni de #400, ni de mover el objeto a la orilla: el choque narrado contra el poste no traía lugar y solo se calculaba y se dibujaba si el perito lo marcaba. La receta de la e2e lo marcaba a mano.
+  - **Qué cambia.** El poste va donde quedó el Sentra, contra su frente, como supuesto visible (`conObjetosNarrados`). La tolerancia del choque contra un objeto pasa de 2 m fijos a medio largo del vehículo más 0.5 m: con 2 m, un Sentra con el frente contra el poste no cuadraba.
+  - **Cifras del Sentra (B)**, Node, 32/128 muestras:
+
+    | Variante                                    | Sentra (B)            |
+    | ------------------------------------------- | --------------------- |
+    | Poste colocado por Croquis                  | 57.8 km/h (49.6–68.3) |
+    | Poste de la receta, con la nueva tolerancia | 49.9 (46.1–55.3)      |
+    | Hoy, sin marcar el poste                    | 49.4 (45.0–54.5)      |
+    | Publicada                                   | 50 (47–57)            |
+- **#412 (abierto) · La vuelta sin cruce.** Si la narración da una vuelta y no hay esquina del mapa a menos de 40 m del choque, La escena dice: «la narración dice que dio vuelta, pero aquí no hay un cruce: revisa el lugar». En los cinco ejemplos no sale de más.
+- **#413 (abierto) · Relevo de Overpass y la colonia.**
+  - **Relevo entre réplicas.** Gana la primera que responde; una réplica colgada ya no retiene la búsqueda.
+  - **«La colonia X» es una colonia,** no una calle con ese nombre.
+  - **La referencia pide solo la calle narrada.**
+  - **Topes:** un tope de 45 s por cruce, y `/api/lugar` a 60 s.
+
+**Los tres casos de René en producción** (`/api/lugar/narrado`, tres veces cada uno, después de #410):
+
+| Caso | Resultado en producción                                                                                                    | Por qué                                                                                                                                        |
+| ---- | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2    | El mismo cruce las tres veces: Av. Tecnológico y Av. Estado de México, 19.250403, −99.577665, seguridad alta, sin opciones | Salió de la caché del servidor, en 0.5 s                                                                                                       |
+| 3    | El mismo cruce las tres veces: Paseo Tollocan y Jesús Carranza, 19.273009, −99.658483, seguridad alta, sin opciones        | Salió de la caché del servidor, en 0.5 s                                                                                                       |
+| 1    | Las tres veces «No pude comprobar «Ciprés» (el mapa no respondió)», a los 41 s                                             | La referencia tomaba una calle Ciprés y bajaba todas las calles a 700 m de tres candidatos; desde Vercel se agotaba el tiempo. Lo corrige #413 |
+
+En local, con #413 y la caché vacía:
+
+| Caso | Lugar                                             | Tiempo                                                                                                                         |
+| ---- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| 1    | Paseo de los Matlatzincas (calle, seguridad baja) | 3.5 s                                                                                                                          |
+| 2    | El cruce                                          | 7.6 s; una de dos corridas se agotó a los 30 s, el tope de antes (Overpass estuvo muy inestable: 502, 504 y réplicas colgadas) |
+| 3    | El cruce                                          | 8 s                                                                                                                            |
+
+**Siguiente paso concreto:** fusionar #412 y #413 con CI en verde. Correr de nuevo los tres casos en producción, tres veces cada uno, y abrirlos de punta a punta en La escena: el lugar, las opciones y si la escena cuadra con la narración (la vuelta del caso 2 en la esquina). #411 espera el visto bueno de René a la cifra del poste.
+
+- **2026-11-28 · El 2D ya no tiembla al reproducir** (René, en producción). Había tres causas:
+  - El croquis pericial rehacía todo el SVG (vías, etiquetas, leyenda y el fondo del mapa) y lo reemplazaba en cada cuadro. Ahora se arma una vez, y solo se mueve una capa encima con los vehículos en movimiento, sin redondear (`croquisPericial(...).ahora(t)`).
+  - React aplicaba el instante en una tarea aparte, a veces después de pintar, así que unos cuadros repetían el instante y otros saltaban doble. Ahora el reloj (`requestAnimationFrame`) lo aplica en el mismo cuadro (`flushSync`).
+  - La barra saltaba de centésima en centésima (`step=0.01`); ahora es continua.
+
+  La prueba `e2e/maqueta-suave.spec.ts` (`@flujo`, croquis pericial y maqueta) mide cuadro a cuadro que cada vehículo avanza hacia adelante y parejo, y que la barra avanza lo que pasó de reloj. Antes, la barra se desfasaba hasta 0.0068 s en un cuadro; después, menos de 0.002 s en todos. 2/2 en verde en local.
+
+- **2026-11-28 · El video del 3D, rápido** (ADR 0148; PR `feat/w-video-rapido`). En la Mac M1, el choque de AXA con la cámara automática (13.23 s de video) tardaba 16.6 min en producción y ahora tarda **124 s en «Rápido»** y **7.4 min en «Máxima calidad»** (`eval/results/video_medicion.jsonl`). La mayor parte del tiempo se iba en leer todos los cuadros de Unity: ahora se toma solo uno por instante, y codificar bajó de 476 a 4 ms por cuadro. El nivel y la resolución quedan fijos mientras se graba (puente `calidad.escala`, #416), y el modo se mide antes de grabar con una meta de 2 min en «Rápido» y 10 min en «Máxima». Pendiente: medir en la laptop con tarjeta integrada con `e2e/video-medicion.spec.ts`.
 - **2026-11-27 · Prueba como perito en producción: 10 casos nuevos (Alberto).** Se probaron 10 choques narrados en lugares reales, de La escena al dictamen, con la lectura con IA de producción: 13 lecturas de 15. Las 10 quedaron grabadas en la máquina de Alberto para repetir sin gastar. La prueba es `apps/web/e2e/perito-produccion.spec.ts`, en `playwright.produccion.config.ts`, y no corre en CI. Hace lo que haría un perito: acepta lo que Croquis propone salvo el choque; si sabe dónde fue, pega las coordenadas y lo marca ahí. Para la posición final usa la de la narración si se ofrece, y si no, «junto al choque». Las capturas están en `docs/cesvi/ronda-4/evidencia/perito/`.
 
   | Caso                                                       | Qué falla                                                                                                                                                                                                                                                                                                                                                    | Captura                         | De quién                                                             |

@@ -1,0 +1,217 @@
+{
+  "sitio": "https://croquis-sage.vercel.app",
+  "fecha": "2026-11-27T23:54:03.873Z",
+  "filas": [
+    {
+      "caso": "axa",
+      "pantalla": "casos",
+      "segundos": 0.8,
+      "ok": true,
+      "nota": "",
+      "captura": "01-axa-casos.jpg"
+    },
+    {
+      "caso": "axa",
+      "pantalla": "caso",
+      "segundos": 0.6,
+      "ok": true,
+      "nota": "",
+      "captura": "02-axa-caso.jpg"
+    },
+    {
+      "caso": "axa",
+      "pantalla": "la-escena",
+      "segundos": 4,
+      "ok": true,
+      "nota": "",
+      "captura": "03-axa-la-escena.jpg"
+    },
+    {
+      "caso": "axa",
+      "pantalla": "reconstruccion",
+      "segundos": 12.8,
+      "ok": true,
+      "nota": "coincide con el índice",
+      "cifra": "57 (55–79)",
+      "indice": "57 (55–79)",
+      "captura": "04-axa-reconstruccion.jpg"
+    },
+    {
+      "caso": "axa",
+      "pantalla": "3d",
+      "segundos": 23,
+      "ok": true,
+      "nota": "Deformación medida por CESVI: 96, 86, 52, 20 cm.",
+      "captura": "05-axa-3d.jpg"
+    },
+    {
+      "caso": "axa",
+      "pantalla": "3d-camara-lenta",
+      "segundos": 3,
+      "ok": true,
+      "nota": "×0.25 elegida y reproduciendo",
+      "captura": "06-axa-3d-camara-lenta.jpg"
+    },
+    {
+      "caso": "axa",
+      "pantalla": "ysi-otra-velocidad",
+      "segundos": 15.8,
+      "ok": true,
+      "nota": "35 km/h: Hipótesis del perito: la cifra reconstruida no cambia. En el mapa y en el 3D, la hipótesis va encima de la reconstrucción.",
+      "captura": "07-axa-ysi-otra-velocidad.jpg"
+    },
+    {
+      "caso": "axa",
+      "pantalla": "versiones",
+      "segundos": 23.5,
+      "ok": true,
+      "nota": "1 hipótesis «¿Y si…?» en la lista",
+      "captura": "08-axa-versiones.jpg"
+    },
+    {
+      "caso": "axa",
+      "pantalla": "analisis-danos",
+      "segundos": 0.7,
+      "ok": true,
+      "nota": "",
+      "captura": "09-axa-analisis-danos.jpg"
+    },
+    {
+      "caso": "axa",
+      "pantalla": "analisis-numeros",
+      "segundos": 1,
+      "ok": true,
+      "nota": "",
+      "captura": "10-axa-analisis-numeros.jpg"
+    },
+    {
+      "caso": "axa",
+      "pantalla": "contra-cesvi",
+      "segundos": 0.8,
+      "ok": true,
+      "nota": "Acto 6 de 7 · Contra CESVI Contra el reporte de CESVI 3 coinciden 0 difieren 1 sin dato Reporte de CESVI · B · velocidad por deformación 63.15 km/h Método de CE",
+      "captura": "11-axa-contra-cesvi.jpg"
+    },
+    {
+      "caso": "axa",
+      "pantalla": "dictamen",
+      "segundos": 2.1,
+      "ok": true,
+      "nota": "",
+      "captura": "12-axa-dictamen.jpg"
+    },
+    {
+      "caso": "axa",
+      "pantalla": "presentar",
+      "segundos": 19.2,
+      "ok": true,
+      "nota": "La escena",
+      "captura": "13-axa-presentar.jpg"
+    },
+    {
+      "caso": "crucero-noche",
+      "pantalla": "lectura",
+      "segundos": 5,
+      "ok": true,
+      "nota": "",
+      "captura": "14-crucero-noche-lectura.jpg"
+    },
+    {
+      "caso": "crucero-noche",
+      "pantalla": "la-escena",
+      "segundos": 2.2,
+      "ok": true,
+      "nota": "",
+      "captura": "15-crucero-noche-la-escena.jpg"
+    },
+    {
+      "caso": "crucero-noche",
+      "pantalla": "reconstruccion",
+      "segundos": 10.1,
+      "ok": true,
+      "nota": "coincide con el índice",
+      "cifra": "20 (1–27)",
+      "indice": "20 (1–27)",
+      "captura": "16-crucero-noche-reconstruccion.jpg"
+    },
+    {
+      "caso": "alcance-deformacion",
+      "pantalla": "lectura",
+      "segundos": 5,
+      "ok": true,
+      "nota": "",
+      "captura": "17-alcance-deformacion-lectura.jpg"
+    },
+    {
+      "caso": "alcance-deformacion",
+      "pantalla": "la-escena",
+      "segundos": 5.1,
+      "ok": true,
+      "nota": "",
+      "captura": "18-alcance-deformacion-la-escena.jpg"
+    },
+    {
+      "caso": "alcance-deformacion",
+      "pantalla": "reconstruccion",
+      "segundos": 16.1,
+      "ok": true,
+      "nota": "coincide con el índice",
+      "cifra": "54 (44–54)",
+      "indice": "54 (44–54)",
+      "captura": "19-alcance-deformacion-reconstruccion.jpg"
+    },
+    {
+      "caso": "carambola-lluvia",
+      "pantalla": "lectura",
+      "segundos": 4.4,
+      "ok": true,
+      "nota": "",
+      "captura": "20-carambola-lluvia-lectura.jpg"
+    },
+    {
+      "caso": "carambola-lluvia",
+      "pantalla": "la-escena",
+      "segundos": 10.2,
+      "ok": true,
+      "nota": "",
+      "captura": "21-carambola-lluvia-la-escena.jpg"
+    },
+    {
+      "caso": "carambola-lluvia",
+      "pantalla": "reconstruccion",
+      "segundos": 28.2,
+      "ok": false,
+      "nota": "cifra -2 km/h (-8.0 %); p90 -2 km/h (-6.3 %)",
+      "cifra": "23 (20–30)",
+      "indice": "25 (20–32)",
+      "captura": "22-carambola-lluvia-reconstruccion.jpg"
+    },
+    {
+      "caso": "reversa-pendiente",
+      "pantalla": "lectura",
+      "segundos": 6.1,
+      "ok": true,
+      "nota": "",
+      "captura": "23-reversa-pendiente-lectura.jpg"
+    },
+    {
+      "caso": "reversa-pendiente",
+      "pantalla": "la-escena",
+      "segundos": 5.5,
+      "ok": true,
+      "nota": "",
+      "captura": "24-reversa-pendiente-la-escena.jpg"
+    },
+    {
+      "caso": "reversa-pendiente",
+      "pantalla": "reconstruccion",
+      "segundos": 11.4,
+      "ok": true,
+      "nota": "coincide con el índice",
+      "cifra": "20 (17–26)",
+      "indice": "20 (17–26)",
+      "captura": "25-reversa-pendiente-reconstruccion.jpg"
+    }
+  ],
+  "errores": []
+}

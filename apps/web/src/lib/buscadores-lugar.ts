@@ -68,6 +68,11 @@ export interface LugarNoEncontrado {
   /** Para el perito: qué se buscó y por qué no aparece («No encontré el km 23 de la MEX-15D en
    * OpenStreetMap»), o que la red no respondió. */
   explicacion: string;
+  /**
+   * El mapa no respondió (René, 2026-11-28): no se sabe si existe. No es «no encontrado»: la colocación
+   * no pasa al siguiente buscador y el perito reintenta.
+   */
+  sinRespuesta?: boolean;
 }
 
 export type ResultadoBuscador = LugarEncontrado | LugarNoEncontrado;

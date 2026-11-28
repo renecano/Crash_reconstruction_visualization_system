@@ -70,7 +70,9 @@ export function BarraReproduccion({
           className="w-full accent-[var(--texto)]"
           min={inicio}
           max={fin}
-          step={0.01}
+          // Sin paso: con 0.01 la perilla saltaba de 1 en 1 o de 2 en 2 centésimas por cuadro y temblaba
+          // (René, 2026-11-28).
+          step="any"
           value={estado.t}
           aria-label="Instante de la reconstrucción"
           aria-valuetext={`${F.numero(estado.t, 2)} segundos respecto al impacto`}

@@ -66,10 +66,14 @@ import { avanzar, desdeMetros, enMetros, rectanguloVehiculo, type LonLat } from 
 import { objetosDe, TIPOS_OBJETO } from "./objetos";
 import { medidasDe } from "./poses-impacto";
 import { arranqueSobreElEje, ejeDeLaCalle, type EjeCalle } from "./eje-calle";
+import { cruceDeLaVuelta } from "./vuelta";
+import { viasDelNivel } from "./nivel-via";
 import { choqueEnLaOrilla, ladoNarrado, TIPOS_DE_ORILLA } from "./orilla";
 import {
   conVelocidadDelPerito,
   enCota,
+  esVelocidadMedida,
+  MEDIO_EN_PALABRAS,
   velocidadPreviaDeclarada,
   type VelocidadNarrada,
 } from "./velocidad-narrada";
@@ -254,6 +258,8 @@ const TIPOS_PLANOS = new Set(["muro", "barda", "vehiculo_estacionado", "contened
 function limiteDeVelocidadNarrada(id: Id, v: VelocidadNarrada): string {
   const [lo, hi] = v.rango_kmh;
   const rango = `${Math.round(lo)} a ${Math.round(hi)} km/h`;
+  if (esVelocidadMedida(v))
+    return `${id}: su velocidad previa la midió ${MEDIO_EN_PALABRAS[v.medio ?? "camara"]} (${Math.round(v.kmh)} km/h): es una restricción; lo demás se ajusta a ella.`;
   if (v.origen === "perito")
     return `${id}: su velocidad previa es la que dio el perito (${rango}); solo pesa si la evidencia no la fija.`;
   if (v.origen === "via")
@@ -395,7 +401,11 @@ export interface EscenaSolver {
 }
 
 /** La escena del solver a partir del expediente (sin correr el solver). */
-export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaSolver {
+export function especDeExpediente(e0: Expediente, specId = "caso-nuevo"): EscenaSolver {
+  // La velocidad DECLARADA por el perito (conductor, testigo) nunca entra al solver (René,
+  // 2026-11-28): solo se compara con la física. Para el solver es como «No sé»: la típica de la vía.
+  // (En el poste, la declarada del Sentra tiraba del ajuste y lo dejaba dentro de un edificio.)
+  const e = sinDeclaradasDelPerito(e0);
   const limites: string[] = [];
   const impactos = [...(e.impactos ?? [])].sort((a, b) => a.orden - b.orden);
   const primero = impactos.find((i) => i.orden === 1) ?? impactos[0];
@@ -684,14 +694,33 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
         // Con las calles guardadas del caso, el tramo recto después del arco es el que deja el
         // arranque sobre el eje de la calle de llegada (revisión de la cadena, 2026-11-24: arrancaba
         // a 10 m de ella en un cruce ancho). Sin calles, los 2 m de siempre.
-        const recto = rectoTrasLaVuelta(
-          e.caso.lugar?.calles_del_mapa?.vias.map((via) =>
-            via.puntos.map(([lon, lat]) => local({ lat, lon })),
-          ) ?? [],
-          { x, y },
-          llegada,
-          rad,
-        );
+        // La vuelta, en un cruce real de la red vial (René, 2026-11-27): donde la calle de llegada
+        // toca de verdad la calzada del choque. Sin un cruce así, la regla de antes, y se dice.
+        const calles = viasDelNivel(e);
+        const cruce = calles.length
+          ? cruceDeLaVuelta(
+              calles.map((via) => ({
+                tipo: via.tipo,
+                ...(via.nombre ? { nombre: via.nombre } : {}),
+                puntos: via.puntos.map(([lon, lat]) => local({ lat, lon })),
+              })),
+              { x, y },
+              llegada,
+              rad,
+            )
+          : null;
+        if (calles.length && !cruce)
+          limites.push(
+            `${v.id}: la narración dice que dio vuelta, pero en las calles del mapa no hay un cruce antes del choque por donde venía: la vuelta se dibuja ahí como supuesto. Revisa dónde colocaste el choque o de dónde venía.`,
+          );
+        const recto = cruce
+          ? Math.min(RECTO_MAXIMO_M, Math.max(0, cruce.distanciaM - TURN_RADIUS_M))
+          : rectoTrasLaVuelta(
+              calles.map((via) => via.puntos.map(([lon, lat]) => local({ lat, lon }))),
+              { x, y },
+              llegada,
+              rad,
+            );
         const tras = TURN_RADIUS_M + recto;
         sv.posicion_inicial = {
           x:
@@ -765,7 +794,7 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
   if (origen && guardadas && primeraPose) {
     const choque = local(primeraPose.punto);
     ejeReal = ejeDeLaCalle(
-      guardadas.vias.map((v) => ({
+      viasDelNivel(e).map((v) => ({
         tipo: v.tipo,
         ...(v.nombre ? { nombre: v.nombre } : {}),
         puntos: v.puntos.map(([lon, lat]) => local({ lat, lon })),
@@ -1209,8 +1238,9 @@ export function especDeExpediente(e: Expediente, specId = "caso-nuevo"): EscenaS
       `${nombres}: sin sus posiciones en el mapa, Croquis ${colocados.length === 1 ? "lo coloca detenido" : "los coloca detenidos"} en la trayectoria del vehículo que los golpea, con la cara que dice la narración (supuesto): coloca a cada uno en el mapa para medirlo.`,
     );
   }
+  // Las del expediente que ve el perito (con la declarada, que el solver no usa): para compararlas.
   const velocidadesNarradas = Object.fromEntries(
-    e.vehiculos.flatMap((v) => (v.velocidad_narrada ? [[v.id, v.velocidad_narrada]] : [])),
+    e0.vehiculos.flatMap((v) => (v.velocidad_narrada ? [[v.id, v.velocidad_narrada]] : [])),
   );
   return { spec, ids, limites, origen, narradas: velocidadesNarradas, posesDeImpacto };
 }
@@ -1321,7 +1351,15 @@ function colocarPosteriores(
 export interface VelocidadReconstruida {
   vehiculo: Id;
   /** Lo que fija la evidencia: mejor estimación y percentiles (km/h). null si no lo fija. */
-  previa: { mejor: number; p10?: number; p50?: number; p90?: number; rango_por?: string } | null;
+  previa: {
+    mejor: number;
+    p10?: number;
+    p50?: number;
+    p90?: number;
+    rango_por?: string;
+    /** La midió un instrumento (René, 2026-11-27): no es una cifra del ajuste, es un dato. */
+    medida?: boolean;
+  } | null;
   impacto: {
     p10?: number;
     p50?: number;
@@ -1435,6 +1473,12 @@ export interface Reconstruccion extends EscenaSolver {
    * Entonces ninguna velocidad trae cifra (`previa` y `impacto` van en null) y el 3D no anima.
    */
   noCuadra?: NoCuadra;
+  /**
+   * La velocidad medida no cabe con la evidencia (René, 2026-11-28): con ella la reconstrucción no
+   * cuadra, así que se muestra la física sin ella (marcada como tal) y el conflicto; el perito decide
+   * cuál usa en el dictamen.
+   */
+  medidaIncompatible?: { vehiculos: { vehiculo: Id; kmh: number }[]; texto: string };
   velocidades: VelocidadReconstruida[];
   /** Los impactos que ocurrieron en la reconstrucción, en orden (más de uno en una carambola). */
   impactos: ImpactoReconstruido[];
@@ -1744,18 +1788,52 @@ export function interpretarResultado(
       `${id}: la evidencia empuja el rumbo fuera del rango permitido (±${ANGLE_BOUND_DEG}° sobre el que se colocó en el mapa). El mejor ajuste queda en el límite, ${grados(p.estimacion.mejor)}, así que no cabe bien con lo demás: conviene revisar las posiciones y el rumbo de llegada.`,
     );
   }
-  const velocidades = Object.entries(base.ids).map(([sid, id]) => {
+  const velocidades = Object.entries(base.ids).map(([sid, id]): VelocidadReconstruida => {
     const p = inv.parametros.find((x) => x.vehiculo === sid && x.parametro === "velocidad_previa");
     const i = inv.velocidad_impacto.find((x) => x.vehiculo === sid);
+    const vp = ((base.spec.vehiculos as Json[]).find((x) => x.id === sid)?.velocidad_previa ??
+      null) as Json | null;
     return {
       vehiculo: id,
-      previa: p?.identificable && p.estimacion ? p.estimacion : null,
+      previa:
+        vp?.medida === true
+          ? { mejor: Number(vp.valor), medida: true }
+          : p?.identificable && p.estimacion
+            ? p.estimacion
+            : null,
       impacto:
         inv.evidencia.length && i
           ? { p10: i.p10, p50: i.p50, p90: i.p90, valores: i.valores_kmh ?? [] }
           : null,
     };
   });
+  // La velocidad medida no se cambia (René, 2026-11-27): si lo medido no cuadra con ella, se avisa.
+  const medidas = velocidades.filter((v) => v.previa?.medida).map((v) => v.vehiculo);
+  if (medidas.length) {
+    const fuera = ((inv.residuos ?? []) as { nombre: string; sigma: number }[]).filter(
+      (r) =>
+        /^(reposo|marcas_despues|proyeccion|dano|dano_minimo):/.test(r.nombre) &&
+        Math.abs(r.sigma) > 3,
+    );
+    if (fuera.length) {
+      const que = [
+        ...new Set(
+          fuera.map((r) =>
+            r.nombre.startsWith("reposo:")
+              ? "dónde quedaron"
+              : r.nombre.startsWith("marcas_despues:")
+                ? "las huellas de después del choque"
+                : r.nombre.startsWith("proyeccion:")
+                  ? "la proyección"
+                  : "la deformación medida",
+          ),
+        ),
+      ];
+      limites.push(
+        `La velocidad medida de ${medidas.join(" y ")} no cuadra con ${que.join(", ")}: con ella, lo medido queda a más de 3σ. Croquis no la cambia; revisa la medida o esa evidencia.`,
+      );
+    }
+  }
   // Un rango no es una garantía: su cobertura medida va con los límites (René, 2026-11-15).
   if (velocidades.some((v) => v.previa?.p10 !== undefined && v.previa.p90 !== undefined))
     limites.push(limiteDeCobertura());
@@ -1832,13 +1910,31 @@ export function interpretarResultado(
   return {
     ...rec,
     noCuadra,
-    velocidades: velocidades.map((v) => ({ ...v, previa: null, impacto: null })),
+    // Lo que midió un instrumento no es una cifra de Croquis: se sigue viendo (René, 2026-11-27); las
+    // demás no se presentan hasta que cuadre.
+    velocidades: velocidades.map((v) => ({
+      ...v,
+      previa: v.previa?.medida ? v.previa : null,
+      impacto: null,
+    })),
     limites: [
       ...limites,
       ...noCuadra.motivos.map((m) => `No cuadra: ${m}`),
       `Croquis no presenta una velocidad hasta que cuadre. Revisa ${noCuadra.revisar.join("; ")}.`,
     ],
   };
+}
+
+/**
+ * El expediente para el solver: cada velocidad declarada por el perito (no medida) se cambia por la
+ * típica de la vía, como si hubiera dicho «No sé». La declarada sigue en el expediente que ve el perito,
+ * para compararla con la física.
+ */
+export function sinDeclaradasDelPerito(e: Expediente): Expediente {
+  const declaradas = e.vehiculos.filter(
+    (v) => v.velocidad_narrada?.origen === "perito" && !esVelocidadMedida(v.velocidad_narrada),
+  );
+  return declaradas.reduce((x, v) => conVelocidadDelPerito(x, v.id, null), e);
 }
 
 /** La evidencia del solver en palabras («reposo:veh-a» → «posición final de V1»). */
@@ -1878,6 +1974,55 @@ export function reconstruirExpediente(
   e: Expediente,
   specId?: string,
   muestras: { samples?: number; mcSamples?: number } = {},
+): Reconstruccion {
+  const r = reconstruirUnaVez(e, specId, muestras);
+  // La velocidad medida que no cabe: la física sin ella, con el conflicto (René, 2026-11-28).
+  if (!r.noCuadra || !hayVelocidadMedida(e)) return r;
+  const fisica = reconstruirUnaVez(sinMedidasDelPerito(e), specId, muestras);
+  return fisica.noCuadra ? r : conConflictoDeMedida(e, r, fisica);
+}
+
+/** Si algún vehículo trae una velocidad medida por un instrumento. */
+export function hayVelocidadMedida(e: Expediente): boolean {
+  return e.vehiculos.some((v) => esVelocidadMedida(v.velocidad_narrada));
+}
+
+/** El expediente sin las velocidades medidas: para el solver, como si el perito dijera «No sé». */
+export function sinMedidasDelPerito(e: Expediente): Expediente {
+  return e.vehiculos
+    .filter((v) => esVelocidadMedida(v.velocidad_narrada))
+    .reduce((x, v) => conVelocidadDelPerito(x, v.id, null), e);
+}
+
+/**
+ * La reconstrucción física (sin las medidas) con el conflicto a la vista: «Con la velocidad medida de
+ * X km/h no cuadra: …; la medida no es compatible con las posiciones».
+ */
+export function conConflictoDeMedida(
+  e: Expediente,
+  conMedida: Reconstruccion,
+  fisica: Reconstruccion,
+): Reconstruccion {
+  const vehiculos = e.vehiculos
+    .filter((v) => esVelocidadMedida(v.velocidad_narrada))
+    .map((v) => ({ vehiculo: v.id, kmh: Math.round(v.velocidad_narrada!.kmh) }));
+  const motivo = conMedida.noCuadra?.motivos[0] ?? "lo medido y las posiciones no caben juntos";
+  const cuales = vehiculos.map((x) => `${x.kmh} km/h (${x.vehiculo})`).join(" y ");
+  const texto = `Con la velocidad medida de ${cuales} no cuadra: ${motivo}. La medida no es compatible con las posiciones: revisa la medida o las posiciones. Croquis muestra la reconstrucción física, sin la medida; en el dictamen decides cuál usar.`;
+  return {
+    ...fisica,
+    // Las velocidades que dio el perito, con la medida, para que la hoja diga «medida X; la física Y».
+    narradas: conMedida.narradas,
+    medidaIncompatible: { vehiculos, texto },
+    limites: [texto, ...fisica.limites],
+  };
+}
+
+/** Una reconstrucción: con lo que dice el expediente y, lo que la evidencia no fija, con la típica. */
+function reconstruirUnaVez(
+  e: Expediente,
+  specId: string | undefined,
+  muestras: { samples?: number; mcSamples?: number },
 ): Reconstruccion {
   const base = especDeExpediente(e, specId);
   const r = interpretarResultado(base, fullResult(base.spec, muestras));

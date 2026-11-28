@@ -230,7 +230,8 @@ describe("buscar el lugar del hecho (A1)", () => {
     });
     const r = await buscarLugar(
       {
-        q: "Calle Azucena esquina con Av. Reforma, colonia Lomas San Lorenzo",
+        // Sin cruce: con uno que no aparece se dice y no se propone una calle sola (#388).
+        q: "Calle Azucena, colonia Lomas San Lorenzo",
         municipio: "Iztapalapa",
         estado: "Ciudad de México",
       },
@@ -481,55 +482,63 @@ describe("el cruce de dos vías y, si nada cuadra, la pregunta (ronda 4, René)"
     );
   });
 
-  it("da el punto donde se cruzan, con las geometrías de OpenStreetMap", async () => {
-    const { deps, pedidos } = falso((u) => {
+  // René, 2026-11-28: el mismo caso daba una vez la esquina y otra una calle recta, según si Overpass
+  // respondía. Sin respuesta no se propone nada; con el reintento, el cruce correcto.
+  const nodoDelCruce = { type: "node", id: 7, lat: 19.28, lon: -99.6 };
+  const cruceConOverpass = (fallasAntes: number) => {
+    let llamadas = 0;
+    return falso((u) => {
+      if (u.pathname.includes("interpreter")) {
+        llamadas++;
+        return llamadas <= fallasAntes
+          ? { status: 502, body: {} }
+          : { status: 200, body: { elements: [nodoDelCruce] } };
+      }
       const q = u.searchParams.get("q");
       if (q === "Toluca, Estado de México") return { status: 200, body: [TOLUCA] };
-      if (u.searchParams.get("polygon_geojson") !== "1") return { status: 200, body: [] };
-      // Las Torres va de oeste a este; Tollocan, de sur a norte: se cruzan en (-99.60, 19.28).
-      if (q === "Solidaridad Las Torres, Toluca, Estado de México")
-        return {
-          status: 200,
-          body: [
-            via("Avenida Solidaridad Las Torres", [
-              [-99.61, 19.28],
-              [-99.59, 19.28],
-            ]),
-          ],
-        };
-      if (q === "Paseo Tollocan, Toluca, Estado de México")
-        return {
-          status: 200,
-          body: [
-            via("Paseo Tollocan", [
-              [-99.6, 19.27],
-              [-99.6, 19.29],
-            ]),
-          ],
-        };
-      return { status: 200, body: [] };
+      // Nominatim da cada calle sola: nunca se usa para el cruce.
+      return {
+        status: 200,
+        body: [
+          via("Paseo Tollocan", [
+            [-99.6, 19.27],
+            [-99.6, 19.29],
+          ]),
+        ],
+      };
     });
-    const r = await buscarLugar(
-      {
-        q: "paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan",
-        municipio: "Toluca",
-        estado: "Estado de México",
-      },
-      "cruce",
-      deps,
-    );
+  };
+  const elCruce = {
+    q: "paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan",
+    municipio: "Toluca",
+    estado: "Estado de México",
+  };
+
+  it("Overpass caído en la primera vuelta y de vuelta en la segunda: el cruce correcto, nunca una calle", async () => {
+    // Tres instancias en la primera vuelta: las tres fallan; responde la primera de la segunda.
+    const { deps } = cruceConOverpass(3);
+    const r = await buscarLugar(elCruce, "reintento", deps);
+    expect(r.sinRespuesta).toBeFalsy();
     expect(r.resultados).toHaveLength(1);
-    expect(r.resultados[0]!.nombre).toBe("Solidaridad Las Torres y Paseo Tollocan");
+    expect(r.resultados[0]!.precision).toBe("cruce");
     expect(r.resultados[0]!.lat).toBeCloseTo(19.28, 5);
     expect(r.resultados[0]!.lon).toBeCloseTo(-99.6, 5);
-    expect(r.aviso).toContain("El cruce de Solidaridad Las Torres y Paseo Tollocan");
-    // Dentro de la caja del municipio.
-    const g = pedidos.find((p) => p.url.searchParams.get("polygon_geojson") === "1")!;
-    expect(g.url.searchParams.get("bounded")).toBe("1");
+  });
+
+  it("si el mapa no responde ni con el reintento: «No pude comprobar…», sin ningún punto", async () => {
+    const { deps } = cruceConOverpass(1000);
+    const r = await buscarLugar(elCruce, "sin-respuesta", deps);
+    expect(r.sinRespuesta).toBe(true);
+    expect(r.resultados).toEqual([]);
+    expect(r.aviso).toBe(
+      "No pude comprobar el cruce de Solidaridad Las Torres con Paseo Tollocan en Toluca, Estado de México (el mapa no respondió): reintenta.",
+    );
   });
 
   it("si las vías no se tocan ni aparece nada, pregunta; nunca el centro del municipio", async () => {
     const { deps } = falso((u) => {
+      // Overpass responde: las dos vías no comparten ningún nodo (#388).
+      if (u.pathname.includes("interpreter")) return { status: 200, body: { elements: [] } };
       const q = u.searchParams.get("q");
       if (q === "Toluca, Estado de México") return { status: 200, body: [TOLUCA] };
       if (u.searchParams.get("polygon_geojson") !== "1") return { status: 200, body: [] };
@@ -566,8 +575,11 @@ describe("el cruce de dos vías y, si nada cuadra, la pregunta (ronda 4, René)"
       deps,
     );
     expect(r.resultados).toEqual([]);
-    expect(r.aviso).toContain("No se encontró «Solidaridad Las Torres y Paseo Tollocan» en Toluca");
-    expect(r.aviso).toContain("¿Dónde fue?");
+    // René, 2026-11-27 (#388): se dice qué cruce no se encontró y no se propone otra esquina.
+    expect(r.aviso).toContain(
+      "No encontré el cruce de Solidaridad Las Torres con Paseo Tollocan en Toluca",
+    );
+    expect(r.aviso).toContain("márcalo tú");
   });
 });
 
@@ -588,5 +600,95 @@ describe("los cruces que dice la revisión de la cadena (2026-11-24)", () => {
         "Avenida de los Insurgentes Sur, unos 15 m al norte de su cruce con Avenida Miguel Ángel de Quevedo, colonia Chimalistac",
       ),
     ).toEqual(["Avenida de los Insurgentes Sur", "Avenida Miguel Ángel de Quevedo"]);
+  });
+});
+
+describe("varios cruces de las mismas dos calles: el orden y el aviso (René, 2026-11-27, #388)", () => {
+  const CUAUHTEMOC = {
+    display_name: "Cuauhtémoc, Ciudad de México",
+    name: "Cuauhtémoc",
+    lat: "19.43",
+    lon: "-99.15",
+    boundingbox: ["19.40", "19.47", "-99.19", "-99.12"],
+    address: { borough: "Cuauhtémoc", state: "Ciudad de México" },
+    addresstype: "borough",
+  };
+  const ROMA = {
+    display_name: "Roma Norte, Cuauhtémoc, Ciudad de México",
+    name: "Roma Norte",
+    lat: "19.418",
+    lon: "-99.162",
+    boundingbox: ["19.410", "19.425", "-99.170", "-99.155"],
+    addresstype: "suburb",
+  };
+  // Dos cruces: el primero, más cerca del centro de la alcaldía; el segundo, en la Roma Norte.
+  const NODOS = [
+    { type: "node", lat: 19.431, lon: -99.151 },
+    { type: "node", lat: 19.417, lon: -99.163 },
+  ];
+  const responde = (conRoma: boolean) =>
+    falso((u) => {
+      if (u.pathname.includes("interpreter")) return { status: 200, body: { elements: NODOS } };
+      if (u.pathname.includes("reverse"))
+        return {
+          status: 200,
+          body: {
+            address: {
+              suburb: Number(u.searchParams.get("lat")) < 19.42 ? "Roma Norte" : "Centro",
+            },
+          },
+        };
+      const q = u.searchParams.get("q") ?? "";
+      if (q === "Cuauhtémoc, Ciudad de México") return { status: 200, body: [CUAUHTEMOC] };
+      if (q.startsWith("Roma Norte")) return { status: 200, body: conRoma ? [ROMA] : [] };
+      return { status: 200, body: [] };
+    });
+  const buscar = (q: string, conRoma = true) =>
+    buscarLugar(
+      { q, municipio: "Cuauhtémoc", estado: "Ciudad de México" },
+      "varios",
+      responde(conRoma).deps,
+    );
+
+  it("los de la colonia que nombra la narración van primero, con su colonia", async () => {
+    const r = await buscar("calle Durango y calle Orizaba, colonia Roma Norte");
+    expect(r.resultados.map((x) => x.nombre)).toEqual([
+      "Cruce de Durango con Orizaba, Roma Norte",
+      "Cruce de Durango con Orizaba, Centro",
+    ]);
+    expect(r.aviso).toContain("uno queda en la colonia Roma Norte, que nombra la narración");
+  });
+  it("si OSM no tiene la colonia, lo dice y el perito elige", async () => {
+    const r = await buscar("calle Durango y calle Orizaba, colonia Roma Norte", false);
+    expect(r.resultados[0]!.nombre).toContain("Centro");
+    expect(r.aviso).toContain("No encontré la colonia Roma Norte en el mapa: elige el del hecho");
+  });
+  it("sin colonia en la narración, lo dice", async () => {
+    const r = await buscar("calle Durango y calle Orizaba");
+    expect(r.resultados).toHaveLength(2);
+    expect(r.aviso).toContain("la narración no dice la colonia ni la zona: elige el del hecho");
+  });
+  it("si Overpass no responde y Nominatim no da el cruce, no dice que no se cruzan", async () => {
+    const { deps } = falso((u) => {
+      if (u.pathname.includes("interpreter")) return { status: 504, body: {} };
+      const q = u.searchParams.get("q") ?? "";
+      if (q === "Cuauhtémoc, Ciudad de México") return { status: 200, body: [CUAUHTEMOC] };
+      return { status: 200, body: [] };
+    });
+    const r = await buscarLugar(
+      { q: "calle Durango y calle Orizaba", municipio: "Cuauhtémoc", estado: "Ciudad de México" },
+      "sin-overpass",
+      deps,
+    );
+    expect(r.resultados).toEqual([]);
+    expect(r.aviso).toContain("No pude comprobar el cruce de Durango con Orizaba");
+  });
+});
+
+describe("la colonia después del cruce no lo esconde (René, 2026-11-27, Torreón)", () => {
+  it("«X y Y, colonia Z» es el cruce de X con Y", () => {
+    expect(
+      viasDelCruce("Boulevard Independencia y Calzada Abastos, colonia Magdalenas", "Torreón"),
+    ).toEqual(["Boulevard Independencia", "Calzada Abastos"]);
   });
 });

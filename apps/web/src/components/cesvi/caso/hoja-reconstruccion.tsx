@@ -6,12 +6,16 @@
  */
 import {
   formato as F,
+  MEDIO_EN_PALABRAS,
   evidenciaEnPalabras,
   mejorFueraDelRango,
   type Reconstruccion,
   sinCifraEnTexto,
 } from "@croquis/cesvi";
-import type { ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
+import type { SensibilidadReposo } from "@croquis/solver-ts";
+import type { EscenaSpec, Resultado } from "@croquis/scene-schema";
+import { sensibilidadEnNavegador } from "@/lib/reconstruct-client";
 import {
   frasePercentil,
   histograma,
@@ -52,6 +56,43 @@ export function CifraReconstruccion({
   const contras = r.limites.flatMap((l) => {
     const m = /^(V\d+): (la narración dice .*las posiciones dan .*)$/.exec(l);
     return m ? [`${nombres[m[1]!] ?? m[1]}: ${m[2]}`] : [];
+  });
+  // La velocidad que dio el perito (René, 2026-11-27): la medida se dice como dato; la declarada,
+  // junto a lo que da la física («declaró 50; la física da 15–25»).
+  const delPerito = r.velocidades.flatMap((x) => {
+    const n = r.narradas?.[x.vehiculo];
+    if (!n || n.origen !== "perito") return [];
+    const quien = nombres[x.vehiculo] ?? x.vehiculo;
+    if (x.previa?.medida)
+      return [
+        {
+          clave: x.vehiculo,
+          medida: true,
+          texto: `${quien}: ${F.kmhConUnidad(n.kmh, "reconstruccion")} medida por ${MEDIO_EN_PALABRAS[n.medio ?? "camara"]}; la física no la ajusta.`,
+        },
+      ];
+    const ra = rangoDeVelocidad(x);
+    const fisica = ra
+      ? `${F.rangoKmh(ra.p10, ra.p90, "reconstruccion")} km/h`
+      : x.previa
+        ? F.kmhConUnidad(x.previa.mejor, "reconstruccion")
+        : null;
+    // La medida que no cuadra (René, 2026-11-28): la cifra de arriba es la física, sin ella.
+    if (n.como_se_sabe === "medida")
+      return [
+        {
+          clave: x.vehiculo,
+          medida: true,
+          texto: `${quien}: ${F.kmhConUnidad(n.kmh, "reconstruccion")} medida por ${MEDIO_EN_PALABRAS[n.medio ?? "camara"]}, que no cuadra con las posiciones; ${fisica ? `la física, sin ella, da ${fisica}` : "la física no da una cifra"}.`,
+        },
+      ];
+    return [
+      {
+        clave: x.vehiculo,
+        medida: false,
+        texto: `${quien}: declaró ${F.kmhConUnidad(n.kmh, "reconstruccion")} (${MEDIO_EN_PALABRAS[n.medio ?? "conductor"]}); ${fisica ? `la física da ${fisica}` : "la física no da una cifra"}.`,
+      },
+    ];
   });
   // Una cifra muy por arriba del límite de su vía (René, 2026-11-26): junto a la cifra.
   const sobreElLimite = r.limites.flatMap((l) => {
@@ -102,8 +143,28 @@ export function CifraReconstruccion({
             </span>
           </p>
           <p className="t-nota" data-testid="metodo-cifra">
-            {METODO.reconstruccion} · mejor ajuste
+            {v.previa?.medida
+              ? "Velocidad medida, no ajustada"
+              : `${METODO.reconstruccion} · mejor ajuste`}
           </p>
+          {r.medidaIncompatible ? (
+            <p
+              role="alert"
+              className="rounded-lg border border-[var(--senal)] p-3 text-sm"
+              data-testid="medida-incompatible"
+            >
+              {r.medidaIncompatible.texto}
+            </p>
+          ) : null}
+          {delPerito.map((d) => (
+            <p
+              key={d.clave}
+              className="t-nota"
+              data-testid={d.medida ? "velocidad-medida" : "declarada-vs-fisica"}
+            >
+              {d.texto}
+            </p>
+          ))}
           {fuera ? (
             <p className="t-nota text-senal-texto" role="note" data-testid="mejor-fuera-del-rango">
               El mejor ajuste queda {fuera === "arriba" ? "por arriba" : "por debajo"} del rango: el
@@ -251,7 +312,61 @@ export function CifraReconstruccion({
           </dd>
         </div>
       </dl>
+      {v && !v.previa?.medida ? (
+        <SensibilidadDeLaCifra r={r} nombres={nombres} vehiculo={v.vehiculo} />
+      ) : null}
     </section>
+  );
+}
+
+/**
+ * Qué medida pesa más en la cifra (René, 2026-11-27): «±1 m en el reposo del Corolla mueve la cifra
+ * ±2 km/h». Se calcula en su propio worker después del resultado; mientras, no se dice nada.
+ */
+function SensibilidadDeLaCifra({
+  r,
+  nombres,
+  vehiculo,
+}: {
+  r: Reconstruccion;
+  nombres: Record<string, string>;
+  vehiculo: string;
+}) {
+  const [filas, setFilas] = useState<{ r: Reconstruccion; s: SensibilidadReposo[] } | null>(null);
+  const objetivo = Object.keys(r.ids).find((k) => r.ids[k] === vehiculo) ?? null;
+  useEffect(() => {
+    if (!objetivo || !r.resultado || typeof Worker === "undefined") return undefined;
+    let vivo = true;
+    sensibilidadEnNavegador(
+      r.spec as unknown as EscenaSpec,
+      r.resultado as unknown as Resultado,
+      objetivo,
+      r.relieve ?? null,
+    )
+      .then((s) => {
+        if (vivo) setFilas({ r, s });
+      })
+      .catch(() => undefined);
+    return () => {
+      vivo = false;
+    };
+  }, [r, objetivo]);
+  const s = filas?.r === r ? filas.s.filter((x) => x.kmhPorMetro >= 0.5) : [];
+  if (!s.length) return null;
+  const nombre = (sid: string) => nombres[r.ids[sid] ?? sid] ?? r.ids[sid] ?? sid;
+  return (
+    <p className="t-nota" data-testid="sensibilidad-cifra">
+      Qué medida pesa más: ±1 m en el reposo del {nombre(s[0]!.vehiculo)} mueve la cifra ±
+      {F.kmhConUnidad(s[0]!.kmhPorMetro, "reconstruccion")}
+      {s
+        .slice(1, 3)
+        .map(
+          (x) =>
+            `; el del ${nombre(x.vehiculo)}, ±${F.kmhConUnidad(x.kmhPorMetro, "reconstruccion")}`,
+        )
+        .join("")}
+      . Es la que conviene medir con más cuidado.
+    </p>
   );
 }
 

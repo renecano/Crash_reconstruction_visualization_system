@@ -143,7 +143,11 @@ namespace Croquis.Visor
                 impostores.Cerrar();
             }
 
-            copasPlanta.Poner(padre, "copas_colocadas", Materiales.Arbol("fresno", "planta"), false);
+            var copas = copasPlanta.Poner(padre, "copas_colocadas", Materiales.Arbol("fresno", "planta"), false);
+            if (copas != null)
+            {
+                copas.layer = CamaraVisor.CapaCopas;
+            }
             placas.Poner(padre, "placas_colocadas", Materiales.Liso(new Color(0.9f, 0.9f, 0.88f), 0.4f));
         }
 

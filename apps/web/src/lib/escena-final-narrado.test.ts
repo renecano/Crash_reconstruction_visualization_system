@@ -80,10 +80,13 @@ describe("las posiciones finales de la carambola", () => {
     expect(f.texto).toMatch(/^1 m de donde quedó el vehículo B/);
   });
 
-  it("lo que se mide desde la orilla del camino no se inventa: lo marca el perito", () => {
-    expect(
-      finalDeLaNarracion(e, "V1", "a 3 m de la orilla del camino, sobre el terreno"),
-    ).toBeNull();
+  it("lo que se mide desde la orilla del camino se ofrece, con lo que supone dicho (René, 2026-11-27)", () => {
+    // Antes no se ofrecía y lo marcaba el perito; la volcadura narrada a 110 km/h salía en 10 km/h. Ahora
+    // va desde la orilla, con el lado supuesto a la vista y para corregir en metros.
+    const f = finalDeLaNarracion(e, "V1", "a 3 m de la orilla del camino, sobre el terreno")!;
+    expect(f.texto).toMatch(/3 m fuera de la orilla de la calzada/);
+    expect(f.texto).toMatch(/el lado es supuesto/);
+    expect(f.texto).toMatch(/Escribir las posiciones en metros/);
   });
 });
 

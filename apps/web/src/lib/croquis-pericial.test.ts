@@ -9,6 +9,8 @@ import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
   tramosFueraDeOtras,
+  unirVias,
+  enderezar,
   viasRelevantes,
   colocarEtiquetas,
   croquisPericial,
@@ -64,6 +66,21 @@ describe("el croquis pericial (ronda 4)", () => {
     const avenida = via(0, "trunk");
     avenida.puntos = avenida.puntos.map((p) => ({ x: p.x, y: p.y - 20 }));
     expect(giroDelCroquis(res, [via(50, "residential"), avenida])).toBeCloseTo(50, 1);
+  });
+
+  it("el vehículo en movimiento va aparte del croquis, sin redondear, y no junto al impacto", () => {
+    const c = croquisPericial(res, [via(35)], nombres, { proporcion: 1.6 });
+    // El croquis no cambia con el instante: el movimiento lo dibuja una capa encima.
+    expect(c.svg).not.toContain("data-ahora");
+    expect(c.svg).toContain(`viewBox="${c.viewBox}"`);
+    const ti = tImpacto(res);
+    const t0 = res.vehiculos[0]!.trayectoria.t[0]!;
+    const a = c.ahora(t0 + 0.0001).find((v) => v.id === res.vehiculos[0]!.id)!;
+    const b = c.ahora(t0 + 0.0002).find((v) => v.id === res.vehiculos[0]!.id)!;
+    expect(a.puntos).toHaveLength(4);
+    // Una diezmilésima de segundo ya lo mueve: nada se redondea a pixeles ni a centímetros.
+    expect(b.puntos[0]!.x).not.toBe(a.puntos[0]!.x);
+    expect(c.ahora(ti)).toEqual([]);
   });
 
   it("cada vehículo en sus tres posiciones (antes, impacto, reposo), con A1…B3 y el impacto", () => {
@@ -158,5 +175,65 @@ describe("solo las calles que importan (René, 2026-11-27)", () => {
     const tramos = tramosFueraDeOtras(recta(-20, 0, 20, 0).puntos, [recta(0, -20, 0, 20)]);
     expect(tramos).toHaveLength(2);
     for (const t of tramos) for (const p of t) expect(Math.abs(p.x)).toBeGreaterThan(3.5);
+  });
+});
+
+describe("el 2D limpio (René, 2026-11-28)", () => {
+  it("dos tramos de la misma calle con un quiebre pequeño quedan en una sola recta, con un solo ancho", () => {
+    // Como la MEX-15D en AXA: dos tramos que se juntan con 1° de diferencia y anchos distintos.
+    const [v] = unirVias([
+      {
+        puntos: [
+          { x: -60, y: -1 },
+          { x: 0, y: 0 },
+        ],
+        ancho: 7,
+      },
+      {
+        puntos: [
+          { x: 0, y: 0 },
+          { x: 60, y: 0 },
+        ],
+        ancho: 7.4,
+      },
+    ]);
+    expect(v!.puntos).toEqual([
+      { x: -60, y: -1 },
+      { x: 60, y: 0 },
+    ]);
+    expect(v!.ancho).toBe(7.4);
+  });
+  it("una calle que curva sigue curvando (no se endereza)", () => {
+    const arco = Array.from({ length: 13 }, (_, k) => ({
+      x: 25 * Math.cos((k * Math.PI) / 12),
+      y: 25 * Math.sin((k * Math.PI) / 12),
+    }));
+    const [v] = unirVias([{ puntos: arco, ancho: 7 }]);
+    expect(v!.puntos.length).toBeGreaterThan(8);
+    expect(enderezar(arco, 0.8).length).toBeGreaterThan(3);
+  });
+  it("las líneas de las etiquetas no se cruzan ni pasan por un vehículo ajeno", () => {
+    const caja = (x: number) => [
+      { x: x - 2, y: -1 },
+      { x: x + 2, y: -1 },
+      { x: x + 2, y: 1 },
+      { x: x - 2, y: 1 },
+    ];
+    const pos = colocarEtiquetas(
+      [
+        { id: "A", x: 0, y: 0, dueno: "A" },
+        { id: "B", x: 4.5, y: 0, dueno: "B" },
+      ],
+      0.8,
+      [],
+      [
+        { dueno: "A", puntos: caja(0) },
+        { dueno: "B", puntos: caja(4.5) },
+      ],
+    );
+    const dentro = (p: { x: number; y: number }, x: number) =>
+      Math.abs(p.x - x) < 2 && Math.abs(p.y) < 1;
+    expect(dentro(pos.A!, 4.5)).toBe(false);
+    expect(dentro(pos.B!, 0)).toBe(false);
   });
 });

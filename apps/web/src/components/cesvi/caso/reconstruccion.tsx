@@ -18,8 +18,11 @@ import {
   danoEnTexto,
   lecturasDeDano,
   formato as F,
+  conConflictoDeMedida,
   especDeExpediente,
   expedienteConTipicas,
+  hayVelocidadMedida,
+  sinMedidasDelPerito,
   especReconstruida,
   evidenciaEnPalabras,
   impactosEnMapa,
@@ -77,11 +80,6 @@ export interface EstadoReconstruccion {
 
 /** Cuánto se espera después del último cambio para recalcular (ms): un arrastre son varios cambios. */
 const ESPERA_RECALCULO_MS = 700;
-/**
- * Lo más que «Reconstruir» espera las calles del lugar (ms): después reconstruye sin ellas y, si
- * llegan, se recalcula sola (como antes de esperarlas).
- */
-export const ESPERA_CALLES_MAX_MS = 20_000;
 
 /**
  * La reconstrucción del caso. Con `alCambiar` (W4, «al soltar se recalcula»), si ya hubo una y el
@@ -116,40 +114,57 @@ export function useReconstruccion(
     }
     setRecalculando(true);
     try {
-      let base = especDeExpediente(exp);
       // W5: el relieve real, si el perito lo pidió. Sin malla (sin red), el solver va en plano y
       // lo avisa.
-      const malla = usaRelieve(exp) && base.origen ? await relieveDelLugar(base.origen) : null;
-      let resultado = await reconstruirCompletoEnNavegador(
-        base.spec as unknown as EscenaSpec,
-        undefined,
-        malla,
-      );
-      if (mio !== turno.current) return;
-      let interpretada = interpretarResultado(
-        base,
-        resultado as unknown as Record<string, unknown>,
-        { relieve: malla },
-      );
-      // Ronda 4: lo que la evidencia no fija va con la velocidad típica de la vía (supuesto con su
-      // rango), nunca con el arranque del ajuste. Si todo quedó fijado, no se recalcula.
-      const conTipicas = expedienteConTipicas(exp, interpretada);
-      if (conTipicas) {
-        base = especDeExpediente(conTipicas);
-        resultado = await reconstruirCompletoEnNavegador(
+      const base0 = especDeExpediente(exp);
+      const malla = usaRelieve(exp) && base0.origen ? await relieveDelLugar(base0.origen) : null;
+      /** Una reconstrucción, como `reconstruirExpediente`: lo que la evidencia no fija, con la típica. */
+      const unaVez = async (x: Expediente) => {
+        let base = especDeExpediente(x);
+        let resultado = await reconstruirCompletoEnNavegador(
           base.spec as unknown as EscenaSpec,
           undefined,
           malla,
         );
+        let interpretada = interpretarResultado(
+          base,
+          resultado as unknown as Record<string, unknown>,
+          { relieve: malla },
+        );
+        // Ronda 4: lo que la evidencia no fija va con la velocidad típica de la vía (supuesto con su
+        // rango), nunca con el arranque del ajuste. Si todo quedó fijado, no se recalcula.
+        const conTipicas = expedienteConTipicas(x, interpretada);
+        if (conTipicas) {
+          base = especDeExpediente(conTipicas);
+          resultado = await reconstruirCompletoEnNavegador(
+            base.spec as unknown as EscenaSpec,
+            undefined,
+            malla,
+          );
+          interpretada = interpretarResultado(
+            base,
+            resultado as unknown as Record<string, unknown>,
+            { relieve: malla },
+          );
+        }
+        return { base, interpretada, json: resultado as unknown as Record<string, unknown> };
+      };
+      let una = await unaVez(exp);
+      if (mio !== turno.current) return;
+      // La velocidad medida que no cabe con la evidencia (René, 2026-11-28): la física sin ella, con
+      // el conflicto a la vista; el perito decide cuál usa en el dictamen.
+      if (una.interpretada.noCuadra && hayVelocidadMedida(exp)) {
+        const fisica = await unaVez(sinMedidasDelPerito(exp));
         if (mio !== turno.current) return;
-        interpretada = interpretarResultado(base, resultado as unknown as Record<string, unknown>, {
-          relieve: malla,
-        });
+        if (!fisica.interpretada.noCuadra)
+          una = {
+            ...fisica,
+            interpretada: conConflictoDeMedida(exp, una.interpretada, fisica.interpretada),
+          };
       }
-      const json = resultado as unknown as Record<string, unknown>;
-      setR({ ...interpretada, relieve: malla });
+      setR({ ...una.interpretada, relieve: malla });
       setDe(exp);
-      setImpactos(impactosEnMapa(base, json));
+      setImpactos(impactosEnMapa(una.base, una.json));
       setEstado(null);
     } catch (e) {
       if (mio === turno.current)
@@ -161,22 +176,11 @@ export function useReconstruccion(
   const esperar = opciones.esperar ?? false;
   // Lo que pidió el perito mientras llegan las calles: se hace en cuanto llegan (o fallan).
   const [pendiente, setPendiente] = useState<"limpiar" | "de_nuevo" | null>(null);
-  const [vencio, setVencio] = useState(false);
-  const tope = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(
-    () => () => {
-      if (tope.current) clearTimeout(tope.current);
-    },
-    [],
-  );
   const pedir = useCallback(
     async (modo: "limpiar" | "de_nuevo") => {
       if (!expediente) return;
       if (esperar) {
         setPendiente(modo);
-        setVencio(false);
-        if (tope.current) clearTimeout(tope.current);
-        tope.current = setTimeout(() => setVencio(true), ESPERA_CALLES_MAX_MS);
         setEstado("Esperando las calles del lugar de OpenStreetMap para reconstruir con ellas…");
         return;
       }
@@ -185,15 +189,15 @@ export function useReconstruccion(
     [expediente, calcular, esperar],
   );
   useEffect(() => {
-    if (!pendiente || (esperar && !vencio) || !expediente) return undefined;
+    // Sin tope (René, 2026-11-27): sin las calles no se calcula ninguna cifra. Si no llegan, el
+    // recorrido dice «No se pudieron cargar las calles del lugar: reintenta».
+    if (!pendiente || esperar || !expediente) return undefined;
     const t = setTimeout(() => {
       setPendiente(null);
-      setVencio(false);
-      if (tope.current) clearTimeout(tope.current);
       void calcular(expediente, pendiente === "limpiar");
     }, 0);
     return () => clearTimeout(t);
-  }, [pendiente, esperar, vencio, expediente, calcular]);
+  }, [pendiente, esperar, expediente, calcular]);
   const reconstruir = useCallback(() => pedir("limpiar"), [pedir]);
   const reconstruirDeNuevo = useCallback(() => pedir("de_nuevo"), [pedir]);
   const alCambiar = opciones.alCambiar ?? false;

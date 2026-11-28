@@ -368,6 +368,13 @@ namespace Croquis.Visor
                 else
                 {
                     Error("interno", "No hay un nivel de calidad «" + nivel + "».");
+                    return;
+                }
+
+                // La escala de dibujo fija (el video) o, con null, otra vez la automática.
+                if (j["escala"] != null)
+                {
+                    Calidad.FijarEscala(j["escala"].Type == JTokenType.Null ? (double?)null : (double)j["escala"]);
                 }
             });
         }

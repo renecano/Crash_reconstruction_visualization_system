@@ -49,12 +49,20 @@ import {
   CAMARA_LENTA_VIDEO,
   duracionVideo,
   FPS_VIDEO,
-  escalaMedida,
   grabarVideoUnity,
   instantesDelVideo,
   lienzoDelVideo,
   msPorCuadro,
-  modoDelVideo,
+  modosDelVideo,
+  elegirModo,
+  aTiempo,
+  type ModoVideo,
+  estimarVideo,
+  guardarMedida,
+  medidaGuardada,
+  tarjetaIntegrada,
+  type CalidadVideo,
+  type MedicionVideo,
   nombreDelVideo,
   SIN_VIDEO,
   textoTarda,
@@ -623,6 +631,8 @@ export function VisorUnity({
   };
   // «Solo el choque» o «Desde el inicio» (el trayecto previo, René 2026-11-27).
   const [videoDesdeInicio, setVideoDesdeInicio] = useState(false);
+  // «Rápido» por omisión (René, 2026-11-28); «Máxima calidad», el supermuestreo de antes.
+  const [calidadVideo, setCalidadVideo] = useState<CalidadVideo>("rapido");
   const conPrevio = Boolean(
     intervalo?.reconstruccion !== undefined && intervalo.reconstruccion > intervalo.inicio + 0.5,
   );
@@ -649,26 +659,24 @@ export function VisorUnity({
     puente.enviar("pausar", {});
     puente.minimapa(false);
     puente.enviar("camara", { modo: camaraVideo });
-    // Con tarjeta dedicada, al doble y en `ultra` (antialiasing, René, 2026-11-26); con integrada,
-    // como antes: 1× y la calidad automática (a 2× la laptop de 8 GB no dibujó ningún cuadro).
-    let modo = modoDelVideo(rendererDeLaTarjeta());
-    const ponerModo = () => {
-      if (modo.calidad) puente.enviar("calidad", { nivel: modo.calidad });
-      const tamano = lienzoDelVideo(window.devicePixelRatio || 1, modo.escala);
+    // «Rápido»: `alta` (MSAA) si la tarjeta lo dibuja a tiempo, si no `media` (FXAA); «Máxima
+    // calidad»: el doble en `ultra` (René, 2026-11-28). Se miden antes de grabar.
+    const candidatos = modosDelVideo(rendererDeLaTarjeta(), calidadVideo);
+    let modo: ModoVideo = candidatos[0]!;
+    const ponerModo = async (m: ModoVideo) => {
+      modo = m;
+      // Nivel y resolución fijos mientras se graba: en automático Unity los bajaba con los fps bajos
+      // del cuadro por cuadro y el video salía con bordes dentados.
+      puente.enviar("calidad", { nivel: m.nivel, escala: 1 });
+      const tamano = lienzoDelVideo(window.devicePixelRatio || 1, m.escala);
       c.style.width = `${tamano.ancho}px`;
       c.style.height = `${tamano.alto}px`;
-    };
-    ponerModo();
-    const fijar = (t: number) => puente.enviar("fijarTiempo", { t });
-    const bajarA1x = async () => {
-      if (modo.calidad) puente.enviar("calidad", { nivel: "auto" });
-      modo = { escala: 1, calidad: null };
-      ponerModo();
-      for (let i = 0; i < 6; i++) await new Promise((ok) => requestAnimationFrame(ok));
-    };
-    try {
       // Unity toma el tamaño nuevo en su siguiente cuadro.
       for (let i = 0; i < 6; i++) await new Promise((ok) => requestAnimationFrame(ok));
+    };
+    const fijar = (t: number) => puente.enviar("fijarTiempo", { t });
+    try {
+      await ponerModo(modo);
       const logo = new Image();
       logo.src = "/marca/logotipo-blanco.svg";
       await logo.decode().catch(() => undefined);
@@ -680,14 +688,30 @@ export function VisorUnity({
         enviarPiso(pv, false);
         for (let i = 0; i < 10; i++) await new Promise((ok) => requestAnimationFrame(ok));
       }
-      // El nombre de la tarjeta no basta (en laptops híbridas Chrome reporta la NVIDIA y dibuja en
-      // la Intel): al doble solo si los primeros cuadros salen a tiempo.
-      if (
-        modo.escala === 2 &&
-        escalaMedida(await msPorCuadro(c, fijar, instantesDelVideo(desde, intervalo.fin))) === 1
-      )
-        await bajarA1x();
-      const grabar = () =>
+      // Se mide cada modo, en orden, hasta tener con cuál grabar (el nombre de la tarjeta no basta: en
+      // laptops híbridas Chrome reporta la NVIDIA y dibuja en la Intel).
+      // La automática lleva el impacto en cámara lenta, con su letrero; «Desde el inicio», el
+      // trayecto lejano acelerado para que el video dure ~1 min (René, 2026-11-27).
+      const lenta = camaraVideo === "automatica" ? CAMARA_LENTA_VIDEO : null;
+      const acelerado =
+        desde < (intervalo.reconstruccion ?? desde)
+          ? aceleradoDelVideo(desde, intervalo.reconstruccion!, intervalo.fin, lenta)
+          : null;
+      const cuadros = instantesDelVideo(desde, intervalo.fin, FPS_VIDEO, lenta, acelerado).length;
+      const medidos: { modo: ModoVideo; ms: number }[] = [];
+      for (const m of candidatos) {
+        if (m !== modo) await ponerModo(m);
+        medidos.push({
+          modo: m,
+          ms: await msPorCuadro(c, fijar, instantesDelVideo(desde, intervalo.fin)),
+        });
+        const e = elegirModo(medidos, calidadVideo, cuadros);
+        if (e && aTiempo(e.ms, cuadros, calidadVideo)) break;
+      }
+      const elegido = elegirModo(medidos, calidadVideo, cuadros);
+      if (!elegido) throw new VideoNoDisponible("El 3D no dibujó ningún cuadro.");
+      if (elegido.modo !== modo) await ponerModo(elegido.modo);
+      const grabar = (msMedido?: number) =>
         grabarVideoUnity({
           credito: pv ? pv.atribucionMapa : null,
           lienzo: c,
@@ -696,20 +720,23 @@ export function VisorUnity({
           fin: intervalo.fin,
           logo,
           leyenda: LEYENDA_3D,
-          // La automática lleva el impacto en cámara lenta, con su letrero; «Desde el inicio», el
-          // trayecto lejano acelerado para que el video dure ~1 min (René, 2026-11-27).
-          lenta: camaraVideo === "automatica" ? CAMARA_LENTA_VIDEO : null,
-          acelerado:
-            desde < (intervalo.reconstruccion ?? desde)
-              ? aceleradoDelVideo(
-                  desde,
-                  intervalo.reconstruccion!,
-                  intervalo.fin,
-                  camaraVideo === "automatica" ? CAMARA_LENTA_VIDEO : null,
-                )
-              : null,
+          lenta,
+          acelerado,
           signal: corte.signal,
+          msPorCuadro: msMedido,
           alProgreso: (hechos, total, ms) => setGrabacion({ hechos, total, ms }),
+          // Lo que tardó cada cuadro, para la estimación de la próxima vez (y para medir).
+          alMedir: (m: MedicionVideo) => {
+            guardarMedida(calidadVideo, m);
+            if (navigator.webdriver)
+              (window as unknown as Record<string, unknown>).__croquisVideoMedicion = {
+                ...m,
+                calidad: calidadVideo,
+                escala: modo.escala,
+                nivel: modo.nivel,
+                medidos: medidos.map((x) => ({ ...x.modo, ms: Math.round(x.ms) })),
+              };
+          },
           confirmar: (ms) =>
             new Promise<boolean>((responder) => {
               // «Cancelar» o Esc mientras pregunta: no se queda esperando.
@@ -719,12 +746,12 @@ export function VisorUnity({
         });
       let video: Blob;
       try {
-        video = await grabar();
+        video = await grabar(elegido.ms);
       } catch (e) {
-        // Si al doble no sale (no llega ningún cuadro o falla el codificador), otra vez a 1× y con
-        // la calidad automática.
-        if (!(e instanceof VideoNoDisponible) || modo.escala === 1) throw e;
-        await bajarA1x();
+        // Si así no sale (no llega ningún cuadro o falla el codificador), con el modo siguiente.
+        const siguiente = candidatos[candidatos.indexOf(modo) + 1];
+        if (!(e instanceof VideoNoDisponible) || !siguiente) throw e;
+        await ponerModo(siguiente);
         video = await grabar();
       }
       const url = URL.createObjectURL(video);
@@ -754,7 +781,7 @@ export function VisorUnity({
     } finally {
       c.style.width = antes.ancho;
       c.style.height = antes.alto;
-      if (modo.calidad) puente.enviar("calidad", { nivel: "auto" });
+      puente.enviar("calidad", { nivel: "auto", escala: null });
       setConfirmacion(null);
       puente.minimapa(minimapa);
       grabando.current = false;
@@ -985,6 +1012,49 @@ export function VisorUnity({
                 lenta, y las posiciones finales desde arriba.
               </span>
             ) : null}
+            {(() => {
+              // La estimación antes de empezar, con lo que tardó cada cuadro aquí la última vez.
+              const d0 =
+                videoDesdeInicio && intervalo
+                  ? intervalo.inicio
+                  : (intervalo?.reconstruccion ?? intervalo?.inicio ?? 0);
+              const lenta = dialogoVideo === "automatica" ? CAMARA_LENTA_VIDEO : null;
+              const acel =
+                videoDesdeInicio && intervalo?.reconstruccion !== undefined && intervalo
+                  ? aceleradoDelVideo(d0, intervalo.reconstruccion, intervalo.fin, lenta)
+                  : null;
+              const cuadros = intervalo
+                ? instantesDelVideo(d0, intervalo.fin, FPS_VIDEO, lenta, acel).length
+                : 0;
+              const ms = estimarVideo(cuadros, medidaGuardada(calidadVideo));
+              const integrada = tarjetaIntegrada(rendererDeLaTarjeta());
+              return (
+                <fieldset className="flex flex-col gap-1" data-testid="video-calidad">
+                  <legend className="t-nota">Calidad</legend>
+                  {(["rapido", "maxima"] as const).map((cal) => (
+                    <label key={cal} className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="video-calidad"
+                        checked={calidadVideo === cal}
+                        onChange={() => setCalidadVideo(cal)}
+                        data-testid={`video-calidad-${cal}`}
+                      />
+                      {cal === "rapido"
+                        ? `Rápido: 1920×1080${integrada ? "" : ", con antialiasing"}`
+                        : integrada
+                          ? "Máxima calidad (con esta tarjeta de video, igual que Rápido)"
+                          : "Máxima calidad: más nítido, tarda varias veces más"}
+                    </label>
+                  ))}
+                  <span className="t-nota" data-testid="video-estimado">
+                    {ms !== null
+                      ? `${textoTarda(ms)} en esta computadora.`
+                      : "Se mide con los primeros cuadros; si va a tardar más de dos minutos, te pregunta antes de seguir."}
+                  </span>
+                </fieldset>
+              );
+            })()}
             <div className="flex gap-2 self-end">
               <button
                 type="button"
