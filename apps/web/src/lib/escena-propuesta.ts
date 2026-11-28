@@ -19,6 +19,7 @@ import { contraLaOrilla } from "./objeto-orilla";
 import {
   avanzar,
   conPosicion,
+  distanciaM,
   formato as F,
   impactosEncimados,
   medidasDe,
@@ -35,6 +36,7 @@ import {
   sobreCalle,
   callesNarradas,
   calzadaEnSuSentido,
+  crucesDe,
   cardinal,
   elegirDireccion,
   flechaPropuesta,
@@ -380,6 +382,16 @@ export function proponerEscena(o: {
       porque: `con la dirección de cada uno quedaban encimados ${F.metros(enc.traslape_m)}: Croquis los separó lo mínimo`,
     });
   }
+  // La vuelta narrada necesita una esquina (René, 2026-11-28: el camión del caso 2 «dio vuelta a la
+  // derecha» y, en un lugar sin cruce, iba recto en silencio). Si no hay un cruce del mapa cerca del
+  // choque, se dice; no se inventa la esquina.
+  for (const sinCruce of calles.length ? vueltasSinCruce(e, crucesDe(calles), puntos) : []) {
+    propuestos.push({
+      clave: `vuelta-sin-cruce-${sinCruce.vehiculo}`,
+      texto: `${o.nombreDe(sinCruce.vehiculo)}: ${AVISO_VUELTA_SIN_CRUCE}`,
+      porque: `la narración dice «${sinCruce.cita}» y no hay una esquina del mapa a menos de ${VUELTA_CRUCE_M} m del choque`,
+    });
+  }
   for (const v of vs) {
     if (!poseDe(e, v.id, "final"))
       faltan.push({
@@ -389,6 +401,39 @@ export function proponerEscena(o: {
       });
   }
   return { expediente: e, puntos, propuestos, faltan };
+}
+
+/** Lo que dice La escena cuando la narración da una vuelta y el lugar no tiene cruce (René, 2026-11-28). */
+export const AVISO_VUELTA_SIN_CRUCE =
+  "la narración dice que dio vuelta, pero aquí no hay un cruce: revisa el lugar";
+/** m: a lo más esto del choque, la esquina de la vuelta (el choque es al entrar o al salir de ella). */
+export const VUELTA_CRUCE_M = 40;
+
+/**
+ * Los vehículos que dan vuelta según la narración (vira a la izquierda o a la derecha) y no tienen un
+ * cruce del mapa a menos de `VUELTA_CRUCE_M` del choque. Sin calles del mapa no se juzga.
+ */
+export function vueltasSinCruce(
+  e: Expediente,
+  cruces: readonly { punto: Punto }[],
+  puntos: Record<number, Punto>,
+): { vehiculo: string; cita: string }[] {
+  const ev = e.versiones?.find((x) => x.tipo === "evidencia");
+  const out: { vehiculo: string; cita: string }[] = [];
+  for (const m of ev?.maniobras ?? []) {
+    if (m.tipo !== "vira_derecha" && m.tipo !== "vira_izquierda") continue;
+    if (out.some((x) => x.vehiculo === m.vehiculo)) continue;
+    const imp = (e.impactos ?? [])
+      .filter((i) => (i.vehiculos ?? []).includes(m.vehiculo))
+      .sort((a, b) => a.orden - b.orden)[0];
+    const choque = (imp && puntos[imp.orden]) ?? poseDe(e, m.vehiculo, "impacto")?.punto ?? null;
+    if (!choque) continue;
+    const cerca = cruces.some(
+      (c) => distanciaM([c.punto.lon, c.punto.lat], [choque.lon, choque.lat]) <= VUELTA_CRUCE_M,
+    );
+    if (!cerca) out.push({ vehiculo: m.vehiculo, cita: m.cita?.texto ?? "dio vuelta" });
+  }
+  return out;
 }
 
 /** Hacia dónde mira cada cara respecto al frente (grados, en el sentido del reloj). */
