@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
+import { olvidarGeocodificaciones } from "./geocodificar";
 import type { RedLugar } from "../buscadores-lugar";
 import {
   buscarReferencia,
@@ -120,6 +121,8 @@ describe("ubicarReferencia, con lo grabado", () => {
     ).toBeNull();
   });
 });
+
+beforeEach(() => olvidarGeocodificaciones());
 
 describe("buscarReferencia, con la interfaz de René (red inyectada, respuestas grabadas)", () => {
   const red: RedLugar = {

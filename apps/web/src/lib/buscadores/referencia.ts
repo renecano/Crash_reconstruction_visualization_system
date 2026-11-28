@@ -12,7 +12,9 @@
  * Siempre con su explicación para el perito y su nivel de seguridad. No toca la escena: lo conecta la
  * interfaz de buscadores.
  */
+import { USER_AGENT } from "../../server/osm";
 import type { BuscarReferencia, RedLugar, ZonaCaso } from "../buscadores-lugar";
+import { ATRIBUCION_OSM, geocodificar } from "./geocodificar";
 import { coincideCalle } from "./normalizar-calle";
 
 type LatLon = { lat: number; lon: number };
@@ -292,25 +294,28 @@ export async function ubicarReferencia(
 }
 
 const OVERPASS = "https://overpass-api.de/api/interpreter";
-const NOMINATIM = "https://nominatim.openstreetmap.org/search";
 
 /** Las consultas a OSM por la red inyectada: Nominatim (con su pausa de 1 s) y Overpass por POST. */
-export function depsDeRed(red: RedLugar): DepsReferencia {
-  let primera = true;
+export function depsDeRed(red: RedLugar): DepsReferencia & { fuentes: Set<"nominatim" | "esri"> } {
+  const fuentes = new Set<"nominatim" | "esri">();
   return {
+    fuentes,
+    // Nominatim con su política de uso y, de respaldo, Esri (`geocodificar`).
     buscar: async (texto) => {
-      if (!primera) await red.pausa?.(1000);
-      primera = false;
-      const r = await red.fetch(
-        `${NOMINATIM}?format=jsonv2&limit=8&countrycodes=mx&q=${encodeURIComponent(texto)}`,
-      );
-      if (!r.ok) throw new Error(`Nominatim respondió ${r.status}`);
-      return (await r.json()) as Encontrado[];
+      const g = await geocodificar(texto, red, 8);
+      if (g.fuente) fuentes.add(g.fuente);
+      return g.resultados.map((x) => ({
+        category: x.categoria,
+        type: x.tipo,
+        name: x.nombre,
+        lat: x.lat,
+        lon: x.lon,
+      }));
     },
     overpass: async (consulta) => {
       const r = await red.fetch(OVERPASS, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": USER_AGENT },
         body: new URLSearchParams({ data: consulta }).toString(),
       });
       if (!r.ok) throw new Error(`Overpass respondió ${r.status}`);
@@ -338,8 +343,9 @@ export const buscarReferencia: BuscarReferencia = async (narracion, zona, red) =
     };
   const z = textoDeZona(zona);
   let p: PuntoReferido | null;
+  const deps = depsDeRed(red);
   try {
-    p = z ? await ubicarReferencia(narracion, z, depsDeRed(red)) : null;
+    p = z ? await ubicarReferencia(narracion, z, deps) : null;
   } catch (e) {
     return {
       encontrado: false,
@@ -363,7 +369,8 @@ export const buscarReferencia: BuscarReferencia = async (narracion, zona, red) =
     como: "referencia",
     seguridad: p.seguridad,
     que: p.calle ? `${p.calle} a la altura de ${p.referencia.nombre}` : p.referencia.nombre,
-    explicacion: p.explicacion,
+    // La atribución que pide OSM y, si la referencia salió de Esri, que lo diga.
+    explicacion: `${p.explicacion}${deps.fuentes.has("esri") ? " La referencia, encontrada con Esri." : ""} Datos de OpenStreetMap (${ATRIBUCION_OSM}).`,
     ...(p.opciones
       ? { opciones: p.opciones.map((o) => ({ punto: { lat: o.lat, lon: o.lon }, que: o.nombre })) }
       : {}),
