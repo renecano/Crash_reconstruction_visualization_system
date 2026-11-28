@@ -113,6 +113,9 @@ function metros(a: Punto, b: Punto): number {
 export function conCallesGuardadas(e: Expediente, g: Guardadas): Expediente {
   if (!g.vias.length) return e;
   const antes = e.caso.lugar?.calles_del_mapa;
+  // Las de un ejemplo publicado o de AXA nunca se reemplazan (René, 2026-11-27): su cifra no depende
+  // de lo que responda la red.
+  if (antes?.fija) return e;
   if (
     antes &&
     metros(antes.centro, g.centro) <= 30 &&

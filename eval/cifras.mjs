@@ -181,6 +181,8 @@ function construir() {
       texto: tasaTexto(c),
       fuente: archivo,
       campo: "total.supuestos_sorteados",
+      motivo:
+        "Arreglo del solver, #369 (lo medido como restricción); detalle caso por caso en eval/results/t3_cobertura_detalle; René lo aprobó el 2026-11-27. Antes, 410 de 578 (70.9 %).",
     });
   }
 

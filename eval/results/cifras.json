@@ -135,18 +135,19 @@
     },
     "cobertura.rango": {
       "que": "Cobertura sintética del p10–p90 de la inversión: de las velocidades verdaderas conocidas, cuántas cayeron dentro del rango",
-      "k": 410,
-      "n": 578,
-      "pct": 70.9,
+      "k": 404,
+      "n": 579,
+      "pct": 69.8,
       "esperado_pct": 80,
       "ic95_pct": [
-        67.1,
-        74.49
+        65.91,
+        73.38
       ],
       "casos_por_escena": 200,
-      "texto": "410 de 578 (70.9 %)",
+      "texto": "404 de 579 (69.8 %)",
       "fuente": "eval/results/t3_cobertura.json",
-      "campo": "total.supuestos_sorteados"
+      "campo": "total.supuestos_sorteados",
+      "motivo": "Arreglo del solver, #369 (lo medido como restricción); detalle caso por caso en eval/results/t3_cobertura_detalle; René lo aprobó el 2026-11-27. Antes, 410 de 578 (70.9 %)."
     },
     "paridad.numeros": {
       "que": "Números comparados entre el solver TS y la referencia Python (E7)",

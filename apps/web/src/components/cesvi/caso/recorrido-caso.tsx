@@ -67,12 +67,8 @@ import {
 import { obstaculosDelMapa } from "@/lib/obstaculos-del-mapa";
 import { callesDelNivel } from "@/lib/nivel-via";
 import { callesCerca, objetosCerca, RADIO_CALLES_M } from "@/lib/calles-del-mapa";
-import {
-  callesParaGuardar,
-  conCallesGuardadas,
-  guardadasCerca,
-  respuestaDeGuardadas,
-} from "@/lib/calles-guardadas";
+import { guardadasCerca, respuestaDeGuardadas } from "@/lib/calles-guardadas";
+import { type CallesPedidas, deAqui, guardarSiEsDeAqui } from "@/lib/calles-del-lugar";
 import { downloadBytes } from "@/lib/download";
 import {
   CLAVES_PASOS,
@@ -253,10 +249,14 @@ export function RecorridoCaso({
   const [centroBuscado, setCentroBuscado] = useState<{ lat: number; lon: number } | null>(null);
   const [rumbosImpacto, setRumbosImpacto] = useState<Record<number, number>>({});
   const [historial, setHistorial] = useState<Expediente[]>([]);
-  const [callesOverpass, setCalles] = useState<OverpassResponse | null>(null);
+  // Cada respuesta con el lugar para el que se pidió (René, 2026-11-27, #388): al mover el lugar, la
+  // del lugar viejo no se guarda con el nuevo.
+  const [pedidaOverpass, setCalles] = useState<CallesPedidas | null>(null);
+  const callesOverpass = pedidaOverpass?.r ?? null;
   // Ronda 4: las calles de las teselas del mapa de La escena, mientras Overpass no llega (la
   // maqueta y el 3D las usan igual). Overpass, si llega, manda.
-  const [callesTeselas, setCallesTeselas] = useState<OverpassResponse | null>(null);
+  const [pedidaTeselas, setPedidaTeselas] = useState<CallesPedidas | null>(null);
+  const callesTeselas = pedidaTeselas?.r ?? null;
   // Ronda 4 (René): las guardadas con el caso, para tenerlas sin red (al abrirlo en local).
   const guardadas = expediente?.caso.lugar?.calles_del_mapa ?? null;
   const callesGuardadas = useMemo(
@@ -765,7 +765,7 @@ export function RecorridoCaso({
     let vivo = true;
     void callesCerca([lon, lat]).then((c) => {
       if (!vivo) return;
-      setCalles(c);
+      setCalles({ de: claveCalles, r: c });
       setCallesFallaron(c === null);
     });
     void objetosCerca([lon, lat]).then((o) => {
@@ -778,24 +778,24 @@ export function RecorridoCaso({
   // Ronda 4 (René): con la vía del choque ya conocida, lo que la narración describe respecto al
   // límite («a exceso de velocidad») o la típica de la vía se recalcula con el límite de esa vía.
   // Las calles que llegan (Overpass o teselas) se guardan con el caso, una vez por lugar.
-  const recienLlegadas = callesOverpass ?? callesTeselas;
+  // Solo las de este lugar (René, 2026-11-27, #388).
+  const overpassAqui = deAqui(pedidaOverpass, claveCalles);
   // «Reconstruir» espera las de Overpass (o que fallen): al llegar cambian la escena del solver. Si el
   // caso ya guarda las de Overpass de este lugar, no hay nada que esperar.
   const yaGuardadas =
-    expediente?.caso.lugar?.calles_del_mapa?.fuente === "overpass" &&
-    guardadasCerca(expediente, origenCalles) !== null;
-  const porLlegar = Boolean(origenCalles) && !callesFallaron && !callesOverpass && !yaGuardadas;
+    expediente?.caso.lugar?.calles_del_mapa?.fija === true ||
+    (expediente?.caso.lugar?.calles_del_mapa?.fuente === "overpass" &&
+      guardadasCerca(expediente, origenCalles) !== null);
+  const porLlegar = Boolean(origenCalles) && !callesFallaron && !overpassAqui && !yaGuardadas;
   if (porLlegar !== callesPorLlegar) setCallesPorLlegar(porLlegar);
-  if (expediente && recienLlegadas && origenCalles) {
-    const nuevo = conCallesGuardadas(
-      expediente,
-      callesParaGuardar(
-        recienLlegadas,
-        origenCalles,
-        RADIO_CALLES_M,
-        callesOverpass ? "overpass" : "teselas",
-      ),
-    );
+  if (expediente && origenCalles && claveCalles) {
+    const nuevo = guardarSiEsDeAqui(expediente, {
+      origen: origenCalles,
+      clave: claveCalles,
+      overpass: pedidaOverpass,
+      teselas: pedidaTeselas,
+      radioM: RADIO_CALLES_M,
+    });
     if (nuevo !== expediente) setExpediente(nuevo);
   }
   const puntoChoque = puntoDe(1);
@@ -848,7 +848,8 @@ export function RecorridoCaso({
   // Ronda 4: mientras Overpass no llega, las calles de las teselas del mapa del caso (también al
   // entrar directo a Reconstrucción, sin pasar por La escena).
   useEffect(() => {
-    if (callesOverpass || callesTeselas || !mapa || !claveCalles) return undefined;
+    if (overpassAqui || deAqui(pedidaTeselas, claveCalles) || !mapa || !claveCalles)
+      return undefined;
     const [lon, lat] = claveCalles.split(",").map(Number) as [number, number];
     const leer = () => {
       try {
@@ -862,7 +863,7 @@ export function RecorridoCaso({
           [lon, lat],
           RADIO_CALLES_M,
         );
-        if (r.elements.some((x) => x.type === "way")) setCallesTeselas(r);
+        if (r.elements.some((x) => x.type === "way")) setPedidaTeselas({ de: claveCalles, r });
       } catch {
         // Sin las teselas todavía: se espera a Overpass.
       }
@@ -872,7 +873,7 @@ export function RecorridoCaso({
     return () => {
       mapa.off("idle", leer);
     };
-  }, [callesOverpass, callesTeselas, mapa, claveCalles]);
+  }, [overpassAqui, pedidaTeselas, mapa, claveCalles]);
   const rumboDeItem = (i: ItemLugar): number | null => {
     if (i.tipo === "impacto") {
       const primero = vehiculosDe(i.orden)[0];
@@ -1753,7 +1754,7 @@ export function RecorridoCaso({
           <EscenaFacil
             reconstruccion={rec.vieja ? null : r}
             tema={tema}
-            onCallesDelMapa={setCallesTeselas}
+            onCallesDelMapa={(r) => claveCalles && setPedidaTeselas({ de: claveCalles, r })}
             estado={{
               expediente,
               desconocidos,
@@ -2346,7 +2347,7 @@ function AvisoSinCalles({ onReintentar }: { onReintentar: () => void }) {
       data-testid="aviso-sin-calles"
       className="flex flex-col gap-3 rounded-lg border border-[var(--senal)] p-4"
     >
-      <p className="font-medium">No se pudieron cargar las calles: reintenta.</p>
+      <p className="font-medium">No se pudieron cargar las calles del lugar: reintenta.</p>
       <p className="text-sm text-[var(--texto-2)]">
         Sin las calles del lugar, Croquis no calcula la velocidad: el choque y por dónde venía cada
         vehículo dependen de ellas. Revisa la conexión y vuelve a intentarlo.

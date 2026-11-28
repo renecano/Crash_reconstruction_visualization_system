@@ -1063,6 +1063,13 @@ namespace Croquis.Generated
         [JsonProperty("consultado")]
         public DateTimeOffset Consultado { get; set; }
 
+        /// <summary>
+        /// Las calles de un ejemplo publicado o de AXA (René, 2026-11-27): centradas en el choque y
+        /// nunca reemplazadas por las que lleguen de la red, para que su cifra no dependa de ella.
+        /// </summary>
+        [JsonProperty("fija", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? Fija { get; set; }
+
         [JsonProperty("fuente")]
         public CallesDelMapaFuente Fuente { get; set; }
 

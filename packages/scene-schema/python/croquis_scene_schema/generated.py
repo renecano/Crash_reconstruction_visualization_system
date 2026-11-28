@@ -1348,6 +1348,10 @@ class CallesGuardadas(BaseModel):
     consultado: AwareDatetime
     centro: Coordenadas
     radio_m: Annotated[float, Field(ge=10.0, le=2000.0)]
+    fija: bool | None = None
+    """
+    Las calles de un ejemplo publicado o de AXA (René, 2026-11-27): centradas en el choque y nunca reemplazadas por las que lleguen de la red, para que su cifra no dependa de ella.
+    """
     vias: Annotated[list[Via], Field(max_length=600)]
 
 

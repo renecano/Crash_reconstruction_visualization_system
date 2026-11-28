@@ -107,20 +107,12 @@
   {
    "accion": "final",
    "vehiculo": "V2",
-   "como": "marcar",
-   "en": [
-    2.82,
-    4.13
-   ]
+   "como": "narracion"
   },
   {
    "accion": "final",
    "vehiculo": "V3",
-   "como": "marcar",
-   "en": [
-    5.65,
-    8.25
-   ]
+   "como": "narracion"
   }
  ],
  "versiones": [
@@ -194,20 +186,20 @@
      "vehiculo": "V2",
      "fase": "final",
      "punto": {
-      "lat": 25.568327062272637,
-      "lon": -100.27337887238238
+      "lat": 25.5683258609285,
+      "lon": -100.27337978411707
      },
-     "rumbo": 54.52459327437731,
+     "rumbo": 34.3958479037355,
      "fuente": "perito"
     },
     {
      "vehiculo": "V3",
      "fase": "final",
      "punto": {
-      "lat": 25.568364124545276,
-      "lon": -100.27335074476476
+      "lat": 25.568362964837963,
+      "lon": -100.27335162490036
      },
-     "rumbo": 54.5245848938448,
+     "rumbo": 34.3958479037355,
      "fuente": "perito"
     }
    ]
