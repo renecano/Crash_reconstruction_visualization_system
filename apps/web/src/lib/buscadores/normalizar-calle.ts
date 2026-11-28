@@ -9,6 +9,7 @@
  * - `coincideCalle`: si un nombre narrado es esa vía, cómo coincide, con qué seguridad y la explicación
  *   para el perito.
  */
+import type { NormalizarNombreCalle } from "../buscadores-lugar";
 
 /** Minúsculas y sin acentos. */
 const plano = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
@@ -109,8 +110,8 @@ const NUMEROS: Record<string, number> = {
 const MESES =
   "enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre";
 
-/** Las palabras de la clave de comparación de un nombre de calle. */
-function palabras(nombre: string): string[] {
+/** Las palabras de la clave de comparación de un nombre de calle (con `titulos`, sin quitarlos). */
+function palabras(nombre: string, titulos = false): string[] {
   let t = plano(nombre);
   for (const [re, por] of ABREVIATURAS) t = t.replace(re, por);
   // «1o. de Mayo», «1º de Mayo» y «Primero de Mayo» son «1 de mayo»; «treinta y uno» es 31.
@@ -127,13 +128,72 @@ function palabras(nombre: string): string[] {
   // Fuera lo genérico del principio («Calle», «Avenida de la», «Av. Gral.»).
   let i = 0;
   while (i < ps.length - 1 && (TIPOS_GENERICOS.has(ps[i]!) || ARTICULOS.has(ps[i]!))) i++;
-  return ps.slice(i).filter((p, k, xs) => !(TITULOS.has(p) && k < xs.length - 1));
+  return ps.slice(i).filter((p, k, xs) => titulos || !(TITULOS.has(p) && k < xs.length - 1));
 }
 
 /** La clave para comparar nombres de calle: «Av. Gral. Lázaro Cárdenas» → «lazaro cardenas». */
-export function normalizarNombreCalle(nombre: string): string {
+export function claveDeCalle(nombre: string): string {
   return palabras(nombre).join(" ");
 }
+
+/** Cada título en sus dos formas, como puede venir en OSM. */
+const TITULO_CORTO: Record<string, string> = {
+  general: "gral",
+  licenciado: "lic",
+  ingeniero: "ing",
+  gobernador: "gob",
+  doctor: "dr",
+  presidente: "pdte",
+  profesor: "prof",
+  santo: "sto",
+  santa: "sta",
+};
+const NUMERO_EN_LETRA: Record<string, string> = Object.fromEntries(
+  Object.entries(NUMEROS)
+    .filter(([p]) => p !== "uno")
+    .map(([p, n]) => [String(n), p]),
+);
+/** Cada vocal con y sin acento y la ñ, en mayúscula y minúscula (Overpass con `,i` no iguala «Á» y «á»). */
+const LETRAS: Record<string, string> = {
+  a: "[aáÁ]",
+  e: "[eéÉ]",
+  i: "[iíÍ]",
+  o: "[oóÓ]",
+  u: "[uúüÚÜ]",
+  n: "[nñÑ]",
+};
+
+/**
+ * Un nombre de calle como lo puede tener OSM (interfaz de René, `buscadores-lugar.ts`): `base` sin tipo
+ * («general lazaro cardenas»), las `formas` que se buscan (con y sin título, abreviado o completo; los
+ * números en cifra y en letra) y el `patron` de Overpass (POSIX extendido, sin barras invertidas, sin
+ * importar acentos; se usa con `,i`). `patron` es null si no queda nombre.
+ */
+export const normalizarNombreCalle: NormalizarNombreCalle = (nombre) => {
+  const conTitulos = palabras(nombre, true);
+  const base = conTitulos.join(" ");
+  const formas = new Set<string>();
+  if (base) formas.add(base);
+  const sinTitulos = palabras(nombre).join(" ");
+  if (sinTitulos) formas.add(sinTitulos);
+  if (base) formas.add(conTitulos.map((p) => TITULO_CORTO[p] ?? p).join(" "));
+  // Los números de las fechas, también en letra: «5 de mayo» y «cinco de mayo».
+  for (const f of [...formas]) {
+    const enLetra = f.replace(/\b(\d{1,2})(?= de )/g, (n) => NUMERO_EN_LETRA[n] ?? n);
+    if (enLetra !== f) formas.add(enLetra);
+  }
+  const lista = [...formas].filter(Boolean);
+  if (!lista.length) return { base, formas: [], patron: null };
+  const patron = lista
+    .map((f) =>
+      f
+        .split(" ")
+        .map((w) => w.replace(/[aeioun]/g, (c) => LETRAS[c]!))
+        .join("[ .]+"),
+    )
+    .join("|");
+  return { base, formas: lista, patron: lista.length > 1 ? `(${patron})` : patron };
+};
 
 /** Las etiquetas de OSM que dan un nombre a la vía, en orden de preferencia. */
 export const ETIQUETAS_DE_NOMBRE = [
