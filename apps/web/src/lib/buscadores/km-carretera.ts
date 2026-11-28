@@ -378,12 +378,14 @@ export const buscarKmCarretera: BuscarKmCarretera = async (narracion, zona, red)
   const deps = depsDeRed(zona, red);
   try {
     p = await ubicarKm(narracion, deps);
-  } catch (e) {
+  } catch {
     return {
       encontrado: false,
       como: "km",
       aplica: true,
-      explicacion: `No pude consultar OpenStreetMap para el km ${n.km} de la ${via}: ${e instanceof Error ? e.message : String(e)}.`,
+      explicacion: `No pude comprobar el km ${n.km} de la ${via} (el mapa no respondió): reintenta.`,
+      // No es «no encontrado»: la colocación no pasa al siguiente buscador (René, 2026-11-28).
+      sinRespuesta: true,
     };
   }
   if (!p)

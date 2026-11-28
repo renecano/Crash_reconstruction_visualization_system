@@ -570,9 +570,21 @@ export function EscenaFacil({
   const [buscandoNarrado, setBuscandoNarrado] = useState(false);
   // Ronda 4 (René): si el lugar narrado no aparece, se pregunta (nunca el centro del municipio).
   const [narradoSinLugar, setNarradoSinLugar] = useState<string | null>(null);
+  // El mapa no respondió al buscar el lugar narrado: se ofrece reintentar (René, 2026-11-28).
+  const [sinRespuestaLugar, setSinRespuestaLugar] = useState(false);
+  const buscarLugarRef = useRef<(() => Promise<void>) | null>(null);
   // El lugar que confirmó el perito (René, 2026-11-27, #388): la escena se propone solo ahí o en el
   // lugar guardado del caso, nunca en lo que Croquis encontró solo ni en el centro del mapa.
   const [lugarConfirmado, setLugarConfirmado] = useState<Punto | null>(null);
+  // El lugar confirmado se guarda con el caso (René, 2026-11-28): reabrir o reconstruir no lo vuelve a
+  // buscar (el buscador podía dar otra cosa si el mapa tardaba).
+  const confirmarLugar = (p: Punto) => {
+    setLugarConfirmado(p);
+    onEstado({
+      ...estado,
+      expediente: { ...e, caso: { ...e.caso, lugar: { ...e.caso.lugar, coordenadas: p } } },
+    });
+  };
   const [moviendoLugar, setMoviendoLugar] = useState(false);
   // El lugar que encontró el buscador, con sus opciones y su aviso: si no coincide claramente con la
   // narración, no se propone el choque ahí (René, 2026-11-25).
@@ -602,6 +614,8 @@ export function EscenaFacil({
     yaBuscado.current = true;
     const buscarEn = async () => {
       setBuscandoNarrado(true);
+      setNarradoSinLugar(null);
+      setSinRespuestaLugar(false);
       let hallado = false;
       let explicacion: string | null = null;
       try {
@@ -648,7 +662,12 @@ export function EscenaFacil({
               onBuscarCalles(res.punto);
             }
           }
-        } else explicacion = res?.explicacion ?? null;
+        } else {
+          explicacion = res?.explicacion ?? null;
+          // El mapa no respondió (René, 2026-11-28): no es «no encontrado»; el perito reintenta.
+          if (res && !res.encontrado && res.sinRespuesta && montada.current)
+            setSinRespuestaLugar(true);
+        }
       } catch {
         // Sin red: se pregunta.
       }
@@ -672,6 +691,7 @@ export function EscenaFacil({
         }
       }
     };
+    buscarLugarRef.current = buscarEn;
     void buscarEn();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- una vez, al abrir la escena
   }, []);
@@ -1435,7 +1455,7 @@ export function EscenaFacil({
       mapa.current?.easeTo({ center: [p.lon, p.lat], zoom: 18.5 });
       onBuscarCalles(p);
       // Unas coordenadas o un link que pegó el perito: él dice que ahí fue.
-      setLugarConfirmado(p);
+      confirmarLugar(p);
       setMoviendoLugar(false);
       setResultados([]);
       setEstadoBusqueda(null);
@@ -2186,7 +2206,7 @@ export function EscenaFacil({
                   type="button"
                   className="boton-principal escena-boton"
                   data-testid="lugar-si"
-                  onClick={() => lugarNarrado && setLugarConfirmado(lugarNarrado)}
+                  onClick={() => lugarNarrado && confirmarLugar(lugarNarrado)}
                 >
                   Sí, aquí fue
                 </button>
@@ -2214,7 +2234,7 @@ export function EscenaFacil({
               const c = mapa.current?.getCenter();
               if (!c) return;
               const p = { lat: c.lat, lon: c.lng };
-              setLugarConfirmado(p);
+              confirmarLugar(p);
               setMoviendoLugar(false);
               onBuscarCalles(p);
             }}
@@ -2230,9 +2250,21 @@ export function EscenaFacil({
           </p>
         ) : null}
         {narradoSinLugar && !buscandoNarrado && !conPropuesta && !estado.puntos[1] ? (
-          <p className="t-nota text-texto" role="status" data-testid="narrado-sin-lugar">
-            {narradoSinLugar}
-          </p>
+          <div className="flex flex-col gap-2">
+            <p className="t-nota text-texto" role="status" data-testid="narrado-sin-lugar">
+              {narradoSinLugar}
+            </p>
+            {sinRespuestaLugar ? (
+              <button
+                type="button"
+                className="boton-principal escena-boton self-start"
+                data-testid="reintentar-lugar"
+                onClick={() => void buscarLugarRef.current?.()}
+              >
+                Reintentar
+              </button>
+            ) : null}
+          </div>
         ) : null}
         {conPropuesta ? (
           <div
@@ -2338,7 +2370,7 @@ export function EscenaFacil({
                           setLugarNarrado({ lat: r.lat, lon: r.lon });
                         }
                         // El perito eligió esta opción: ahí fue.
-                        setLugarConfirmado({ lat: r.lat, lon: r.lon });
+                        confirmarLugar({ lat: r.lat, lon: r.lon });
                         setMoviendoLugar(false);
                         setResultados([]);
                         setEstadoBusqueda(null);

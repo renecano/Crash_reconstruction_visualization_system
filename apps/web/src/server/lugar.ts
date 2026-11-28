@@ -26,7 +26,7 @@ import {
 import { z } from "zod";
 import { interpretarLugar } from "@/lib/lugar-texto";
 
-import { crucesPorNombre } from "./cruces";
+import { crucesPorNombre, patronDeNombres } from "./cruces";
 
 export const NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
 export const PHOTON_URL = "https://photon.komoot.io/api/";
@@ -71,6 +71,11 @@ export interface LugarOut {
   aviso: string | null;
   fuente: "nominatim" | "photon" | null;
   cache: "hit" | "miss";
+  /**
+   * El mapa no respondió (Overpass o Nominatim, aun con réplicas y reintento): no se sabe si existe. No
+   * es «no encontrado»: el perito reintenta (René, 2026-11-28).
+   */
+  sinRespuesta?: boolean;
 }
 
 export interface LugarCache {
@@ -618,8 +623,6 @@ function aResultado(x: Nominatim): ResultadoLugar {
  * Los nombres con que se busca una vía de un cruce: el narrado, sin los artículos de en medio («de
  * los», «de la») y sin su tipo («Avenida»). OpenStreetMap la puede tener con cualquiera.
  */
-/** m: a lo más esto entre dos vías para tomar su punto más cercano como el cruce aproximado. */
-const CERCA_DEL_CRUCE_M = 150;
 
 export function variantesDeVia(nombre: string): string[] {
   // «paso a desnivel de Avenida Río Churubusco (Circuito Interior)»: la vía, y su otro nombre.
@@ -719,7 +722,11 @@ export async function buscarLugar(
       zona,
       interpretado,
       nom,
-      (cs, caja, centro) => crucesPorNombre(cs, caja, centro, deps.fetcher),
+      // Sin un nombre que se pueda buscar, el cruce no se consulta: no es que el mapa no respondiera.
+      (cs, caja, centro) =>
+        patronDeNombres(cs[0]) && patronDeNombres(cs[1])
+          ? crucesPorNombre(cs, caja, centro, deps.fetcher)
+          : Promise.resolve([]),
       async (lat, lon) => {
         if (consultas++ > 0) await pausa(PAUSA_NOMINATIM_MS);
         return coloniaEn(lat, lon, deps);
@@ -1062,54 +1069,17 @@ async function conNominatim(
         fuente: "nominatim",
       };
   }
-  // Overpass no respondió (`reales` null): se intenta con las geometrías de Nominatim, sin afirmar
-  // que no se cruzan en otro lugar.
-  if (vias && cajaCruce?.boundingbox) {
-    // Con variantes del nombre (revisión de la cadena, René 2026-11-24): «Avenida de los Insurgentes
-    // Sur» es «Avenida Insurgentes Sur» en OpenStreetMap.
-    const geometria = async (v: string) => {
-      for (const n of variantesDeVia(v)) {
-        const r = await nom({
-          q: donde ? `${n}, ${donde}` : n,
-          viewbox: viewbox(cajaCruce.boundingbox!),
-          bounded: "1",
-          polygon_geojson: "1",
-          // Solo vías y lugares: «Paseo de la Reforma» y «Prado Norte» daban paradas de autobús.
-          layer: "address",
-          limit: "10",
-        });
-        if (r.length) return r;
-      }
-      return [];
-    };
-    const a = await geometria(vias[0]);
-    const b = a.length ? await geometria(vias[1]) : [];
-    // Nominatim da a lo más 10 tramos por vía y el del cruce puede no venir: basta el punto donde se
-    // acercan más (a menos de 150 m); La escena encuentra el cruce exacto con las calles del mapa a
-    // 150 m de ahí (revisión de la cadena, 2026-11-24).
-    const c = cruceDeVias(a, b) ?? cruceDeVias(a, b, CERCA_DEL_CRUCE_M);
-    if (c) {
-      const base = aResultado(c.de);
-      return {
-        resultados: [
-          {
-            ...base,
-            nombre: `${vias[0]} y ${vias[1]}`,
-            lat: c.lat,
-            lon: c.lon,
-            precision: "cruce" as const,
-          },
-        ],
-        aviso: `El cruce de ${vias[0]} y ${vias[1]}${donde ? ` en ${donde}` : ""}. OpenStreetMap no respondió para ver si se cruzan en otro lugar: revisa que sea el del hecho.`,
-        fuente: "nominatim",
-      };
-    }
+  // El mapa no respondió, aun con sus réplicas y un reintento (René, 2026-11-28: el mismo caso daba
+  // una vez la esquina y otra una calle recta): no es «no se cruzan». Se dice y no se propone nada; ni
+  // la geometría de Nominatim (el punto donde dos tramos pasan más cerca puede ser cualquier lugar) ni
+  // una calle sola.
+  if (vias && cajaCruce?.boundingbox)
     return {
       resultados: [],
-      aviso: `No pude comprobar el cruce de ${vias[0]} con ${vias[1]}${enDonde}: OpenStreetMap no respondió. Vuelve a buscar en un momento o márcalo tú en el mapa.`,
+      aviso: `No pude comprobar el cruce de ${vias[0]} con ${vias[1]}${enDonde} (el mapa no respondió): reintenta.`,
       fuente: "nominatim",
+      sinRespuesta: true,
     };
-  }
 
   if (cajaMunicipio) {
     const h = await buscarEn(cajaMunicipio, variantes.length, donde);
