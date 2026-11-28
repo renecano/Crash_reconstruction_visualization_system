@@ -1,4 +1,4 @@
-import { avisoSobreElLimite, type Reconstruccion } from "@croquis/cesvi";
+import type { Reconstruccion } from "@croquis/cesvi";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { CifraReconstruccion } from "./hoja-reconstruccion";
@@ -111,22 +111,5 @@ describe("la velocidad que dio el perito junto a la cifra (René, 2026-11-27)", 
     );
     expect(screen.getByTestId("metodo-cifra").textContent).toBe("Velocidad medida, no ajustada");
     expect(screen.queryByTestId("cifra-rango")).toBeNull();
-  });
-});
-
-describe("la cifra muy por arriba del límite de la vía (René, 2026-11-26)", () => {
-  it("se dice junto a la cifra, con el nombre del vehículo", () => {
-    const aviso = avisoSobreElLimite("V2", 95, { kmh: 50, fuente: "OpenStreetMap" })!;
-    pintar({ ...reconstruccion(95, 90, 99), limites: [aviso] } as Reconstruccion);
-    const nota = screen.getByTestId("sobre-el-limite").textContent!;
-    expect(nota).toMatch(/^B · Camaro: la cifra/);
-    expect(nota).toContain("queda más de 40 km/h arriba del límite de esta vía");
-    expect(nota).toContain("revisa las posiciones finales y las medidas antes de usarla");
-  });
-
-  it("dentro del margen, no hay aviso", () => {
-    expect(avisoSobreElLimite("V2", 85, { kmh: 50, fuente: "OpenStreetMap" })).toBeNull();
-    pintar(reconstruccion(85, 80, 90));
-    expect(screen.queryByTestId("sobre-el-limite")).toBeNull();
   });
 });

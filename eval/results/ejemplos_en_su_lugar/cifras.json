@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-11-28T18:06:05.745Z",
+  "fecha": "2026-11-28T03:57:32.114Z",
   "muestras": {
     "samples": 32,
     "mcSamples": 128
@@ -260,22 +260,21 @@
       "velocidades": [
         {
           "vehiculo": "V1",
-          "mejor": 24,
+          "mejor": 23,
           "p10": 19,
-          "p90": 29
+          "p90": 27
         },
         {
           "vehiculo": "V2",
-          "mejor": 58,
-          "p10": 50,
-          "p90": 68
+          "mejor": 50,
+          "p10": 46,
+          "p90": 59
         }
       ],
       "relieve": false,
       "topes": 0,
       "limites": [
-        "Poste de concreto de la línea de distribución eléctrica (impacto 2): la narración no dice dónde está; Croquis lo pone donde quedó el vehículo B, contra su frente, al final de su recorrido (supuesto; muévelo si fue en otro lugar).",
-        "El objeto del impacto 2 (poste de concreto de la línea de distribución eléctrica) va con medidas típicas: dónde está es un supuesto de Croquis, no cómo es (supuesto).",
+        "El objeto del impacto 2 (poste de concreto de la línea de distribución eléctrica) va con medidas típicas: el perito marcó dónde está, no cómo es (supuesto).",
         "V1: la evidencia empuja el rumbo fuera del rango permitido (±20° sobre el que se colocó en el mapa). El mejor ajuste queda en el límite, 47.7°, así que no cabe bien con lo demás: conviene revisar las posiciones y el rumbo de llegada.",
         "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 404 de 579 (69.8 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]

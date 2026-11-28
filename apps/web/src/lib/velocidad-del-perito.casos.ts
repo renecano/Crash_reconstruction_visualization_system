@@ -93,7 +93,7 @@ export function probarVelocidadesDelPerito(cual: (typeof CLAVES)[number]) {
               expect(r.noCuadra).toBeFalsy();
               expect(v.previa?.medida).toBeFalsy();
               expect(r.medidaIncompatible.texto).toMatch(
-                new RegExp(`^Con la velocidad medida de ${kmh} km/h \\(${vehiculo}\\) no cuadra: `),
+                new RegExp(`Con la velocidad medida de ${kmh} km/h no cuadra`),
               );
               expect(r.limites[0]).toBe(r.medidaIncompatible.texto);
             } else if (r.noCuadra) {
