@@ -1699,3 +1699,10 @@ Narración de prueba en la carretera estatal 100 (SON 100), Hermosillo–Bahía 
   - el norte, arriba a la izquierda (lejos del zoom), y la escala con margen.
 
   La prueba visual revisa todo eso en AXA (con y sin calles de OSM), los cinco ejemplos y los casos nuevos. Capturas lado a lado en `docs/cesvi/ronda-4/evidencia/2d-limpio/`; las de AXA, solo en local.
+
+- **2026-11-28 · El 2D ya no tiembla al reproducir** (René, en producción). Había tres causas:
+  - El croquis pericial rehacía todo el SVG (vías, etiquetas, leyenda y el fondo del mapa) y lo reemplazaba en cada cuadro. Ahora se arma una vez, y solo se mueve una capa encima con los vehículos en movimiento, sin redondear (`croquisPericial(...).ahora(t)`).
+  - React aplicaba el instante en una tarea aparte, a veces después de pintar, así que unos cuadros repetían el instante y otros saltaban doble. Ahora el reloj (`requestAnimationFrame`) lo aplica en el mismo cuadro (`flushSync`).
+  - La barra saltaba de centésima en centésima (`step=0.01`); ahora es continua.
+
+  La prueba `e2e/maqueta-suave.spec.ts` (`@flujo`, croquis pericial y maqueta) mide cuadro a cuadro que cada vehículo avanza hacia adelante y parejo, y que la barra avanza lo que pasó de reloj. Antes, la barra se desfasaba hasta 0.0068 s en un cuadro; después, menos de 0.002 s en todos. 2/2 en verde en local.

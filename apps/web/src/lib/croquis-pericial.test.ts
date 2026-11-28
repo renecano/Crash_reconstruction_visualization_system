@@ -68,6 +68,21 @@ describe("el croquis pericial (ronda 4)", () => {
     expect(giroDelCroquis(res, [via(50, "residential"), avenida])).toBeCloseTo(50, 1);
   });
 
+  it("el vehículo en movimiento va aparte del croquis, sin redondear, y no junto al impacto", () => {
+    const c = croquisPericial(res, [via(35)], nombres, { proporcion: 1.6 });
+    // El croquis no cambia con el instante: el movimiento lo dibuja una capa encima.
+    expect(c.svg).not.toContain("data-ahora");
+    expect(c.svg).toContain(`viewBox="${c.viewBox}"`);
+    const ti = tImpacto(res);
+    const t0 = res.vehiculos[0]!.trayectoria.t[0]!;
+    const a = c.ahora(t0 + 0.0001).find((v) => v.id === res.vehiculos[0]!.id)!;
+    const b = c.ahora(t0 + 0.0002).find((v) => v.id === res.vehiculos[0]!.id)!;
+    expect(a.puntos).toHaveLength(4);
+    // Una diezmilésima de segundo ya lo mueve: nada se redondea a pixeles ni a centímetros.
+    expect(b.puntos[0]!.x).not.toBe(a.puntos[0]!.x);
+    expect(c.ahora(ti)).toEqual([]);
+  });
+
   it("cada vehículo en sus tres posiciones (antes, impacto, reposo), con A1…B3 y el impacto", () => {
     const { svg } = croquisPericial(res, [via(35)], nombres, { proporcion: 1.6 });
     // B está detenido: antes del impacto y en el impacto en el mismo lugar, una sola silueta «B1·2».
