@@ -1,4 +1,5 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { ALL_FORMATS, BufferSource, Input } from "mediabunny";
 import { join, resolve } from "node:path";
 import { type Page } from "@playwright/test";
 import { expect, test } from "./base";
@@ -295,7 +296,7 @@ const texto = async (page: Page, testid: string) =>
 
 for (const c of CASOS) {
   test(`perito en producción: ${c.clave}`, async ({ page }) => {
-    test.setTimeout(900_000);
+    test.setTimeout(2_400_000);
     const dir = join(SALIDA, c.clave);
     mkdirSync(dir, { recursive: true });
     const foto = (n: string) =>
@@ -305,13 +306,20 @@ for (const c of CASOS) {
     page.on("pageerror", (e) => errores.push(String(e)));
     const guardar = () =>
       writeFileSync(join(dir, "notas.json"), JSON.stringify({ ...notas, errores }, null, 2) + "\n");
-    // La lectura con IA, una sola vez por caso: se graba y las repeticiones la reusan (tope de 15).
+    // Solo lecturas grabadas (René, 2026-11-28: ya van 14 de 15 lecturas con IA). Sin la grabada, la
+    // prueba falla en vez de llamar a la IA; `CROQUIS_PERITO_LEER_CON_IA=1` permite grabar una nueva.
     const grabada = join(SALIDA, "lecturas", `${c.clave}.json`);
+    const puedeLeer = process.env.CROQUIS_PERITO_LEER_CON_IA === "1";
+    expect(
+      existsSync(grabada) || puedeLeer,
+      `Sin la lectura grabada de ${c.clave} (${grabada}): no se llama a la IA.`,
+    ).toBe(true);
     await page.route("**/api/cesvi/escena", async (r) => {
       if (existsSync(grabada)) {
         notas.lectura = "grabada";
         return r.fulfill({ json: JSON.parse(readFileSync(grabada, "utf8")) });
       }
+      if (!puedeLeer) return r.abort();
       const resp = await r.fetch();
       const cuerpo = await resp.text();
       if (resp.ok()) {
@@ -372,6 +380,51 @@ for (const c of CASOS) {
         await page.waitForTimeout(3500);
         await foto(`4-3d-${modo}`);
       }
+      // El video (René, 2026-11-28: revisarlo en cada caso). Antes del «¿Y si…?»: con una hipótesis a
+      // la vista la app no ofrece el video. Se graba el que ofrece por omisión y se mide el MP4.
+      const grabar = page.getByTestId("descargar-video");
+      if (await grabar.isVisible().catch(() => false)) {
+        await grabar.click();
+        await page.waitForTimeout(1200);
+        notas.video = (
+          await page
+            .getByRole("dialog")
+            .first()
+            .innerText()
+            .catch(() => "")
+        ).replace(/\s+/g, " ");
+        await foto("6-video");
+        if (process.env.CROQUIS_PERITO_VIDEO) {
+          const t0 = Date.now();
+          // Si la app avisa que tardará («Tarda ~13 min en esta computadora. ¿Seguir grabando?»), sí.
+          const seguir = page.getByTestId("video-seguir");
+          const [descarga] = await Promise.all([
+            page.waitForEvent("download", { timeout: 1_500_000 }),
+            page
+              .getByTestId("video-grabar")
+              .click()
+              .then(() => seguir.click({ timeout: 60_000 }).catch(() => undefined)),
+          ]);
+          const destino = join(dir, `video-${c.clave}.mp4`);
+          copyFileSync(await descarga.path(), destino);
+          const bytes = readFileSync(destino);
+          const entrada = new Input({
+            formats: ALL_FORMATS,
+            source: new BufferSource(
+              bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.length),
+            ),
+          });
+          const pista = (await entrada.getPrimaryVideoTrack())!;
+          notas.video_mp4 = {
+            segundos_grabando: Math.round((Date.now() - t0) / 1000),
+            mb: Math.round((bytes.length / 1e6) * 10) / 10,
+            codec: await pista.getCodec(),
+            ancho: pista.displayWidth,
+            alto: pista.displayHeight,
+            duracion_s: Math.round((await entrada.computeDuration()) * 100) / 100,
+          };
+        } else await page.keyboard.press("Escape");
+      } else notas.sin_video = true;
       // «¿Y si…?»: 20 km/h más que lo calculado para el primer vehículo.
       const ysi = page.getByTestId("abrir-ysi").first();
       if (await ysi.isVisible().catch(() => false)) {
@@ -389,34 +442,6 @@ for (const c of CASOS) {
           await foto("5-ysi");
         }
       } else notas.sin_ysi = true;
-      // El diálogo del video (sin grabarlo): las opciones y la duración estimada.
-      const grabar = page.getByTestId("descargar-video");
-      if (await grabar.isVisible().catch(() => false)) {
-        await grabar.click();
-        await page.waitForTimeout(1500);
-        notas.video = (
-          await page
-            .getByRole("dialog")
-            .first()
-            .innerText()
-            .catch(() => "")
-        ).replace(/\s+/g, " ");
-        // «Desde el inicio», si existe: la duración estimada y el «acelerado ×N».
-        const desde = page.getByTestId("video-desde").locator("input").last();
-        if (await desde.isVisible().catch(() => false)) {
-          await desde.check().catch(() => undefined);
-          await page.waitForTimeout(800);
-          notas.video_desde_inicio = (
-            await page
-              .getByRole("dialog")
-              .first()
-              .innerText()
-              .catch(() => "")
-          ).replace(/\s+/g, " ");
-        }
-        await foto("6-video");
-        await page.keyboard.press("Escape");
-      } else notas.sin_video = true;
       // El dictamen.
       await irAPaso(page, 9);
       await page.waitForTimeout(15_000);
