@@ -121,6 +121,7 @@ test("@flujo /cesvi: corregir después — el poste golpeado en el recorrido del
   await irAPaso(page, 4);
   await expect(cifra).toBeVisible();
   const conPosteMovido = await cifra.innerText();
+  console.log(`[calibración] antes: ${antes} · con el poste movido: ${conPosteMovido}`);
   expect(conPosteMovido).not.toEqual(antes);
   // 95 km/h: más de 40 km/h arriba del límite de la vía, junto a la cifra (René, 2026-11-26).
   await expect(page.getByTestId("sobre-el-limite")).toContainText(
