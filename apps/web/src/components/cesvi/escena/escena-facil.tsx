@@ -67,8 +67,6 @@ import {
   ajustarACalle,
   avisarSinCalles,
   callesDe,
-  cruceNarrado,
-  carreteraNarrada,
   callesEn,
   choqueLejosDeCalles,
   coloresVehiculos,
@@ -109,8 +107,13 @@ import {
 } from "@/lib/escena-facil";
 import { siluetaClase } from "@/lib/colocar";
 import { pedirRuta } from "@/lib/trayecto-previo";
-import { interpretarLugar, zonaNarrada } from "@/lib/lugar-texto";
+import { interpretarLugar } from "@/lib/lugar-texto";
 import { lugarParaProponer, textoDelHallazgo } from "@/lib/lugar-confirmado";
+import {
+  type ComoSeEncontro,
+  type ResultadoBuscador,
+  textoEncontrado,
+} from "@/lib/buscadores-lugar";
 
 /** El aviso cuando no se encontró el lugar narrado: nunca un punto por omisión (#388). */
 const NO_ENCONTRADO = "No encontré el lugar narrado: márcalo tú";
@@ -577,6 +580,8 @@ export function EscenaFacil({
     nombre: string;
     resultados: OpcionLugar[];
     aviso: string | null;
+    como?: ComoSeEncontro;
+    seguridad?: "alta" | "media" | "baja";
   } | null>(null);
   const yaBuscado = useRef(false);
   // Vivo mientras la escena está montada (en desarrollo React monta los efectos dos veces: la búsqueda
@@ -590,88 +595,68 @@ export function EscenaFacil({
   }, []);
   useEffect(() => {
     if (lugar || yaBuscado.current || estado.puntos[1]) return;
-    const cruce = narracion ? cruceNarrado(narracion) : null;
-    const zonaDelCruce = zonaNarrada(descripcionLugar) ?? zonaNarrada(narracion);
-    // Ronda 4 (René): solo el lugar va al buscador, nunca la frase completa con su «rumbo a…».
-    // Con un cruce narrado se busca el cruce, con la colonia o la zona narrada para ordenar si hay
-    // varios, y nada más (René, 2026-11-27, #388): una de sus calles sola, o la descripción sin su
-    // «hacia el cruce con…», daba un punto de la calle a kilómetros del cruce. Si no aparece, se dice.
-    const consultas = (
-      cruce
-        ? [`${cruce.calles[0]} y ${cruce.calles[1]}${zonaDelCruce ? `, ${zonaDelCruce}` : ""}`]
-        : [
-            separarLugarYSentido(descripcionLugar).lugar,
-            narracion ? carreteraNarrada(narracion) : null,
-          ]
-    ).filter((x): x is string => Boolean(x?.trim()));
-    if (!consultas.length) return;
+    // Los buscadores en orden, en el servidor (René, 2026-11-27, #388): cruce → km → referencia →
+    // calle. Lo que encuentra se muestra con cómo y qué tan seguro, y el perito lo confirma; si nada,
+    // «No encontré el lugar narrado: márcalo tú». Nunca un punto por omisión.
+    if (!narracion?.trim()) return;
     yaBuscado.current = true;
     const buscarEn = async () => {
       setBuscandoNarrado(true);
       let hallado = false;
-      let aviso: string | null = null;
-      for (const q of consultas) {
-        const params = new URLSearchParams({ q });
-        if (zona.municipio) params.set("municipio", zona.municipio);
-        if (zona.estado) params.set("estado", zona.estado);
-        try {
-          const r = await fetch(`/api/lugar?${params.toString()}`);
-          const d = (await r.json().catch(() => null)) as {
-            resultados?: OpcionLugar[];
-            aviso?: string | null;
-          } | null;
-          aviso ??= d?.aviso ?? null;
-          // B5: sin el municipio ni el estado del caso, la primera opción puede ser de otro estado
-          // (San Luis Potosí caía en la CDMX): se muestran las opciones para elegir.
-          if (r.ok && d?.resultados?.length && !zona.municipio && !zona.estado) {
-            if (montada.current) {
-              setResultados(d.resultados);
-              setEstadoBusqueda(
-                "La narración no dice el municipio ni el estado: elige el lugar del caso.",
-              );
+      let explicacion: string | null = null;
+      try {
+        const r = await fetch("/api/lugar/narrado", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            narracion,
+            lugar: descripcionLugar ?? null,
+            ...(zona.municipio ? { municipio: zona.municipio } : {}),
+            ...(zona.estado ? { estado: zona.estado } : {}),
+          }),
+        });
+        const d = (await r.json().catch(() => null)) as { resultado?: ResultadoBuscador } | null;
+        const res = d?.resultado;
+        if (r.ok && res?.encontrado) {
+          hallado = true;
+          const precision = res.como === "cruce" ? ("cruce" as const) : ("calle" as const);
+          const opcion = (o: {
+            punto: { lat: number; lon: number };
+            que: string;
+          }): OpcionLugar => ({
+            nombre: o.que,
+            lat: o.punto.lat,
+            lon: o.punto.lon,
+            precision,
+            ...(zona.municipio ? { municipio: zona.municipio } : {}),
+            ...(zona.estado ? { estado: zona.estado } : {}),
+          });
+          if (montada.current) {
+            if ((res.opciones?.length ?? 0) > 1) {
+              // Varios lugares posibles (los cruces de las mismas dos calles): el perito elige.
+              setResultados(res.opciones!.map(opcion));
+              setEstadoBusqueda(res.explicacion);
+            } else {
+              setLugarNarrado(res.punto);
+              setBusquedaNarrada({
+                nombre: res.que,
+                resultados: [opcion({ punto: res.punto, que: res.que })],
+                aviso: res.explicacion,
+                como: res.como,
+                seguridad: res.seguridad,
+              });
+              onBuscarCalles(res.punto);
             }
-            hallado = true;
-            break;
           }
-          // Las dos calles se cruzan en varios lugares (René, 2026-11-27, #388): el perito elige.
-          const cruces = (d?.resultados ?? []).filter((x) => x.precision === "cruce");
-          if (r.ok && cruces.length > 1) {
-            if (montada.current) {
-              setResultados(cruces);
-              setEstadoBusqueda(
-                d?.aviso ?? "Las calles se cruzan en varios lugares: elige el del hecho.",
-              );
-            }
-            hallado = true;
-            break;
-          }
-          const p = r.ok ? d?.resultados?.[0] : undefined;
-          // Solo una zona (la colonia, el municipio) no es el lugar del choque (revisión de la cadena,
-          // René 2026-11-24): se prueba la consulta siguiente y, si nada es preciso, se pregunta.
-          if (p?.precision === "zona") {
-            aviso ??= `Solo se encontró la zona («${p.nombre}»), no el lugar del choque. Escribe las calles del cruce, pega las coordenadas o un link de Google Maps, o toca el lugar en el mapa.`;
-            continue;
-          }
-          if (p && montada.current) {
-            setLugarNarrado({ lat: p.lat, lon: p.lon });
-            setBusquedaNarrada({
-              nombre: p.nombre,
-              resultados: d?.resultados ?? [],
-              aviso: d?.aviso ?? null,
-            });
-            onBuscarCalles({ lat: p.lat, lon: p.lon });
-            hallado = true;
-            break;
-          }
-        } catch {
-          break;
-        }
+        } else explicacion = res?.explicacion ?? null;
+      } catch {
+        // Sin red: se pregunta.
       }
       if (montada.current) {
         setBuscandoNarrado(false);
         if (!hallado) {
           setNarradoSinLugar(
-            `${NO_ENCONTRADO}.${aviso ? ` ${aviso}` : ""} Mueve el mapa hasta el lugar y oprime «Aquí fue», escribe las calles del cruce o pega las coordenadas o un link de Google Maps.`,
+            `${explicacion ?? `${NO_ENCONTRADO}.`} Mueve el mapa hasta el lugar y oprime «Aquí fue», escribe las calles del cruce o pega las coordenadas o un link de Google Maps.`,
           );
           // El mapa, en el municipio del caso: para que el perito lo busque desde ahí.
           const donde = [zona.municipio, zona.estado].filter(Boolean).join(", ");
@@ -2169,6 +2154,7 @@ export function EscenaFacil({
               className="t-nota text-texto"
               role="status"
               data-seguridad={
+                busquedaNarrada.seguridad ??
                 textoDelHallazgo({
                   nombre: busquedaNarrada.nombre,
                   precision: busquedaNarrada.resultados[0]?.precision,
@@ -2176,13 +2162,20 @@ export function EscenaFacil({
                 }).seguridad
               }
             >
-              {
-                textoDelHallazgo({
-                  nombre: busquedaNarrada.nombre,
-                  precision: busquedaNarrada.resultados[0]?.precision,
-                  aviso: busquedaNarrada.aviso,
-                }).texto
-              }
+              {busquedaNarrada.como && busquedaNarrada.seguridad
+                ? textoEncontrado({
+                    encontrado: true,
+                    punto: busquedaNarrada.resultados[0] ?? { lat: 0, lon: 0 },
+                    como: busquedaNarrada.como,
+                    seguridad: busquedaNarrada.seguridad,
+                    que: busquedaNarrada.nombre,
+                    explicacion: busquedaNarrada.aviso ?? "",
+                  })
+                : textoDelHallazgo({
+                    nombre: busquedaNarrada.nombre,
+                    precision: busquedaNarrada.resultados[0]?.precision,
+                    aviso: busquedaNarrada.aviso,
+                  }).texto}
               {busquedaNarrada.aviso ? `. ${busquedaNarrada.aviso}` : ""}
             </p>
             {lugarConfirmado ? null : moviendoLugar ? (
