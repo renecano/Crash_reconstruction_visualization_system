@@ -1,0 +1,75 @@
+# Paso: ensayo
+# Comando: powershell -NoProfile -ExecutionPolicy Bypass -File tools/demo-local/demo-local.ps1 -Despues ensayo -Salida eval/results/t12/ensayo.json
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-27 18:02:30
+
+
+== 1. Herramientas
+Node v26.13.1 y pnpm 12.11.2.
+Hay internet.
+
+== 2. Dependencias
+Scope: all 10 workspace projects
+✓ Lockfile passes supply-chain policies (verified 1d ago)
+Lockfile is up to date, resolution step is skipped
+Done in 76ms using pnpm v12.11.2
+
+== 3. El visor de Unity, desde esta computadora
+Visor 9b485d0574678674 servido desde el sitio: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\apps\web\public\visor-unity\local
+
+== 4. La app en modo local
+Ya está compilada para esta versión (b856da7b).
+
+== 5. La lectura con IA
+No hay llave de Claude en .env.local: la lectura con IA no estará. Todo lo demás funciona (AXA, los casos de ejemplo con su lectura guardada, la reconstrucción, el 3D y el dictamen).
+
+== 6. Croquis en http://localhost:3000
+Necesitan internet: la lectura con IA de una narración nueva, los mosaicos del mapa (sin red, el mapa sale en blanco pero se puede colocar la escena) y buscar un lugar por nombre.
+Sin internet funcionan completos: el caso de AXA y los cinco casos de ejemplo, la reconstrucción, el 3D de Unity y el dictamen.
+
+Running 1 test using 1 worker
+
+[1/1] [chromium] › e2e\ensayo-automatico.spec.ts:102:5 › ensayo automático de la demo: AXA de punta a punta y los ejemplos hasta su cifra
+[chromium] › e2e\ensayo-automatico.spec.ts:102:5 › ensayo automático de la demo: AXA de punta a punta y los ejemplos hasta su cifra
+
+# Ensayo automático de la demo
+
+http://localhost:3000 · 2026-11-28T00:04:31.846Z · 25 de 25 bien
+
+| Caso | Pantalla | ¿Bien? | Tiempo (s) | Cifra | Índice | Nota | Captura |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| axa | casos | bien | 0.2 |  |  |  | 01-axa-casos.jpg |
+| axa | caso | bien | 0.5 |  |  |  | 02-axa-caso.jpg |
+| axa | la-escena | bien | 0.3 |  |  |  | 03-axa-la-escena.jpg |
+| axa | reconstruccion | bien | 26.6 | 57 (55–79) | 57 (55–79) | coincide con el índice | 04-axa-reconstruccion.jpg |
+| axa | 3d | bien | 8.8 |  |  | Deformación medida por CESVI: 96, 86, 52, 20 cm. | 05-axa-3d.jpg |
+| axa | 3d-camara-lenta | bien | 2.6 |  |  | ×0.25 elegida y reproduciendo | 06-axa-3d-camara-lenta.jpg |
+| axa | ysi-otra-velocidad | bien | 5.3 |  |  | 35 km/h: Hipótesis del perito: la cifra reconstruida no cambia. En el mapa y en el 3D, la hipótesis va encima de la reconstrucción. | 07-axa-ysi-otra-velocidad.jpg |
+| axa | versiones | bien | 3.5 |  |  | 1 hipótesis «¿Y si…?» en la lista | 08-axa-versiones.jpg |
+| axa | analisis-danos | bien | 0.1 |  |  |  | 09-axa-analisis-danos.jpg |
+| axa | analisis-numeros | bien | 0.1 |  |  |  | 10-axa-analisis-numeros.jpg |
+| axa | contra-cesvi | bien | 0.1 |  |  | Acto 6 de 7 · Contra CESVI Contra el reporte de CESVI 3 coinciden 0 difieren 1 sin dato Reporte de CESVI · B · velocidad por deformación 63.15 km/h Método de CE | 11-axa-contra-cesvi.jpg |
+| axa | dictamen | bien | 0.1 |  |  |  | 12-axa-dictamen.jpg |
+| axa | presentar | bien | 3.1 |  |  | La escena | 13-axa-presentar.jpg |
+| crucero-noche | lectura | bien | 1.7 |  |  |  | 14-crucero-noche-lectura.jpg |
+| crucero-noche | la-escena | bien | 0.9 |  |  |  | 15-crucero-noche-la-escena.jpg |
+| crucero-noche | reconstruccion | bien | 4.1 | 20 (1–27) | 20 (1–27) | coincide con el índice | 16-crucero-noche-reconstruccion.jpg |
+| alcance-deformacion | lectura | bien | 1.7 |  |  |  | 17-alcance-deformacion-lectura.jpg |
+| alcance-deformacion | la-escena | bien | 3.2 |  |  |  | 18-alcance-deformacion-la-escena.jpg |
+| alcance-deformacion | reconstruccion | bien | 6.1 | 54 (44–54) | 54 (44–54) | coincide con el índice | 19-alcance-deformacion-reconstruccion.jpg |
+| carambola-lluvia | lectura | bien | 1.7 |  |  |  | 20-carambola-lluvia-lectura.jpg |
+| carambola-lluvia | la-escena | bien | 2.6 |  |  |  | 21-carambola-lluvia-la-escena.jpg |
+| carambola-lluvia | reconstruccion | bien | 26.1 | 25 (20–32) | 25 (20–32) | coincide con el índice | 22-carambola-lluvia-reconstruccion.jpg |
+| reversa-pendiente | lectura | bien | 1.7 |  |  |  | 23-reversa-pendiente-lectura.jpg |
+| reversa-pendiente | la-escena | bien | 3.9 |  |  |  | 24-reversa-pendiente-la-escena.jpg |
+| reversa-pendiente | reconstruccion | bien | 6.6 | 20 (17–26) | 20 (17–26) | coincide con el índice | 25-reversa-pendiente-reconstruccion.jpg |
+
+Sin errores de la página.
+
+Capturas y tabla en C:\Users\MrKan\AppData\Local\croquis-demo-local\ensayo-20261127-1802
+
+  1 passed (2.0m)
+Ensayo (capturas con AXA, fuera del repo): C:\Users\MrKan\AppData\Local\croquis-demo-local\ensayo-20261127-1802
+Tarjeta que usó Chrome: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis\eval\results\t12\ensayo.json.gpu.json
+
+# Fin: 2026-11-27 18:04:32 · ok · 2 min
