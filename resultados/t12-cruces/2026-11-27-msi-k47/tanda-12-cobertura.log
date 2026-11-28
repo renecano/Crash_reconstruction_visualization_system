@@ -1,0 +1,35 @@
+# Paso: cobertura
+# Comando: pnpm --filter @croquis/cesvi exec tsx ../../eval/t3_cobertura.mts --casos 200 --salida eval/results/t12/t3_cobertura.json
+# Carpeta: C:\Users\MrKan\Documents\Proyecto Cesvi\Croquis
+# Inicio: 2026-11-27 18:09:20
+
+alcance: 10 de 200 casos (23 s)
+alcance: 20 de 200 casos (44 s)
+alcance: 30 de 200 casos (66 s)
+alcance: 40 de 200 casos (91 s)
+alcance: 50 de 200 casos (120 s)
+alcance: 60 de 200 casos (151 s)
+alcance: 70 de 200 casos (177 s)
+alcance: 80 de 200 casos (201 s)
+alcance: 90 de 200 casos (226 s)
+alcance: 100 de 200 casos (255 s)
+alcance: 110 de 200 casos (277 s)
+alcance: 120 de 200 casos (303 s)
+alcance: 130 de 200 casos (332 s)
+alcance: 140 de 200 casos (358 s)
+alcance: 150 de 200 casos (385 s)
+alcance: 160 de 200 casos (409 s)
+alcance: 170 de 200 casos (437 s)
+alcance: 180 de 200 casos (464 s)
+alcance: 190 de 200 casos (494 s)
+alcance: 200 de 200 casos (523 s)
+lateral_interseccion: 10 de 200 casos (589 s)
+lateral_interseccion: 20 de 200 casos (648 s)
+lateral_interseccion: 30 de 200 casos (714 s)
+lateral_interseccion: 40 de 200 casos (3482 s)
+lateral_interseccion: 50 de 200 casos (3533 s)
+lateral_interseccion: 60 de 200 casos (3587 s)
+
+# detenido por pasar de 60 min
+
+# Fin: 2026-11-27 19:09:44 · detenido por pasar de 60 min · 60.4 min
