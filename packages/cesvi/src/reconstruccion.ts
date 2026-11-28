@@ -194,13 +194,10 @@ const ATRAVESADOS = new Set(["muro", "barda", "barrera", "guarnicion"]);
 /** Lo que el perito coloca va como declarado en la escena v1. */
 const DEL_PERITO = { fuente: "usuario", confianza: 0.9 } as const;
 /**
- * Qué tan cerca del punto de un choque intermedio pasa el centro del vehículo (m): medio vehículo más
- * medio objeto y una holgura, es decir, que lo toca. Era 2 m fijos (René, 2026-11-28): un Sentra que
- * queda con el frente contra el poste tiene su centro a 2.5 m de él, y el caso no cuadraba.
+ * Qué tan cerca del punto de un choque intermedio pasa el centro del vehículo (m): medio vehículo.
+ * Es la precisión del punto de paso que lleva a la inversión hasta ese lugar.
  */
-const HOLGURA_CHOQUE_M = 0.5;
-const precisionDelChoque = (v: Expediente["vehiculos"][number]) =>
-  Math.round((medidasDe(v).largo / 2 + HOLGURA_CHOQUE_M) * 100) / 100;
+const PRECISION_CHOQUE_M = 2;
 /** Sin posición inicial del perito, el vehículo empieza 12 m antes del impacto en su rumbo. */
 const ANTES_DEL_IMPACTO_M = 12;
 /** m: lo que avanza derecho después de la vuelta, antes del choque, si no hay calles guardadas. */
@@ -1059,7 +1056,7 @@ export function especDeExpediente(e0: Expediente, specId = "caso-nuevo"): Escena
           id: `pp-choque-${imp.orden}`,
           orden: previos.length + 1,
           posicion: pos,
-          precision_m: precisionDelChoque(vehiculos[orden.indexOf(par[0]!)]!),
+          precision_m: PRECISION_CHOQUE_M,
           nota: colocadoPorCroquis
             ? "Lugar del choque intermedio donde quedó el vehículo (supuesto de Croquis)."
             : "Lugar del choque intermedio que marcó el perito.",

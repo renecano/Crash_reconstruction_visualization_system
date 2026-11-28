@@ -60,7 +60,7 @@ describe("todo objeto narrado aparece solo, en los cinco ejemplos", () => {
     expect(poste!.supuesto).toMatch(
       /^Poste de concreto .*donde quedó el vehículo B, contra su frente/,
     );
-    // A medio Sentra más 20 cm de su reposo.
+    // Medio Sentra menos el hundimiento supuesto (0.6 m) delante de su reposo, en la línea de su recorrido.
     const final = e
       .versiones!.find((v) => v.tipo === "evidencia")!
       .posiciones!.find((p) => p.vehiculo === "V2" && p.fase === "final")!;
@@ -68,8 +68,8 @@ describe("todo objeto narrado aparece solo, en los cinco ejemplos", () => {
       [final.punto.lon, final.punto.lat],
       [poste!.punto.lon, poste!.punto.lat],
     );
-    expect(d).toBeGreaterThan(2);
-    expect(d).toBeLessThan(3);
+    expect(d).toBeGreaterThan(1.3);
+    expect(d).toBeLessThan(2);
     // Marcado por el perito, el lugar es suyo: ya no es supuesto.
     const movido = {
       ...e,
@@ -89,4 +89,36 @@ describe("todo objeto narrado aparece solo, en los cinco ejemplos", () => {
       expect.objectContaining({ id: "obj-choque-2", tipo: "poste" }),
     );
   });
+});
+
+describe("el poste que coloca Croquis da una cifra estable (René, 2026-11-28)", () => {
+  it(
+    "unos centímetros del reposo del Sentra no cambian la cifra ni la dejan sin cuadrar",
+    { timeout: 600_000 },
+    () => {
+      // Con el poste justo en la defensa, 4 cm daban 49, 85, 125 km/h o «no cuadra».
+      const e = sinObjetosDelPerito("poste-terraceria");
+      const fin = e
+        .versiones!.find((v) => v.tipo === "evidencia")!
+        .posiciones!.find((p) => p.vehiculo === "V2" && p.fase === "final")!;
+      const grado = (cm: number) => cm / 100 / 111_320;
+      const cifras = [
+        [0, 0],
+        [4, 0],
+        [0, -4],
+        [11, 11],
+      ].map(([norte, este]) => {
+        const x = cesvi.conPosicion(e, {
+          vehiculo: "V2",
+          fase: "final",
+          punto: { lat: fin.punto.lat + grado(norte!), lon: fin.punto.lon + grado(este!) * 1.057 },
+          rumbo: fin.rumbo,
+        });
+        const r = cesvi.reconstruirExpediente(x, "caso-nuevo", { samples: 32, mcSamples: 32 });
+        expect(r.noCuadra, JSON.stringify(r.noCuadra?.motivos)).toBeFalsy();
+        return r.velocidades.find((v) => v.vehiculo === "V2")!.previa!.mejor;
+      });
+      expect(Math.max(...cifras) - Math.min(...cifras)).toBeLessThan(5);
+    },
+  );
 });

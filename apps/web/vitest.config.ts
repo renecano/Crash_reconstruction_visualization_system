@@ -14,6 +14,7 @@ export const PESADAS = [
   "src/lib/carambola-detenido.test.ts",
   "src/lib/velocidad-del-perito.*.test.ts",
   "src/lib/visor-unity/deformacion-medida.test.ts",
+  "src/lib/objetos-narrados.test.ts",
 ];
 const cuales = process.env.CROQUIS_PRUEBAS;
 

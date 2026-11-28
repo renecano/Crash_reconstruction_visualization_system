@@ -8,12 +8,19 @@
  * lugar es suyo y esto ya no lo toca. Sin el reposo del vehículo todavía, no se coloca.
  */
 import type { Expediente } from "./corpus";
-import { avanzar } from "./geo";
+import { avanzar, enMetros } from "./geo";
+
+const ll = (p: { lat: number; lon: number }): [number, number] => [p.lon, p.lat];
 import { OBJETO_PERSONA } from "./personas";
 import { medidasDe } from "./poses-impacto";
 
-/** m: del borde del vehículo al centro del objeto (medio poste o medio tronco). */
-const AL_CENTRO_DEL_OBJETO_M = 0.2;
+/**
+ * m: cuánto entra el objeto en la cara del vehículo, que se impactó contra él y quedó en contacto
+ * (supuesto). Con el objeto justo en la defensa, el vehículo lo tocaba o no según unos centímetros de
+ * su reposo y la cifra saltaba de 49 a 125 km/h (René, 2026-11-28); con el hundimiento, el golpe
+ * ocurre y la cifra es estable.
+ */
+export const HUNDIMIENTO_SUPUESTO_M = 0.6;
 
 const GIRO_CARA: Record<string, number> = {
   frontal: 0,
@@ -53,18 +60,22 @@ export function conObjetosNarrados(e: Expediente): {
     const cara = imp.zonas?.find((z) => z.vehiculo === vehiculo)?.zona.cara ?? "frontal";
     const { largo, ancho } = medidasDe(v);
     const lateral = cara === "lateral_izquierdo" || cara === "lateral_derecho";
-    const distancia = (lateral ? ancho : largo) / 2 + AL_CENTRO_DEL_OBJETO_M;
-    const [lon, lat] = avanzar(
-      [final.punto.lon, final.punto.lat],
-      (final.rumbo ?? 0) + (GIRO_CARA[cara] ?? 0),
-      distancia,
-    );
+    const distancia = Math.max(0.3, (lateral ? ancho : largo) / 2 - HUNDIMIENTO_SUPUESTO_M);
+    // Llega al objeto por su recorrido, del choque anterior a donde quedó: el frente va hacia allá (no
+    // hacia su rumbo final, que puede girar al detenerse). Sin choque anterior, su rumbo final.
+    const antes = posiciones.find((p) => p.vehiculo === vehiculo && p.fase === "impacto");
+    const recorrido = antes ? enMetros(ll(antes.punto), ll(final.punto)) : null;
+    const haciaDonde =
+      cara === "frontal" && recorrido && Math.hypot(recorrido.este, recorrido.norte) > 1
+        ? (Math.atan2(recorrido.este, recorrido.norte) * 180) / Math.PI
+        : (final.rumbo ?? 0) + (GIRO_CARA[cara] ?? 0);
+    const [lon, lat] = avanzar(ll(final.punto), haciaDonde, distancia);
     const nombre = `${imp.objeto_fijo[0]!.toUpperCase()}${imp.objeto_fijo.slice(1)}`;
     colocados.push({
       orden: imp.orden,
       vehiculo,
       objeto: imp.objeto_fijo,
-      texto: `${nombre} (impacto ${imp.orden}): la narración no dice dónde está; Croquis lo pone donde quedó el vehículo ${letra(vehiculo)}, contra su ${CARA_TEXTO[cara] ?? "frente"}, al final de su recorrido (supuesto; muévelo si fue en otro lugar).`,
+      texto: `${nombre} (impacto ${imp.orden}): la narración no dice dónde está; Croquis lo pone donde quedó el vehículo ${letra(vehiculo)}, contra su ${CARA_TEXTO[cara] ?? "frente"}, al final de su recorrido, con un hundimiento de ${HUNDIMIENTO_SUPUESTO_M} m (supuestos; muévelo si fue en otro lugar).`,
     });
     return { ...imp, punto: { lat, lon } };
   });
