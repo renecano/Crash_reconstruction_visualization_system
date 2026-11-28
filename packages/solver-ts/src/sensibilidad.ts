@@ -7,6 +7,7 @@
  *
  * Coordenadas de la escena: x al este, y al norte (m); rumbos desde +x, antihorario (grados).
  */
+import { cos, sin } from "./dmath";
 import { evidenceFromSpec, fitEvidence } from "./inversion";
 
 type Json = Record<string, unknown>;
@@ -62,11 +63,11 @@ export function sensibilidadDeReposos(
       const s = structuredClone(spec);
       const sv = (s.vehiculos as Json[]).find((x) => x.id === v.id)!;
       const f = sv.posicion_final as Json;
-      f.x = Number(fin.x) + signo * metros * Math.cos(r);
-      f.y = Number(fin.y) + signo * metros * Math.sin(r);
+      f.x = Number(fin.x) + signo * metros * cos(r);
+      f.y = Number(fin.y) + signo * metros * sin(r);
       try {
-        const ev = evidenceFromSpec(s as never);
-        const fit = fitEvidence(s as never, ev, { start: new Map(valores), free: libres });
+        const ev = evidenceFromSpec(s);
+        const fit = fitEvidence(s, ev, { start: new Map(valores), free: libres });
         return fit.values.get(nombre) ?? null;
       } catch {
         return null;

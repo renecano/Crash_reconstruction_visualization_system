@@ -9,7 +9,9 @@ export default defineConfig({
   // Un solo reintento en CI: con dos, un flujo que se cae (3 × 150 s) pasaba los 10 min del trabajo,
   // lo cancelaba y no quedaba el reporte con la traza del reintento.
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : 2,
+  // Dos en CI (René, 2026-11-27): con uno, las 27 pruebas de los flujos tardaban 8 min más la
+  // instalación y el job llegaba a su tope de 10 min; se cancelaba a veces, sin ninguna falla.
+  workers: 2,
   // En CI, también una línea por prueba (René, 2026-11-27): si el job llega a su tope y se cancela, el
   // registro dice cuál se quedó colgada; «github» solo escribe al final.
   reporter: process.env.CI ? [["github"], ["line"], ["html", { open: "never" }]] : "list",
