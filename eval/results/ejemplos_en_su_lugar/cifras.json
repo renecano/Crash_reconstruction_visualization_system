@@ -1,5 +1,5 @@
 {
-  "fecha": "2026-11-27T17:22:14.986Z",
+  "fecha": "2026-11-28T03:35:39.878Z",
   "muestras": {
     "samples": 32,
     "mcSamples": 128
@@ -46,7 +46,7 @@
       "limites": [
         "El reporte no da las zonas del impacto de V2 y V1: se toma la cara de su primer daño.",
         "V2: el reporte trae medidas de deformación en 2 daños; se usa la de la cara del impacto (frontal).",
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 404 de 579 (69.8 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     },
     {
@@ -88,7 +88,7 @@
       "relieve": false,
       "topes": 0,
       "limites": [
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 404 de 579 (69.8 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     },
     {
@@ -130,7 +130,7 @@
       "relieve": false,
       "topes": 0,
       "limites": [
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 404 de 579 (69.8 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     },
     {
@@ -166,7 +166,7 @@
       "velocidades": [
         {
           "vehiculo": "V1",
-          "mejor": 25,
+          "mejor": 24,
           "p10": 20,
           "p90": 32
         },
@@ -188,7 +188,7 @@
       "limites": [
         "La trayectoria sigue el trazo real de Avenida Valle Alto, de las calles guardadas con el caso: gira 18° cerca del choque.",
         "V3: solo está en un impacto posterior y empieza detenido en la posición de impacto que colocó el perito (supuesto).",
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 404 de 579 (69.8 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     },
     {
@@ -232,7 +232,7 @@
       "limites": [
         "V1 va en reversa y la narración no dice a qué velocidad: se suponen 5.68 km/h (de 3.06 a 9.07), lo que se mide en maniobras de reversa en uso real (NHTSA, DOT HS 811 024).",
         "Los topes sin medir llevan las medidas de la NOM-034-SCT2/SEDATU-2022, tabla 38: si mediste el tope, corrígelas.",
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 404 de 579 (69.8 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     },
     {
@@ -276,7 +276,7 @@
       "limites": [
         "El objeto del impacto 2 (poste de concreto de la línea de distribución eléctrica) va con medidas típicas: el perito marcó dónde está, no cómo es (supuesto).",
         "V1: la evidencia empuja el rumbo fuera del rango permitido (±20° sobre el que se colocó en el mapa). El mejor ajuste queda en el límite, 47.7°, así que no cabe bien con lo demás: conviene revisar las posiciones y el rumbo de llegada.",
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 404 de 579 (69.8 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     },
     {
@@ -318,7 +318,7 @@
       "limites": [
         "V1: la narración dice «a exceso de velocidad»; entra como supuesto de 50 a 80 km/h (respecto al límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Paseo» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
         "El arbol del primer impacto va frente a la cara frontal de V1, donde lo colocaste en el choque; sus medidas son las típicas (supuesto).",
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 404 de 579 (69.8 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     },
     {
@@ -358,7 +358,7 @@
         "La narración dice que llovía y no dice el estado de la carpeta: se supone mojada (fricción de pavimento mojado).",
         "V1: la narración dice «60 km/h»; entra como supuesto de 54 a 66 km/h. Solo pesa si la evidencia no la fija.",
         "El poste del primer impacto va frente a la cara lateral derecho de V1, donde lo colocaste en el choque; sus medidas son las típicas (supuesto).",
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 404 de 579 (69.8 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     },
     {
@@ -422,7 +422,7 @@
       "limites": [
         "V1: la narración dice «70 km/h»; entra como supuesto de 60 a 81 km/h. Solo pesa si la evidencia no la fija.",
         "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Paseo» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 404 de 579 (69.8 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     },
     {
@@ -489,7 +489,7 @@
       "limites": [
         "V1: la narración dice «despacio»; entra como supuesto de 5 a 35 km/h (respecto al límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Calzada» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
         "V2: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) avenidas primarias sin acceso controlado; por «Calzada» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 404 de 579 (69.8 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     },
     {
@@ -597,7 +597,7 @@
         "V1: el perito no sabe su velocidad; se supone la típica de la vía (48 a 96 km/h, alrededor del límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Circuito Exterior» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
         "V2: la narración dice «a alta velocidad»; entra como supuesto de 80 a 128 km/h (respecto al límite de 80 km/h: LGMSV, art. 49 fr. III e) carriles centrales de avenidas de acceso controlado; por «Circuito Exterior» en el lugar narrado, mientras la vía no se ubica en el mapa). Solo pesa si la evidencia no la fija.",
         "La narración dice «El hecho ocurrió en la curva del Circuito Exterior Mexiquense a la altura de Ecatepec, Estado de México, aproximadamente a las 21:15 horas», pero sin las calles del mapa del lugar no se conoce el trazo de la curva: se reconstruye en recta (supuesto).",
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 404 de 579 (69.8 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     },
     {
@@ -638,7 +638,7 @@
       "limites": [
         "V1: el perito no sabe su velocidad; se supone la típica de la vía (30 a 60 km/h, alrededor del límite de 50 km/h: LGMSV, art. 49 fr. III d) (avenida primaria; la vía aún no se conoce)). Solo pesa si la evidencia no la fija.",
         "El arbol del primer impacto va frente a la cara frontal de V1, donde lo colocaste en el choque; sus medidas son las típicas (supuesto).",
-        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 410 de 578 (70.9 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
+        "El rango de velocidad no es una garantía: en casos fabricados con velocidad verdadera conocida, el rango (donde cae el 80 % de las simulaciones) la contuvo 404 de 579 (69.8 %) de las veces, y lo esperado es cerca de 80 %. La velocidad real puede quedar fuera del rango más seguido de lo que dice su nombre."
       ]
     }
   ]

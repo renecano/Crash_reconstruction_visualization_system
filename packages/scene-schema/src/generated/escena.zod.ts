@@ -72,6 +72,7 @@ export const CallesGuardadas = z.strictObject({
   consultado: z.iso.datetime({ offset: true }),
   centro: Coordenadas,
   radio_m: z.number().min(10).max(2000),
+  fija: z.boolean().optional(),
   vias: z
     .array(
       z.strictObject({

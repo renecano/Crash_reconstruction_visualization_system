@@ -2465,6 +2465,8 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **El rango corto por arriba en choques laterales** (René, 2026-11-27, después de la demo): con lo medido como restricción (#369), la cobertura pasó de 410/578 a 404/579; de los 34 casos que salen del rango, 28 son laterales y en 23 de ellos la verdad queda por encima del p90 (`eval/results/t3_cobertura_detalle/`). Revisar el muestreo del rango contra lo medido y los nominales asimétricos (restitución, arrastre).
+
 - **Colonias para ordenar los cruces donde OSM no las tiene** (René, 2026-11-27, después de la demo): el catálogo de colonias por código postal de SEPOMEX o el Marco Geoestadístico del INEGI, registrado en `data/SOURCES.md`. Hoy, con varios cruces de las mismas calles, la app ordena por «centro» o por la colonia si OSM la tiene, y si no, lo dice y el perito elige (#388).
 
 - **El reajuste del rango (2026-11-26), atendido en `fix/solver-evidencia-dura` (t11):** lo medido entra como restricción, el reajuste converge y una huella de después del choque bloquea las llantas (ver `docs/progress/W.md`, «La t11»). Queda: **R9**, el recorrido de AXA con la evidencia que propone el paso 4 (`recorrido-3d.test.ts`): da 62.82 km/h, como CESVI, pero su reposo propuesto queda a 8.9σ; revisar qué propone `proponerVersiones` para AXA.

@@ -1,7 +1,7 @@
 {
   "name": "t3_cobertura",
-  "generated_at": "2026-11-16T00:49:31.787Z",
-  "git_commit": "44e7bf67",
+  "generated_at": "2026-11-28T01:51:19.990Z",
+  "git_commit": "b856da7b",
   "descripcion": "Cobertura sintética del p10–p90 de la inversión: casos fabricados con velocidad verdadera conocida, medidos con los tres supuestos del impacto fijos (como antes del ADR 0139) y sorteados (como ahora). Un p10–p90 calibrado contiene la verdad cerca del 80 % de las veces.",
   "limite": "La verdad sale del mismo modelo que la inversión: mide la propagación de la incertidumbre dentro del modelo, no su parecido con un choque real.",
   "semilla": 20261115,
@@ -31,30 +31,30 @@
   "esperado_pct": 80,
   "total": {
     "supuestos_fijos": {
-      "velocidades": 578,
-      "dentro": 345,
-      "cobertura_pct": 59.69,
+      "velocidades": 579,
+      "dentro": 348,
+      "cobertura_pct": 60.1,
       "ic95_pct": [
-        55.64,
-        63.61
+        56.06,
+        64.01
       ],
-      "ancho_mediano_kmh": 11.27,
+      "ancho_mediano_kmh": 11.38,
       "error_absoluto_mediano_kmh": 4.78,
-      "verdad_abajo_del_rango": 105,
-      "verdad_arriba_del_rango": 125
+      "verdad_abajo_del_rango": 102,
+      "verdad_arriba_del_rango": 129
     },
     "supuestos_sorteados": {
-      "velocidades": 578,
-      "dentro": 410,
-      "cobertura_pct": 70.93,
+      "velocidades": 579,
+      "dentro": 404,
+      "cobertura_pct": 69.78,
       "ic95_pct": [
-        67.1,
-        74.49
+        65.91,
+        73.38
       ],
-      "ancho_mediano_kmh": 13.09,
+      "ancho_mediano_kmh": 13.31,
       "error_absoluto_mediano_kmh": 4.78,
-      "verdad_abajo_del_rango": 79,
-      "verdad_arriba_del_rango": 88
+      "verdad_abajo_del_rango": 75,
+      "verdad_arriba_del_rango": 100
     }
   },
   "escenas": [
@@ -65,29 +65,29 @@
       "sin_estimar": 0,
       "supuestos_fijos": {
         "velocidades": 187,
-        "dentro": 116,
-        "cobertura_pct": 62.03,
+        "dentro": 117,
+        "cobertura_pct": 62.57,
         "ic95_pct": [
-          54.9,
-          68.68
+          55.44,
+          69.18
         ],
-        "ancho_mediano_kmh": 10.91,
-        "error_absoluto_mediano_kmh": 3.71,
-        "verdad_abajo_del_rango": 39,
-        "verdad_arriba_del_rango": 31
+        "ancho_mediano_kmh": 11.15,
+        "error_absoluto_mediano_kmh": 3.78,
+        "verdad_abajo_del_rango": 38,
+        "verdad_arriba_del_rango": 32
       },
       "supuestos_sorteados": {
         "velocidades": 187,
-        "dentro": 125,
-        "cobertura_pct": 66.84,
+        "dentro": 129,
+        "cobertura_pct": 68.98,
         "ic95_pct": [
-          59.82,
-          73.19
+          62.03,
+          75.18
         ],
-        "ancho_mediano_kmh": 12.68,
-        "error_absoluto_mediano_kmh": 3.71,
-        "verdad_abajo_del_rango": 36,
-        "verdad_arriba_del_rango": 26
+        "ancho_mediano_kmh": 12.94,
+        "error_absoluto_mediano_kmh": 3.78,
+        "verdad_abajo_del_rango": 34,
+        "verdad_arriba_del_rango": 24
       }
     },
     {
@@ -96,32 +96,32 @@
       "sin_integrar": 0,
       "sin_estimar": 0,
       "supuestos_fijos": {
-        "velocidades": 391,
-        "dentro": 229,
-        "cobertura_pct": 58.57,
+        "velocidades": 392,
+        "dentro": 231,
+        "cobertura_pct": 58.93,
         "ic95_pct": [
-          53.62,
-          63.34
+          53.99,
+          63.69
         ],
-        "ancho_mediano_kmh": 12.05,
-        "error_absoluto_mediano_kmh": 5.37,
-        "verdad_abajo_del_rango": 66,
-        "verdad_arriba_del_rango": 94
+        "ancho_mediano_kmh": 12.28,
+        "error_absoluto_mediano_kmh": 5.39,
+        "verdad_abajo_del_rango": 64,
+        "verdad_arriba_del_rango": 97
       },
       "supuestos_sorteados": {
-        "velocidades": 391,
-        "dentro": 285,
-        "cobertura_pct": 72.89,
+        "velocidades": 392,
+        "dentro": 275,
+        "cobertura_pct": 70.15,
         "ic95_pct": [
-          68.28,
-          77.06
+          65.45,
+          74.47
         ],
-        "ancho_mediano_kmh": 13.27,
-        "error_absoluto_mediano_kmh": 5.37,
-        "verdad_abajo_del_rango": 43,
-        "verdad_arriba_del_rango": 62
+        "ancho_mediano_kmh": 13.74,
+        "error_absoluto_mediano_kmh": 5.39,
+        "verdad_abajo_del_rango": 41,
+        "verdad_arriba_del_rango": 76
       }
     }
   ],
-  "segundos": 771
+  "segundos": 1354
 }

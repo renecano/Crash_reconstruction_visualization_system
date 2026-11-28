@@ -1520,6 +1520,10 @@
         "consultado": { "type": "string", "format": "date-time" },
         "centro": { "$ref": "#/$defs/Coordenadas" },
         "radio_m": { "type": "number", "minimum": 10, "maximum": 2000 },
+        "fija": {
+          "type": "boolean",
+          "description": "Las calles de un ejemplo publicado o de AXA (René, 2026-11-27): centradas en el choque y nunca reemplazadas por las que lleguen de la red, para que su cifra no dependa de ella."
+        },
         "vias": {
           "type": "array",
           "maxItems": 600,
