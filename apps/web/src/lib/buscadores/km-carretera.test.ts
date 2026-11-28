@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
+import { olvidarGeocodificaciones } from "./geocodificar";
 import type { RedLugar } from "../buscadores-lugar";
 import {
   buscarKmCarretera,
@@ -31,7 +32,7 @@ const consultas: string[] = [];
 const grabadas: DepsKm = {
   overpass: async (q) => {
     consultas.push(q);
-    return q.includes("45") ? G.mex45 : G.mex15;
+    return structuredClone(q.includes("45") ? G.mex45 : G.mex15);
   },
   poblacion: async (n) => G.poblaciones[POBLACIONES[n] ?? ""] ?? null,
 };
@@ -88,25 +89,38 @@ describe("ubicarKm, con OSM grabado", () => {
     );
     expect(p).not.toBeNull();
     expect(p!.metodo).toBe("medido-desde-origen");
-    // Villa Victoria, que también dice la narración, queda cerca: lo corrobora.
-    expect(p!.seguridad).toBe("media");
+    // Se prueban los dos sentidos y gana el que deja el km más cerca de Villa Victoria; queda a poco
+    // más de 10 km, así que va como dudoso para que el perito lo confirme.
     expect(p!.explicacion).toContain("medido por la carretera desde Toluca");
-    expect(p!.explicacion).toContain("aproximado");
+    expect(p!.explicacion).toContain("contado desde Zitácuaro quedaba a");
+    expect(p!.seguridad).toBe("baja");
+    expect(p!.explicacion).toContain("Dudoso");
+    expect(p!.explicacion).toContain("Aproximado");
     // Ya no cae dentro de Toluca (el error de la prueba como perito): a más de 15 km en línea recta.
     expect(distanciaKm(p!, G.poblaciones.toluca!)).toBeGreaterThan(15);
     expect(distanciaKm(p!, G.poblaciones.toluca!)).toBeLessThan(30);
   });
 
-  it("carretera 45 km 120 desde Chihuahua, cerca de Villa Ahumada: avisa que no cuadran", async () => {
+  it("carretera 45 km 120 cerca de Villa Ahumada: el sentido desde Ciudad Juárez, no desde Chihuahua", async () => {
     const p = await ubicarKm(
       "en la carretera federal 45, tramo Chihuahua–Ciudad Juárez, kilómetro 120, cerca de Villa Ahumada",
       grabadas,
     );
-    expect(p).not.toBeNull();
     expect(p!.metodo).toBe("medido-desde-origen");
+    // Contado desde Chihuahua quedaba a 108 km de Villa Ahumada (René, 2026-11-28); desde Ciudad Juárez,
+    // cerca. Sigue a más de 10 km del punto que da el buscador para Villa Ahumada: dudoso.
+    expect(p!.explicacion).toContain("medido por la carretera desde Ciudad Juárez");
+    expect(p!.explicacion).toMatch(/contado desde Chihuahua quedaba a 108\.\d km/);
+    expect(distanciaKm(p!, G.poblaciones["villa-ahumada"]!)).toBeLessThan(25);
+  });
+
+  it("sin población que sirva de ancla, desde el primer extremo que dice la narración", async () => {
+    const p = await ubicarKm(
+      "en la carretera federal 45, tramo Chihuahua–Ciudad Juárez, kilómetro 120",
+      grabadas,
+    );
+    expect(p).toMatchObject({ metodo: "medido-desde-origen", seguridad: "baja" });
     expect(distanciaKm(p!, G.poblaciones.chihuahua!)).toBeGreaterThan(90);
-    // El km 120 desde Chihuahua no está cerca de Villa Ahumada: Croquis lo dice, no lo esconde.
-    expect(p!.explicacion).toMatch(/Ojo: queda a [\d.]+ km de Villa Ahumada/);
   });
 
   it("solo la carretera y la población: el punto más cercano a ella, y dice por qué no ubica el km", async () => {
@@ -162,6 +176,8 @@ describe("con mojones (red sintética: OSM no tiene mojones en los tramos de pru
   });
 });
 
+beforeEach(() => olvidarGeocodificaciones());
+
 describe("buscarKmCarretera, con la interfaz de René (red inyectada, respuestas grabadas)", () => {
   /** La red: Nominatim por la población que pide la URL y Overpass por la carretera que pide la consulta. */
   const red: RedLugar = {
@@ -188,9 +204,9 @@ describe("buscarKmCarretera, con la interfaz de René (red inyectada, respuestas
     expect(r).toMatchObject({
       encontrado: true,
       como: "km",
-      seguridad: "media",
       que: "km 30 de la MEX 15",
     });
+    expect(r.encontrado && r.explicacion).toContain("© OpenStreetMap contributors");
   });
   it("no aplica si la narración no nombra un km", async () => {
     expect(await buscarKmCarretera("en el cruce de Juárez y Morelos", {}, red)).toEqual({

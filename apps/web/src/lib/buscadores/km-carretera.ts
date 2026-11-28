@@ -14,7 +14,9 @@
  * Siempre con su explicación para el perito y su nivel de seguridad. No toca la escena: lo conecta la
  * colocación con la interfaz de René (`buscadores-lugar.ts`).
  */
+import { USER_AGENT } from "../../server/osm";
 import type { BuscarKmCarretera, RedLugar, ZonaCaso } from "../buscadores-lugar";
+import { ATRIBUCION_OSM, geocodificar } from "./geocodificar";
 
 export interface PuntoBuscado {
   lat: number;
@@ -197,7 +199,13 @@ export async function ubicarKm(texto: string, deps: DepsKm): Promise<PuntoBuscad
   const centro = origen ?? cerca;
   if (!centro) return null;
   const radio = origen ? n.km * 1000 + 15_000 : 25_000;
+  // La carretera alrededor de los dos extremos del tramo: el km se puede contar desde cualquiera.
   const resp = await deps.overpass(consultaKm(n, centro, radio));
+  if (origen && destino) {
+    const ids = new Set(resp.elements.map((e) => `${e.type}/${(e as { id?: number }).id}`));
+    for (const e of (await deps.overpass(consultaKm(n, destino, radio))).elements)
+      if (!ids.has(`${e.type}/${(e as { id?: number }).id}`)) resp.elements.push(e);
+  }
   const vias = resp.elements.filter((e): e is Via => e.type === "way" && !!(e as Via).geometry);
   if (!vias.length) return null;
   const r = red(vias);
@@ -256,26 +264,50 @@ export async function ubicarKm(texto: string, deps: DepsKm): Promise<PuntoBuscad
     }
   }
 
-  // Sin mojones, desde el origen del tramo: medido por la carretera.
-  if (origen && n.tramo) {
-    const o = masCercano(r, origen);
-    if (o) {
-      const d = distancias(r, o.k);
-      const cand = aDistancia(r, d, n.km * 1000);
-      const hacia = destino ?? cerca;
+  // Sin mojones, desde un extremo del tramo, medido por la carretera. Con una población narrada como
+  // ancla (René, 2026-11-28: el km 120 de la 45 contado desde Chihuahua quedaba a 108 km de Villa
+  // Ahumada), se prueban los dos sentidos y se elige el que deja el km cerca de ella; si aun así queda a
+  // más de 10 km, va como dudoso para que el perito lo confirme.
+  if (n.tramo && (origen || destino)) {
+    const sentidos: { desde: string; punto: LatLon }[] = [];
+    const extremos = [
+      [n.tramo[0], origen, destino],
+      [n.tramo[1], destino, origen],
+    ] as const;
+    for (const [desde, de, hacia] of extremos) {
+      if (!de) continue;
+      const o = masCercano(r, de);
+      if (!o) continue;
+      const cand = aDistancia(r, distancias(r, o.k), n.km * 1000);
       const p = hacia ? cand.sort((x, y) => metros(x, hacia) - metros(y, hacia))[0] : cand[0];
-      if (p) {
-        const a = aviso(p);
-        return {
-          ...p,
-          // Media si la población que también dice la narración queda cerca: lo corrobora.
-          seguridad: cerca && !a.lejos ? "media" : "baja",
-          metodo: "medido-desde-origen",
-          explicacion:
-            `km ${n.km} de la ${nombreVia}, medido por la carretera desde ${n.tramo[0]}` +
-            ` (aproximado: el mapa no tiene mojones en este tramo y el kilometraje oficial puede empezar en otro punto).${a.texto}`,
-        };
-      }
+      if (p) sentidos.push({ desde, punto: p });
+      if (!cerca) break; // sin ancla, desde el primero que dice la narración
+    }
+    if (sentidos.length) {
+      const [elegido, ...otros] = cerca
+        ? [...sentidos].sort((a, b) => metros(a.punto, cerca) - metros(b.punto, cerca))
+        : sentidos;
+      const m = cerca ? metros(elegido!.punto, cerca) : null;
+      const dudoso = m !== null && m > 10_000;
+      const otro = otros[0];
+      const comparado =
+        cerca && otro && n.cercaDe
+          ? `; contado desde ${otro.desde} quedaba a ${kmTexto(metros(otro.punto, cerca))} de ${n.cercaDe}`
+          : "";
+      return {
+        ...elegido!.punto,
+        seguridad: m !== null && !dudoso ? "media" : "baja",
+        metodo: "medido-desde-origen",
+        explicacion:
+          `km ${n.km} de la ${nombreVia}, medido por la carretera desde ${elegido!.desde}` +
+          (cerca && n.cercaDe
+            ? ` (el sentido que lo deja a ${kmTexto(m!)} de ${n.cercaDe}${comparado})`
+            : "") +
+          ". Aproximado: el mapa no tiene mojones en este tramo." +
+          (dudoso
+            ? ` Dudoso: aun así queda a ${kmTexto(m!)} de ${n.cercaDe}; confírmalo o márcalo en el mapa.`
+            : ""),
+      };
     }
   }
 
@@ -299,31 +331,35 @@ export async function ubicarKm(texto: string, deps: DepsKm): Promise<PuntoBuscad
 }
 
 const OVERPASS = "https://overpass-api.de/api/interpreter";
-const NOMINATIM = "https://nominatim.openstreetmap.org/search";
 
-/** Las consultas a OSM por la red inyectada: Overpass por POST y Nominatim con su pausa de 1 s. */
-export function depsDeRed(zona: ZonaCaso, red: RedLugar): DepsKm {
-  let primera = true;
+/**
+ * Las consultas por la red inyectada: Overpass por POST y las poblaciones con `geocodificar` (Nominatim
+ * con su política de uso y, de respaldo, Esri). `fuentes` dice de dónde salieron las poblaciones.
+ */
+export function depsDeRed(
+  zona: ZonaCaso,
+  red: RedLugar,
+): DepsKm & { fuentes: Set<"nominatim" | "esri"> } {
+  const fuentes = new Set<"nominatim" | "esri">();
   return {
+    fuentes,
     overpass: async (consulta) => {
       const r = await red.fetch(OVERPASS, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": USER_AGENT },
         body: new URLSearchParams({ data: consulta }).toString(),
       });
       if (!r.ok) throw new Error(`Overpass respondió ${r.status}`);
       return (await r.json()) as RespuestaOverpass;
     },
     poblacion: async (nombre) => {
-      if (!primera) await red.pausa?.(1000);
-      primera = false;
-      const q = [nombre, zona.estado].filter(Boolean).join(", ");
-      const r = await red.fetch(
-        `${NOMINATIM}?format=jsonv2&limit=1&countrycodes=mx&q=${encodeURIComponent(q)}`,
-      );
-      if (!r.ok) throw new Error(`Nominatim respondió ${r.status}`);
-      const d = (await r.json()) as { lat: string; lon: string }[];
-      return d[0] ? { lat: Number(d[0].lat), lon: Number(d[0].lon) } : null;
+      const g = await geocodificar([nombre, zona.estado].filter(Boolean).join(", "), red, 5);
+      if (g.fuente) fuentes.add(g.fuente);
+      // La población, no un arroyo ni una calle con su nombre («Arroyo Villa Ahumada»).
+      const p =
+        g.resultados.find((x) => x.categoria === "place" || x.categoria === "boundary") ??
+        g.resultados[0];
+      return p ? { lat: p.lat, lon: p.lon } : null;
     },
   };
 }
@@ -343,8 +379,9 @@ export const buscarKmCarretera: BuscarKmCarretera = async (narracion, zona, red)
     };
   const via = n.ref ?? `${n.tramo![0]}–${n.tramo![1]}`;
   let p: PuntoBuscado | null;
+  const deps = depsDeRed(zona, red);
   try {
-    p = await ubicarKm(narracion, depsDeRed(zona, red));
+    p = await ubicarKm(narracion, deps);
   } catch (e) {
     return {
       encontrado: false,
@@ -372,6 +409,7 @@ export const buscarKmCarretera: BuscarKmCarretera = async (narracion, zona, red)
       p.metodo === "cerca-de-poblacion"
         ? `la ${via} cerca de ${n.cercaDe}`
         : `km ${n.km} de la ${via}`,
-    explicacion: p.explicacion,
+    // La atribución que pide OSM y, si una población salió de Esri, que lo diga.
+    explicacion: `${p.explicacion} Datos de OpenStreetMap (${ATRIBUCION_OSM})${deps.fuentes.has("esri") ? "; la población, encontrada con Esri" : ""}.`,
   };
 };
