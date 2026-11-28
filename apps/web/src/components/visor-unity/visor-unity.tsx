@@ -49,12 +49,14 @@ import {
   CAMARA_LENTA_VIDEO,
   duracionVideo,
   FPS_VIDEO,
-  escalaMedida,
   grabarVideoUnity,
   instantesDelVideo,
   lienzoDelVideo,
   msPorCuadro,
-  modoDelVideo,
+  modosDelVideo,
+  elegirModo,
+  UMBRAL_RAPIDO_MS,
+  type ModoVideo,
   estimarVideo,
   guardarMedida,
   medidaGuardada,
@@ -657,26 +659,25 @@ export function VisorUnity({
     puente.enviar("pausar", {});
     puente.minimapa(false);
     puente.enviar("camara", { modo: camaraVideo });
-    // Con tarjeta dedicada, al doble y en `ultra` (antialiasing, René, 2026-11-26); con integrada,
-    // como antes: 1× y la calidad automática (a 2× la laptop de 8 GB no dibujó ningún cuadro).
-    let modo = modoDelVideo(rendererDeLaTarjeta(), calidadVideo);
-    const ponerModo = () => {
-      if (modo.calidad) puente.enviar("calidad", { nivel: modo.calidad });
-      const tamano = lienzoDelVideo(window.devicePixelRatio || 1, modo.escala);
+    // «Rápido»: `alta` (MSAA) si la tarjeta lo dibuja a tiempo, si no `media` (FXAA); «Máxima
+    // calidad»: el doble en `ultra` (René, 2026-11-28). Se miden antes de grabar.
+    const candidatos = modosDelVideo(rendererDeLaTarjeta(), calidadVideo);
+    let modo: ModoVideo = candidatos[0]!;
+    const ponerModo = async (m: ModoVideo) => {
+      modo = m;
+      // Nivel y resolución fijos mientras se graba: en automático Unity los bajaba con los fps bajos
+      // del cuadro por cuadro (la escala de dibujo solo se fija con `depurar`).
+      puente.enviar("calidad", { nivel: m.nivel });
+      puente.enviar("depurar", { escala: 1 });
+      const tamano = lienzoDelVideo(window.devicePixelRatio || 1, m.escala);
       c.style.width = `${tamano.ancho}px`;
       c.style.height = `${tamano.alto}px`;
-    };
-    ponerModo();
-    const fijar = (t: number) => puente.enviar("fijarTiempo", { t });
-    const bajarA1x = async () => {
-      if (modo.calidad) puente.enviar("calidad", { nivel: "auto" });
-      modo = { escala: 1, calidad: null };
-      ponerModo();
-      for (let i = 0; i < 6; i++) await new Promise((ok) => requestAnimationFrame(ok));
-    };
-    try {
       // Unity toma el tamaño nuevo en su siguiente cuadro.
       for (let i = 0; i < 6; i++) await new Promise((ok) => requestAnimationFrame(ok));
+    };
+    const fijar = (t: number) => puente.enviar("fijarTiempo", { t });
+    try {
+      await ponerModo(modo);
       const logo = new Image();
       logo.src = "/marca/logotipo-blanco.svg";
       await logo.decode().catch(() => undefined);
@@ -688,14 +689,22 @@ export function VisorUnity({
         enviarPiso(pv, false);
         for (let i = 0; i < 10; i++) await new Promise((ok) => requestAnimationFrame(ok));
       }
-      // El nombre de la tarjeta no basta (en laptops híbridas Chrome reporta la NVIDIA y dibuja en
-      // la Intel): al doble solo si los primeros cuadros salen a tiempo.
-      if (
-        modo.escala === 2 &&
-        escalaMedida(await msPorCuadro(c, fijar, instantesDelVideo(desde, intervalo.fin))) === 1
-      )
-        await bajarA1x();
-      const grabar = () =>
+      // Se mide cada modo, en orden, hasta tener con cuál grabar (el nombre de la tarjeta no basta: en
+      // laptops híbridas Chrome reporta la NVIDIA y dibuja en la Intel).
+      const medidos: { modo: ModoVideo; ms: number }[] = [];
+      for (const m of candidatos) {
+        if (m !== modo) await ponerModo(m);
+        medidos.push({
+          modo: m,
+          ms: await msPorCuadro(c, fijar, instantesDelVideo(desde, intervalo.fin)),
+        });
+        const e = elegirModo(medidos, calidadVideo);
+        if (e && (calidadVideo === "maxima" || e.ms <= UMBRAL_RAPIDO_MS)) break;
+      }
+      const elegido = elegirModo(medidos, calidadVideo);
+      if (!elegido) throw new VideoNoDisponible("El 3D no dibujó ningún cuadro.");
+      if (elegido.modo !== modo) await ponerModo(elegido.modo);
+      const grabar = (msMedido?: number) =>
         grabarVideoUnity({
           credito: pv ? pv.atribucionMapa : null,
           lienzo: c,
@@ -717,6 +726,7 @@ export function VisorUnity({
                 )
               : null,
           signal: corte.signal,
+          msPorCuadro: msMedido,
           alProgreso: (hechos, total, ms) => setGrabacion({ hechos, total, ms }),
           // Lo que tardó cada cuadro, para la estimación de la próxima vez (y para medir).
           alMedir: (m: MedicionVideo) => {
@@ -726,7 +736,8 @@ export function VisorUnity({
                 ...m,
                 calidad: calidadVideo,
                 escala: modo.escala,
-                nivel: modo.calidad ?? "auto",
+                nivel: modo.nivel,
+                medidos: medidos.map((x) => ({ ...x.modo, ms: Math.round(x.ms) })),
               };
           },
           confirmar: (ms) =>
@@ -738,12 +749,12 @@ export function VisorUnity({
         });
       let video: Blob;
       try {
-        video = await grabar();
+        video = await grabar(elegido.ms);
       } catch (e) {
-        // Si al doble no sale (no llega ningún cuadro o falla el codificador), otra vez a 1× y con
-        // la calidad automática.
-        if (!(e instanceof VideoNoDisponible) || modo.escala === 1) throw e;
-        await bajarA1x();
+        // Si así no sale (no llega ningún cuadro o falla el codificador), con el modo siguiente.
+        const siguiente = candidatos[candidatos.indexOf(modo) + 1];
+        if (!(e instanceof VideoNoDisponible) || !siguiente) throw e;
+        await ponerModo(siguiente);
         video = await grabar();
       }
       const url = URL.createObjectURL(video);
@@ -773,7 +784,8 @@ export function VisorUnity({
     } finally {
       c.style.width = antes.ancho;
       c.style.height = antes.alto;
-      if (modo.calidad) puente.enviar("calidad", { nivel: "auto" });
+      puente.enviar("calidad", { nivel: "auto" });
+      puente.enviar("depurar", { escala: null });
       setConfirmacion(null);
       puente.minimapa(minimapa);
       grabando.current = false;

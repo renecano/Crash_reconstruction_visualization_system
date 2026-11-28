@@ -37,23 +37,54 @@ export function tarjetaIntegrada(renderer: string | null): boolean {
 }
 
 /**
- * Las dos formas de grabar (René, 2026-11-28: 13 min por video es demasiado para un perito):
- * - `rapido` (por omisión): 1920×1080 tal cual; con tarjeta dedicada en calidad `alta` (antialiasing
- *   MSAA ×4), con integrada en la automática.
- * - `maxima`: con tarjeta dedicada, el doble en `ultra` (supermuestreo, lo de antes); con integrada,
- *   igual que `rapido` (a 2× no dibuja).
+ * Las dos formas de grabar (René, 2026-11-28: 13 min por video es demasiado para un perito). Siempre
+ * con el nivel y la resolución fijos mientras se graba: en automático, Unity los bajaba porque cuadro
+ * por cuadro los fps son bajos, y el video salía con bordes dentados.
+ * - `rapido` (por omisión): 1920×1080, en `alta` (antialiasing MSAA ×4) si la tarjeta lo dibuja a
+ *   tiempo; si no, en `media` (antialiasing FXAA).
+ * - `maxima`: con tarjeta dedicada, el doble en `ultra` (supermuestreo); si a 2× no dibuja, 1× en
+ *   `alta`. Con integrada, como `rapido` (a 2× la laptop de 8 GB no dibujó ningún cuadro).
  */
 export type CalidadVideo = "rapido" | "maxima";
+export interface ModoVideo {
+  escala: 1 | 2;
+  nivel: "ultra" | "alta" | "media";
+}
 
-/** Cómo se graba, según la calidad elegida y la tarjeta. */
-export function modoDelVideo(
+/** Los modos que se prueban, en orden, según la calidad elegida y la tarjeta. */
+export function modosDelVideo(
   renderer: string | null,
   calidad: CalidadVideo = "rapido",
-): { escala: 1 | 2; calidad: "ultra" | "alta" | null } {
-  if (tarjetaIntegrada(renderer)) return { escala: 1, calidad: null };
-  return calidad === "maxima"
-    ? { escala: SUPERMUESTREO_VIDEO, calidad: "ultra" }
-    : { escala: 1, calidad: "alta" };
+): ModoVideo[] {
+  const rapido: ModoVideo[] = [
+    { escala: 1, nivel: "alta" },
+    { escala: 1, nivel: "media" },
+  ];
+  if (calidad === "rapido" || tarjetaIntegrada(renderer)) return rapido;
+  return [{ escala: SUPERMUESTREO_VIDEO, nivel: "ultra" }, rapido[0]!];
+}
+
+/**
+ * Lo más que puede tardar cada cuadro en «Rápido» (ms): un choque de ~10 s son ~300–400 cuadros
+ * (con la cámara lenta), y la meta es de 1 a 2 minutos.
+ */
+export const UMBRAL_RAPIDO_MS = 250;
+
+/**
+ * El modo con que se graba, con lo medido de cada uno (ms por cuadro; Infinity si no dibujó). En
+ * «Rápido», el primero que sale a tiempo o, si ninguno, el más rápido; en «Máxima calidad», el primero
+ * que dibuja (el perito eligió esperar: se le dice cuánto antes de empezar).
+ */
+export function elegirModo(
+  medidos: { modo: ModoVideo; ms: number }[],
+  calidad: CalidadVideo,
+): { modo: ModoVideo; ms: number } | null {
+  const dibujan = medidos.filter((m) => Number.isFinite(m.ms));
+  if (!dibujan.length) return null;
+  if (calidad === "maxima") return dibujan[0]!;
+  return (
+    dibujan.find((m) => m.ms <= UMBRAL_RAPIDO_MS) ?? dibujan.reduce((a, b) => (b.ms < a.ms ? b : a))
+  );
 }
 
 /** En qué se fue el tiempo de una grabación (ms), para medir y para estimar la siguiente. */
@@ -68,6 +99,8 @@ export interface MedicionVideo {
   ms_codificar: number;
   /** Cerrar el archivo (lo que queda por codificar y el MP4). */
   ms_cerrar: number;
+  /** Las pasadas por codificador antes de esta (las que fallaron), con lo que tardaron. */
+  fallidas?: { codificador: string; ms: number; error: string }[];
 }
 
 /** Lo que tardó cada cuadro en esta computadora, por calidad: para estimar antes de empezar. */
@@ -275,6 +308,11 @@ export interface OpcionesGrabacion {
    * cuadros: si pasa de `AVISAR_DESDE_MS`, se pregunta y con `false` se cancela. Sin él, no se pregunta.
    */
   confirmar?: (msEstimados: number) => Promise<boolean>;
+  /**
+   * Lo que tardó cada cuadro al medir el modo (ms): con él se estima y se pregunta antes del primer
+   * cuadro. Sin él, con los primeros `CUADROS_PARA_ESTIMAR`.
+   */
+  msPorCuadro?: number;
   /** En qué se fue el tiempo, al terminar. */
   alMedir?: (m: MedicionVideo) => void;
   /** La cámara lenta alrededor del impacto (con su letrero en el cuadro); sin ella, todo a 1×. */
@@ -304,29 +342,28 @@ export const CODIFICADORES = [
 ] as const;
 
 /**
- * Con tarjeta dedicada se graba al doble solo si lo aguanta de verdad: en laptops híbridas Chrome
- * reporta la NVIDIA y dibuja en la Intel. Se miden los primeros cuadros al doble; si tardan más que
- * esto cada uno (ms), el video va a 1×. A 1× la Intel UHD tardó ~1.6 s por cuadro (2026-11-26).
+ * Cuántos cuadros se miden de cada modo antes de elegirlo. El nombre de la tarjeta no basta: en
+ * laptops híbridas Chrome reporta la NVIDIA y dibuja en la Intel.
  */
-export const UMBRAL_DOBLE_MS = 250;
-/** Cuántos cuadros al doble se miden. */
 export const CUADROS_PARA_MEDIR = 5;
 
-/** 2 si los cuadros medidos al doble salen a tiempo; 1 si no (o si no llegó ninguno). */
-export function escalaMedida(msPorCuadro: number): 1 | 2 {
-  return Number.isFinite(msPorCuadro) && msPorCuadro <= UMBRAL_DOBLE_MS ? 2 : 1;
-}
-
-/** Los cuadros del lienzo de Unity, según los va dibujando. */
+/**
+ * Los cuadros del lienzo de Unity, uno por instante y solo cuando se piden (René, 2026-11-28: 13 min
+ * por video). Antes se leían todos los que Unity dibujaba, unos 60 por segundo, y cada uno es una copia
+ * del cuadro desde la tarjeta de video: eso frenaba al propio Unity. Con `captureStream(0)` el
+ * navegador no entrega ninguno hasta que se pide con `requestFrame`.
+ */
 function lectorDeCuadros(lienzo: HTMLCanvasElement) {
-  const pista = lienzo.captureStream().getVideoTracks()[0];
-  if (!pista) throw new VideoNoDisponible("El lienzo del 3D no entrega cuadros.");
+  const pista = lienzo.captureStream(0).getVideoTracks()[0] as
+    (MediaStreamTrack & { requestFrame?: () => void }) | undefined;
+  if (!pista?.requestFrame) throw new VideoNoDisponible("El lienzo del 3D no entrega cuadros.");
   const Proc = (globalThis as unknown as { MediaStreamTrackProcessor: ConstructorProcesador })
     .MediaStreamTrackProcessor;
   const lector = new Proc({ track: pista }).readable.getReader();
   let ultimo: VideoFrame | null = null;
   let llegados = 0;
   let leyendo = true;
+  const espera: { aviso: (() => void) | null } = { aviso: null };
   const lectura = (async () => {
     while (leyendo) {
       const { value, done } = await lector.read();
@@ -334,15 +371,24 @@ function lectorDeCuadros(lienzo: HTMLCanvasElement) {
       ultimo?.close();
       ultimo = value;
       llegados++;
+      espera.aviso?.();
     }
   })();
   return {
     ultimo: () => ultimo,
-    /** Espera `n` cuadros nuevos (Unity ya dibujó el instante pedido); false si no llegaron en 3 s. */
-    esperar: async (n: number) => {
-      const meta = llegados + n;
-      const limite = performance.now() + 3000;
-      while (llegados < meta && performance.now() < limite) await vuelta();
+    /**
+     * El cuadro del instante que se acaba de fijar: se dejan pasar `vueltas` cuadros del navegador y
+     * se pide uno solo. Con una basta: `requestFrame` toma el siguiente cuadro que se pinte, y Unity ya
+     * tiene el instante nuevo (`fijarTiempo` es síncrono). Antes se esperaban dos cuadros completos
+     * de Unity por instante. false si no llega en 3 s.
+     */
+    tomar: async (vueltas: number) => {
+      for (let k = 0; k < vueltas; k++) await vuelta();
+      const meta = llegados + 1;
+      const llego = new Promise<void>((ok) => (espera.aviso = ok));
+      pista.requestFrame!();
+      await Promise.race([llego, new Promise((ok) => setTimeout(ok, 3000))]);
+      espera.aviso = null;
       return llegados >= meta;
     },
     cerrar: async () => {
@@ -368,12 +414,12 @@ export async function msPorCuadro(
   const l = lectorDeCuadros(lienzo);
   try {
     fijar(instantes[0]!);
-    if (!(await l.esperar(4))) return Infinity;
+    if (!(await l.tomar(4))) return Infinity;
     const muestra = instantes.slice(1, 1 + CUADROS_PARA_MEDIR);
     const t0 = performance.now();
     for (const t of muestra) {
       fijar(t);
-      if (!(await l.esperar(2))) return Infinity;
+      if (!(await l.tomar(1))) return Infinity;
     }
     return muestra.length ? (performance.now() - t0) / muestra.length : 0;
   } finally {
@@ -405,6 +451,12 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
     o.acelerado ?? null,
   );
   let pregunto = false;
+  if (o.confirmar && o.msPorCuadro !== undefined && Number.isFinite(o.msPorCuadro)) {
+    pregunto = true;
+    const estimado = o.msPorCuadro * instantes.length;
+    if (estimado > AVISAR_DESDE_MS && !(await o.confirmar(estimado)))
+      throw new DOMException("Grabación cancelada", "AbortError");
+  }
   const pasada = async (
     l: ReturnType<typeof lectorDeCuadros>,
     cfg: (typeof CODIFICADORES)[number],
@@ -440,9 +492,8 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
         if (o.signal?.aborted) throw new DOMException("Grabación cancelada", "AbortError");
         const t0 = performance.now();
         o.fijar(instantes[i]!);
-        // Dos cuadros: el primero puede ser del instante anterior.
-        await l.esperar(i === 0 ? 4 : 2);
-        const cuadro = l.ultimo();
+        const tomado = await l.tomar(i === 0 ? 4 : 1);
+        const cuadro = tomado ? l.ultimo() : null;
         if (!cuadro) throw new VideoNoDisponible("El 3D no dibujó ningún cuadro.");
         const t1 = performance.now();
         med.unity += t1 - t0;
@@ -484,6 +535,7 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
         ms_componer: ms(med.componer),
         ms_codificar: ms(med.codificar),
         ms_cerrar: ms(performance.now() - t3),
+        fallidas,
       });
     } catch (e) {
       await output.cancel().catch(() => undefined);
@@ -495,9 +547,11 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
   };
 
   const l = lectorDeCuadros(o.lienzo);
+  const fallidas: NonNullable<MedicionVideo["fallidas"]> = [];
   try {
     let fallo: unknown = null;
     for (const cfg of CODIFICADORES) {
+      const inicio = performance.now();
       try {
         const video = await pasada(l, cfg);
         if (video) return video;
@@ -509,6 +563,11 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
         )
           throw e;
         fallo = e;
+        fallidas.push({
+          codificador: `${cfg.aceleracion} · ${cfg.calidad}`,
+          ms: Math.round(performance.now() - inicio),
+          error: e instanceof Error ? e.message : String(e),
+        });
         console.warn(`Video: falló el codificador (${cfg.aceleracion}, ${cfg.calidad})`, e);
       }
     }
