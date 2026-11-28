@@ -129,6 +129,33 @@ namespace Croquis.Core.Tests
         }
 
         [Fact]
+        public void LaTomaDelImpactoEligeElLadoDesdeDondeSeVeDondeCae()
+        {
+            // Contacto en el origen, los vehículos sobre el eje x; un camión alto al sur de la línea
+            // (z negativa) tapa el lugar donde cae el motociclista (12 m al sur) desde el lado norte.
+            var contacto = new V3(0, CamaraAutomatica.AlturaContacto, 0);
+            var a = new V3(-3, 1, 0);
+            var b = new V3(3, 1, 0);
+            var camion = Estorbo.Vehiculo(0.0, -4.0, 0.0, 7.5, 2.4, 3.0);
+            var estorbos = new[] { camion };
+            var cae = new V3(0, 0.3, -12);
+            var sin = CamaraAutomatica.Impacto(contacto, a, b, estorbos);
+            var con = CamaraAutomatica.Impacto(contacto, a, b, estorbos, cae);
+            Assert.True(CamaraAutomatica.Despejado(con.Ojo, cae, estorbos));
+            Assert.True(CamaraAutomatica.Despejado(con.Ojo, contacto, estorbos));
+            // Sin pedirlo, la toma no tiene por qué ver dónde cae.
+            Assert.True(CamaraAutomatica.Despejado(sin.Ojo, contacto, estorbos));
+        }
+
+        [Fact]
+        public void SaleInclinadoNoDePie()
+        {
+            var v = Vuelo(Moto());
+            Assert.Equal(VueloOcupante.InclinacionSalida, v.Pose(v.T0).Inclinacion, 9);
+            Assert.Equal(Math.PI / 2.0, v.Pose(v.T0 + v.TAire).Inclinacion, 9);
+        }
+
+        [Fact]
         public void LaCamaraDejaAlOcupanteALaVista()
         {
             var toma = new Toma { Ojo = new V3(0, 2, -10), Mira = new V3(0, 1, 0) };

@@ -27,6 +27,9 @@ namespace Croquis.Core
         /// <summary>Lo que conserva de su rapidez al caer (el golpe contra el piso).</summary>
         public const double ConservaAlCaer = 0.6;
 
+        /// <summary>La inclinación con que sale (rad): venía sobre la moto, inclinado hacia el manubrio.</summary>
+        public const double InclinacionSalida = 40.0 * Math.PI / 180.0;
+
         /// <summary>La altura del centro del cuerpo tendido sobre el piso (m).</summary>
         public const double AlturaTendido = 0.15;
 
@@ -170,8 +173,9 @@ namespace Croquis.Core
             if (s <= TAire)
             {
                 var z = Math.Max(AlturaTendido, Z0 + vz0 * s - 0.5 * Gravedad * s * s);
+                // Sale ya inclinado hacia adelante (venía sobre la moto) y llega tendido.
                 var avance = TAire > 0.0 ? s / TAire : 1.0;
-                return new PosePersona(x, y, z, rumbo, avance * Math.PI / 2.0, Postura.Vuelo);
+                return new PosePersona(x, y, z, rumbo, (InclinacionSalida + avance * (1.0 - InclinacionSalida / (Math.PI / 2.0)) * Math.PI / 2.0), Postura.Vuelo);
             }
 
             return new PosePersona(x, y, AlturaTendido, rumbo, Math.PI / 2.0, Postura.Tendido);

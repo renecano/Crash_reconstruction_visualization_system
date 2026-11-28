@@ -125,22 +125,37 @@ namespace Croquis.Core
         /// <summary>
         /// La toma del impacto: perpendicular a la línea entre los vehículos (o, contra un objeto, entre el
         /// vehículo y el contacto), del primer lado y a la primera distancia y altura desde donde el contacto
-        /// se ve despejado. Prueba de los dos lados, abriendo hasta 60°, y si no, desde arriba.
+        /// se ve despejado. Prueba de los dos lados, abriendo hasta 60°, y si no, desde arriba. Con
+        /// `tambien` (donde cae el motociclista que sale volando, René 2026-11-28), primero busca un lado
+        /// desde donde se vean despejados los dos; si no hay, como siempre.
         /// </summary>
-        public static Toma Impacto(V3 contacto, V3 a, V3 b, IList<Estorbo> estorbos)
+        public static Toma Impacto(V3 contacto, V3 a, V3 b, IList<Estorbo> estorbos, V3? tambien = null)
+        {
+            if (tambien.HasValue)
+            {
+                var ambos = Lados(contacto, a, b, ojo => Despejado(ojo, contacto, estorbos) && Despejado(ojo, tambien.Value, estorbos));
+                if (ambos.HasValue)
+                {
+                    return ambos.Value;
+                }
+            }
+
+            return Lados(contacto, a, b, ojo => Despejado(ojo, contacto, estorbos)) ?? DesdeArriba(contacto, a, b);
+        }
+
+        private static double Linea(V3 a, V3 b)
+        {
+            var dx = b.X - a.X;
+            var dz = b.Z - a.Z;
+            return dx * dx + dz * dz < 1e-6 ? 0.0 : Math.Atan2(dz, dx);
+        }
+
+        private static Toma? Lados(V3 contacto, V3 a, V3 b, Func<V3, bool> sirve)
         {
             // `contacto` ya viene a la altura de las defensas (el suelo más `AlturaContacto`).
             var p = contacto;
             var suelo = p.Y - AlturaContacto;
-            var dx = b.X - a.X;
-            var dz = b.Z - a.Z;
-            if (dx * dx + dz * dz < 1e-6)
-            {
-                dx = 1.0;
-                dz = 0.0;
-            }
-
-            var linea = Math.Atan2(dz, dx);
+            var linea = Linea(a, b);
             foreach (var (d, h) in new[] { (7.0, 1.9), (9.0, 2.8), (5.5, 3.6), (11.0, 5.0) })
             {
                 foreach (var giro in new[] { 0.0, 15.0, -15.0, 30.0, -30.0, 45.0, -45.0, 60.0, -60.0 })
@@ -149,7 +164,7 @@ namespace Croquis.Core
                     {
                         var az = linea + (lado + giro) * Math.PI / 180.0;
                         var ojo = new V3(p.X + Math.Cos(az) * d, suelo + h, p.Z + Math.Sin(az) * d);
-                        if (Despejado(ojo, p, estorbos))
+                        if (sirve(ojo))
                         {
                             return new Toma { Ojo = ojo, Mira = p };
                         }
@@ -157,6 +172,13 @@ namespace Croquis.Core
                 }
             }
 
+            return null;
+        }
+
+        private static Toma DesdeArriba(V3 p, V3 a, V3 b)
+        {
+            var suelo = p.Y - AlturaContacto;
+            var linea = Linea(a, b);
             // Desde arriba, casi a plomo, el contacto siempre se ve (salvo bajo una copa: un poco de lado).
             return new Toma { Ojo = new V3(p.X + Math.Cos(linea + Math.PI / 2.0) * 2.0, suelo + 16.0, p.Z + Math.Sin(linea + Math.PI / 2.0) * 2.0), Mira = p };
         }

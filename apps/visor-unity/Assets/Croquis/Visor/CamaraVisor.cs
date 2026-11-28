@@ -1262,7 +1262,18 @@ namespace Croquis.Visor
                 var todos = new List<Estorbo>(fijos);
                 todos.AddRange(enImpacto);
                 todos.AddRange(CamaraAutomatica.Vehiculos(resultado, tI + 0.5, Suelo));
-                tomaImpacto = CamaraAutomatica.Impacto(Contacto, a, b, todos);
+                // Si alguien sale volando de su moto, que también se vea dónde cae.
+                V3? cae = null;
+                foreach (var pv in Peatones)
+                {
+                    if (pv != null && pv.Vuelo != null)
+                    {
+                        cae = new V3(pv.Vuelo.XFinal, Suelo + 0.3, pv.Vuelo.YFinal);
+                        break;
+                    }
+                }
+
+                tomaImpacto = CamaraAutomatica.Impacto(Contacto, a, b, todos, cae);
                 Debug.Log("[cámara automática] impacto desde " + tomaImpacto.Value.Ojo.X.ToString("0.0") + ", " + tomaImpacto.Value.Ojo.Y.ToString("0.0") + ", " + tomaImpacto.Value.Ojo.Z.ToString("0.0"));
             }
 
