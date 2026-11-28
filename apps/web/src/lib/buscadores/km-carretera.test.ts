@@ -231,6 +231,7 @@ describe("buscarKmCarretera, con la interfaz de René (red inyectada, respuestas
       caida,
     );
     expect(r).toMatchObject({ encontrado: false, aplica: true });
-    expect(!r.encontrado && r.explicacion).toContain("No pude consultar OpenStreetMap");
+    expect(!r.encontrado && r.explicacion).toContain("(el mapa no respondió): reintenta");
+    expect(!r.encontrado && r.sinRespuesta).toBe(true);
   });
 });

@@ -340,12 +340,14 @@ export const buscarReferencia: BuscarReferencia = async (narracion, zona, red) =
   const deps = depsDeRed(red, zona);
   try {
     p = z ? await ubicarReferencia(narracion, z, deps) : null;
-  } catch (e) {
+  } catch {
     return {
       encontrado: false,
       como: "referencia",
       aplica: true,
-      explicacion: `No pude consultar OpenStreetMap para «${r.nombre}»: ${e instanceof Error ? e.message : String(e)}.`,
+      explicacion: `No pude comprobar «${r.nombre}» (el mapa no respondió): reintenta.`,
+      // No es «no encontrado»: la colocación no pasa al siguiente buscador (René, 2026-11-28).
+      sinRespuesta: true,
     };
   }
   if (!p)

@@ -482,51 +482,57 @@ describe("el cruce de dos vías y, si nada cuadra, la pregunta (ronda 4, René)"
     );
   });
 
-  it("da el punto donde se cruzan, con las geometrías de OpenStreetMap", async () => {
-    const { deps, pedidos } = falso((u) => {
+  // René, 2026-11-28: el mismo caso daba una vez la esquina y otra una calle recta, según si Overpass
+  // respondía. Sin respuesta no se propone nada; con el reintento, el cruce correcto.
+  const nodoDelCruce = { type: "node", id: 7, lat: 19.28, lon: -99.6 };
+  const cruceConOverpass = (fallasAntes: number) => {
+    let llamadas = 0;
+    return falso((u) => {
+      if (u.pathname.includes("interpreter")) {
+        llamadas++;
+        return llamadas <= fallasAntes
+          ? { status: 502, body: {} }
+          : { status: 200, body: { elements: [nodoDelCruce] } };
+      }
       const q = u.searchParams.get("q");
       if (q === "Toluca, Estado de México") return { status: 200, body: [TOLUCA] };
-      if (u.searchParams.get("polygon_geojson") !== "1") return { status: 200, body: [] };
-      // Las Torres va de oeste a este; Tollocan, de sur a norte: se cruzan en (-99.60, 19.28).
-      if (q === "Solidaridad Las Torres, Toluca, Estado de México")
-        return {
-          status: 200,
-          body: [
-            via("Avenida Solidaridad Las Torres", [
-              [-99.61, 19.28],
-              [-99.59, 19.28],
-            ]),
-          ],
-        };
-      if (q === "Paseo Tollocan, Toluca, Estado de México")
-        return {
-          status: 200,
-          body: [
-            via("Paseo Tollocan", [
-              [-99.6, 19.27],
-              [-99.6, 19.29],
-            ]),
-          ],
-        };
-      return { status: 200, body: [] };
+      // Nominatim da cada calle sola: nunca se usa para el cruce.
+      return {
+        status: 200,
+        body: [
+          via("Paseo Tollocan", [
+            [-99.6, 19.27],
+            [-99.6, 19.29],
+          ]),
+        ],
+      };
     });
-    const r = await buscarLugar(
-      {
-        q: "paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan",
-        municipio: "Toluca",
-        estado: "Estado de México",
-      },
-      "cruce",
-      deps,
-    );
+  };
+  const elCruce = {
+    q: "paso a desnivel de Solidaridad Las Torres sobre Paseo Tollocan",
+    municipio: "Toluca",
+    estado: "Estado de México",
+  };
+
+  it("Overpass caído en la primera vuelta y de vuelta en la segunda: el cruce correcto, nunca una calle", async () => {
+    // Tres instancias en la primera vuelta: las tres fallan; responde la primera de la segunda.
+    const { deps } = cruceConOverpass(3);
+    const r = await buscarLugar(elCruce, "reintento", deps);
+    expect(r.sinRespuesta).toBeFalsy();
     expect(r.resultados).toHaveLength(1);
-    expect(r.resultados[0]!.nombre).toBe("Solidaridad Las Torres y Paseo Tollocan");
+    expect(r.resultados[0]!.precision).toBe("cruce");
     expect(r.resultados[0]!.lat).toBeCloseTo(19.28, 5);
     expect(r.resultados[0]!.lon).toBeCloseTo(-99.6, 5);
-    expect(r.aviso).toContain("El cruce de Solidaridad Las Torres y Paseo Tollocan");
-    // Dentro de la caja del municipio.
-    const g = pedidos.find((p) => p.url.searchParams.get("polygon_geojson") === "1")!;
-    expect(g.url.searchParams.get("bounded")).toBe("1");
+  });
+
+  it("si el mapa no responde ni con el reintento: «No pude comprobar…», sin ningún punto", async () => {
+    const { deps } = cruceConOverpass(1000);
+    const r = await buscarLugar(elCruce, "sin-respuesta", deps);
+    expect(r.sinRespuesta).toBe(true);
+    expect(r.resultados).toEqual([]);
+    expect(r.aviso).toBe(
+      "No pude comprobar el cruce de Solidaridad Las Torres con Paseo Tollocan en Toluca, Estado de México (el mapa no respondió): reintenta.",
+    );
   });
 
   it("si las vías no se tocan ni aparece nada, pregunta; nunca el centro del municipio", async () => {
