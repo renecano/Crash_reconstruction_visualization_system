@@ -1699,3 +1699,51 @@ Narración de prueba en la carretera estatal 100 (SON 100), Hermosillo–Bahía 
   - el norte, arriba a la izquierda (lejos del zoom), y la escala con margen.
 
   La prueba visual revisa todo eso en AXA (con y sin calles de OSM), los cinco ejemplos y los casos nuevos. Capturas lado a lado en `docs/cesvi/ronda-4/evidencia/2d-limpio/`; las de AXA, solo en local.
+
+## La velocidad del perito, el lugar sin respuesta, el poste narrado y la vuelta sin cruce (2026-11-28) · #409, #410, #411, #412, #413
+
+**Qué se hizo** (pedidos de René del 2026-11-28):
+
+- **#409 (en producción) · Velocidad del perito.**
+  - **La DECLARADA nunca entra al solver.** Cuenta como «No sé», es decir, la típica de la vía, y solo se compara con la física en la hoja. En el poste, la declarada del Sentra llevaba el ajuste a un edificio y salía «no cuadra».
+  - **La MEDIDA que no cabe** deja ver la reconstrucción física sin ella, marcada, con el conflicto escrito («Con la velocidad medida de X km/h no cuadra: …; revisa la medida o las posiciones»). En Node y en el navegador.
+  - **Pruebas:** en los cinco ejemplos y AXA, con la cifra publicada y con 200 km/h (un archivo por caso para que corran en paralelo). No se mueve ninguna cifra publicada.
+- **#410 (en producción) · «No respondió» no es «no encontrado».** Si el mapa no contesta (Overpass o Nominatim), la búsqueda se detiene y dice «No pude comprobar el cruce de X con Y (el mapa no respondió): reintenta», con un botón «Reintentar».
+  - No se pasa al km, a la referencia ni a la calle, y no se usa la geometría de Nominatim.
+  - El lugar confirmado se guarda con el caso, así que reabrir o reconstruir no lo vuelve a buscar.
+  - Prueba con respuestas grabadas: Overpass caído en la primera vuelta y de vuelta en la segunda da el cruce correcto.
+- **#411 (abierto, espera a René: cambia la cifra) · El poste narrado aparece solo.**
+  - **Por qué no salía.** No es una regresión de #331 ni de #400, ni de mover el objeto a la orilla: el choque narrado contra el poste no traía lugar y solo se calculaba y se dibujaba si el perito lo marcaba. La receta de la e2e lo marcaba a mano.
+  - **Qué cambia.** El poste va donde quedó el Sentra, contra su frente, como supuesto visible (`conObjetosNarrados`). La tolerancia del choque contra un objeto pasa de 2 m fijos a medio largo del vehículo más 0.5 m: con 2 m, un Sentra con el frente contra el poste no cuadraba.
+  - **Cifras del Sentra (B)**, Node, 32/128 muestras:
+
+    | Variante                                    | Sentra (B)            |
+    | ------------------------------------------- | --------------------- |
+    | Poste colocado por Croquis                  | 57.8 km/h (49.6–68.3) |
+    | Poste de la receta, con la nueva tolerancia | 49.9 (46.1–55.3)      |
+    | Hoy, sin marcar el poste                    | 49.4 (45.0–54.5)      |
+    | Publicada                                   | 50 (47–57)            |
+- **#412 (abierto) · La vuelta sin cruce.** Si la narración da una vuelta y no hay esquina del mapa a menos de 40 m del choque, La escena dice: «la narración dice que dio vuelta, pero aquí no hay un cruce: revisa el lugar». En los cinco ejemplos no sale de más.
+- **#413 (abierto) · Relevo de Overpass y la colonia.**
+  - **Relevo entre réplicas.** Gana la primera que responde; una réplica colgada ya no retiene la búsqueda.
+  - **«La colonia X» es una colonia,** no una calle con ese nombre.
+  - **La referencia pide solo la calle narrada.**
+  - **Topes:** un tope de 45 s por cruce, y `/api/lugar` a 60 s.
+
+**Los tres casos de René en producción** (`/api/lugar/narrado`, tres veces cada uno, después de #410):
+
+| Caso | Resultado en producción                                                                                                    | Por qué                                                                                                                                        |
+| ---- | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2    | El mismo cruce las tres veces: Av. Tecnológico y Av. Estado de México, 19.250403, −99.577665, seguridad alta, sin opciones | Salió de la caché del servidor, en 0.5 s                                                                                                       |
+| 3    | El mismo cruce las tres veces: Paseo Tollocan y Jesús Carranza, 19.273009, −99.658483, seguridad alta, sin opciones        | Salió de la caché del servidor, en 0.5 s                                                                                                       |
+| 1    | Las tres veces «No pude comprobar «Ciprés» (el mapa no respondió)», a los 41 s                                             | La referencia tomaba una calle Ciprés y bajaba todas las calles a 700 m de tres candidatos; desde Vercel se agotaba el tiempo. Lo corrige #413 |
+
+En local, con #413 y la caché vacía:
+
+| Caso | Lugar                                             | Tiempo                                                                                                                         |
+| ---- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| 1    | Paseo de los Matlatzincas (calle, seguridad baja) | 3.5 s                                                                                                                          |
+| 2    | El cruce                                          | 7.6 s; una de dos corridas se agotó a los 30 s, el tope de antes (Overpass estuvo muy inestable: 502, 504 y réplicas colgadas) |
+| 3    | El cruce                                          | 8 s                                                                                                                            |
+
+**Siguiente paso concreto:** fusionar #412 y #413 con CI en verde. Correr de nuevo los tres casos en producción, tres veces cada uno, y abrirlos de punta a punta en La escena: el lugar, las opciones y si la escena cuadra con la narración (la vuelta del caso 2 en la esquina). #411 espera el visto bueno de René a la cifra del poste.
