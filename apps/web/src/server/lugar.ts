@@ -39,6 +39,8 @@ export const PAUSA_NOMINATIM_MS = 1100;
 const ESPERA_MS = 8000;
 export const CACHE_DIAS = 30;
 const MEMORIA = 300;
+/** m: a lo más esto del centro del municipio, el cruce «del centro» que se toma sin preguntar. */
+const CENTRO_CERCA_M = 1000;
 /** Cuántas opciones se muestran. */
 export const OPCIONES = 5;
 
@@ -1051,6 +1053,23 @@ async function conNominatim(
       }
       const cuantos = `${vias[0]} y ${vias[1]} se cruzan en ${reales.length} lugares${enDonde}`;
       const delCentro = municipio ? `al centro de ${municipio}` : "al centro del municipio";
+      // «En el centro de Toluca» (René, 2026-11-28, caso 7): si el cruce más cercano al centro del
+      // municipio queda en él y los demás claramente lejos, ese es el lugar; los otros se dicen.
+      if (esCentro && centro && resultados.length > 1) {
+        const m = (p: { lat: number; lon: number }) =>
+          Math.hypot(
+            (p.lon - centro.lon) * plano(centro.lat).x,
+            (p.lat - centro.lat) * plano(centro.lat).y,
+          );
+        const d0 = m(resultados[0]!);
+        const d1 = m(resultados[1]!);
+        if (d0 <= CENTRO_CERCA_M && d1 >= Math.max(CENTRO_CERCA_M, 2 * d0))
+          return {
+            resultados: [resultados[0]!],
+            aviso: `El cruce de ${vias[0]} y ${vias[1]} más cercano al centro de ${municipio ?? "el municipio"} (a ${Math.round(d0 / 10) * 10} m), como dice la narración. Hay otros ${resultados.length - 1} más lejos (el siguiente, a ${(d1 / 1000).toFixed(1)} km): si no es este, márcalo.`,
+            fuente: "nominatim",
+          };
+      }
       const aviso = !colonia
         ? `${cuantos} y la narración no dice la colonia ni la zona: elige el del hecho (van del más cercano ${delCentro} al más lejano).`
         : esCentro

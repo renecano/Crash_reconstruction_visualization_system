@@ -154,3 +154,23 @@ describe("sin respuesta del mapa, no se pasa al siguiente método (René, 2026-1
     expect(llamadas).toBe(0);
   });
 });
+
+describe("un cruce narrado sin el tipo de vía (René, 2026-11-28, caso 7 de la demo)", () => {
+  it("«en el cruce de Lerdo de Tejada y Nicolás Bravo» es un cruce, no una calle", async () => {
+    const r = await buscarLugarNarrado(
+      {
+        narracion:
+          "El hecho se ubica en el cruce de Lerdo de Tejada y Nicolás Bravo, en el centro de Toluca, Estado de México, aproximadamente a las 19:20 horas.",
+        municipio: "Toluca",
+        estado: "Estado de México",
+      },
+      "prueba",
+      { ...sinNada, cache: new MemoryLugarCache() },
+      { km: noAplica("km"), referencia: noAplica("referencia") },
+    );
+    // La red sin nada: el cruce no aparece; nunca se cae a la calle sola.
+    const cruce = r.intentos.find((x) => x.como === "cruce");
+    expect(cruce).toMatchObject({ aplica: true });
+    expect(r.intentos.find((x) => x.como === "calle")).toMatchObject({ aplica: false });
+  });
+});
