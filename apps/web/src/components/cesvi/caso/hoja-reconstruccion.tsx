@@ -254,6 +254,15 @@ export function CifraReconstruccion({
             </div>
           </details>
         </>
+      ) : r.sinCalculo ? (
+        // Lo que Croquis todavía no calcula (una volcadura sin choque, René 2026-11-28): sin cifra, y
+        // el croquis y el dictamen siguen.
+        <div className="flex flex-col gap-2" data-testid="sin-calculo">
+          <p className="t-cuerpo font-semibold">{r.sinCalculo}</p>
+          <p className="t-nota">
+            El croquis y el 3D muestran el vehículo donde quedó, sin animar el hecho.
+          </p>
+        </div>
       ) : r.noCuadra ? (
         // El candado físico (René, 2026-11-24): la cifra no se presenta; se dice qué no cuadra y qué
         // revisar. El 3D deja a los vehículos donde quedaron, sin animar el choque.

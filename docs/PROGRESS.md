@@ -2465,6 +2465,12 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **Reconstruir volcaduras** (René, 2026-11-28: después de la demo). Hoy una volcadura sin choque se dice y no se calcula: «Croquis todavía no reconstruye volcaduras: puedes usar el croquis y el dictamen sin cifra de velocidad» (`packages/cesvi/src/volcadura.ts`). Lo que falta, con las horas estimadas:
+  1. **Velocidad por tramos:** derrape en pavimento, surcos en terracería y vueltas con arrastre de 0.4 a 0.5 g, cada uno con su fuente (en `data/SOURCES.md`). En Python y TS con paridad, con huellas que lleven su superficie y su fase. De 12 a 16 h.
+  2. **Evento «volcadura» y criterio de tropiezo sin objeto** (en la orilla o en el surco), desde el flujo del perito. De 4 a 6 h.
+  3. **Las vueltas en la trayectoria** (`trayectoria.alabeo`) hasta la pose narrada (sobre el techo, con su rumbo), marcadas como ilustrativas. Unity ya aplica el alabeo; falta un build para comprobar la pose y el daño del toldo. De 10 a 16 h.
+  4. **El reposo medido desde el fin de los surcos**, del lado narrado («salió por el costado derecho»). De 2 a 3 h.
+  5. **Un dictamen real de volcadura de CESVI** que reproduzca su cifra, con valor y porcentaje, más una e2e. De 4 a 6 h.
 - **El video del 3D en la laptop con tarjeta integrada** (ADR 0148, 2026-11-28): en la Mac M1 «Rápido» tardó 124 s para 13 s de video; en la Intel UHD no se ha medido con la captura bajo pedido. La prueba ya está: `CROQUIS_URL=http://localhost:3000 CROQUIS_CANAL=msedge pnpm exec playwright test -c playwright.produccion.config.ts e2e/video-medicion.spec.ts --headed` con la demo local. Necesita la computadora de demo de René.
 
 - **El rango corto por arriba en choques laterales** (René, 2026-11-27, después de la demo): con lo medido como restricción (#369), la cobertura pasó de 410/578 a 404/579; de los 34 casos que salen del rango, 28 son laterales y en 23 de ellos la verdad queda por encima del p90 (`eval/results/t3_cobertura_detalle/`). Revisar el muestreo del rango contra lo medido y los nominales asimétricos (restitución, arrastre).

@@ -48,6 +48,7 @@ import {
   type RolPersona,
   type TipoObjeto,
   separarLugarYSentido,
+  volcaduraSinChoque,
 } from "@croquis/cesvi";
 import { overpassDeTeselas, type OverpassResponse } from "@croquis/croquis-2d";
 import { RADIO_CALLES_M } from "@/lib/calles-del-mapa";
@@ -2182,7 +2183,9 @@ export function EscenaFacil({
         <h2 className="escena-titulo" data-testid="escena-pregunta">
           {varios
             ? `¿Dónde fue el ${["primer", "segundo", "tercer", "cuarto", "quinto"][orden - 1] ?? `${orden}.º`} choque?`
-            : "¿Dónde fue el choque?"}
+            : volcaduraSinChoque(e)
+              ? "¿Dónde empezó la volcadura?"
+              : "¿Dónde fue el choque?"}
         </h2>
         <p className="t-cuerpo text-texto-2">
           Toca el lugar en el mapa. Puedes moverte arrastrando y acercarte con la rueda del ratón o

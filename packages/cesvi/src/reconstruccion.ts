@@ -82,6 +82,7 @@ import { terrenoDeEscena, terrenoReconstruido, type TerrenoReconstruido } from "
 import { limiteDeCobertura } from "./cobertura";
 import { iluminacionDeHora } from "./iluminacion";
 import { distanciaProyeccion, OBJETO_PERSONA, personaDelAtropello } from "./personas";
+import { AVISO_VOLCADURA, volcaduraSinChoque } from "./volcadura";
 import { grados, kmhConUnidad, metros, rangoKmh } from "./formato";
 
 type Json = Record<string, unknown>;
@@ -391,6 +392,11 @@ export interface EscenaSolver {
   limites: string[];
   /** El punto de impacto en el mapa (lon, lat): el origen de la escena. null sin posiciones de impacto. */
   origen: LonLat | null;
+  /**
+   * Por qué Croquis no calcula una velocidad en este caso (una volcadura sin choque, René 2026-11-28):
+   * la reconstrucción no trae cifras y el 3D muestra cada vehículo donde quedó.
+   */
+  sinCalculo?: string;
   /** La velocidad narrada de cada vehículo del expediente, para decir si las posiciones la contradicen. */
   narradas?: Record<string, VelocidadNarrada>;
   /**
@@ -1242,7 +1248,15 @@ export function especDeExpediente(e0: Expediente, specId = "caso-nuevo"): Escena
   const velocidadesNarradas = Object.fromEntries(
     e0.vehiculos.flatMap((v) => (v.velocidad_narrada ? [[v.id, v.velocidad_narrada]] : [])),
   );
-  return { spec, ids, limites, origen, narradas: velocidadesNarradas, posesDeImpacto };
+  return {
+    spec,
+    ids,
+    limites,
+    origen,
+    narradas: velocidadesNarradas,
+    posesDeImpacto,
+    ...(volcaduraSinChoque(e) ? { sinCalculo: AVISO_VOLCADURA } : {}),
+  };
 }
 
 const CARA_POR_OMISION = "B";
@@ -1898,6 +1912,15 @@ export function interpretarResultado(
     elegida: null,
     terreno,
   };
+  // Lo que Croquis no calcula (una volcadura sin choque): sin cifras, y se dice por qué.
+  if (base.sinCalculo)
+    return {
+      ...rec,
+      sinCalculo: base.sinCalculo,
+      velocidades: velocidades.map((v) => ({ ...v, previa: null, impacto: null })),
+      hipotesis: null,
+      limites: [base.sinCalculo, ...limites],
+    };
   // El candado físico (René, 2026-11-24): si la cifra no cuadra con la física o con lo que reproduce
   // el 3D, no se presenta como resultado; se dice qué no cuadra y qué revisar.
   const { noCuadra } = candadoFisico({
@@ -2042,8 +2065,8 @@ function reconstruirUnaVez(
  */
 export function expedienteConTipicas(e: Expediente, r: Reconstruccion): Expediente | null {
   // Lo que no cuadra no trae cifras (el candado las quita): no es que la evidencia no las fije, así
-  // que no se le ponen las típicas de la vía (René, 2026-11-24).
-  if (r.noCuadra) return null;
+  // que no se le ponen las típicas de la vía (René, 2026-11-24). Tampoco lo que no se calcula.
+  if (r.noCuadra || r.sinCalculo) return null;
   const detenidos = new Set(
     (e.versiones ?? [])
       .find((x) => x.tipo === "evidencia")
@@ -2177,7 +2200,7 @@ export function especReconstruida(r: Reconstruccion): Json {
   // El candado físico (René, 2026-11-24): lo que no cuadra no se anima. El 3D muestra a cada vehículo
   // quieto donde el perito dijo que quedó, sin choque: la animación nunca muestra una velocidad que
   // Croquis no presenta.
-  if (r.noCuadra) {
+  if (r.noCuadra || r.sinCalculo) {
     for (const sv of spec.vehiculos) {
       const fin = (sv.posicion_final ?? null) as Json | null;
       if (fin) sv.posicion_inicial = { ...fin };
