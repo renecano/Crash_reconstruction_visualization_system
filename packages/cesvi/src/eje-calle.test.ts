@@ -50,7 +50,9 @@ function caso(puntos: [number, number][] | null, conCurvaNarrada = false): Exped
     ...base,
     vehiculos: base.vehiculos.filter((v) => v.id === "V1"),
     danos: [],
-    impactos: [{ orden: 1, vehiculos: ["V1"], objeto_fijo: "poste", fuente: "perito" }],
+    // Una barrera, que puede estar sobre la vía: esta prueba es del trazo de la curva. Un poste o un
+    // árbol en el eje pasa a la orilla (René, 2026-11-26; `orilla.test.ts`).
+    impactos: [{ orden: 1, vehiculos: ["V1"], objeto_fijo: "barrera", fuente: "perito" }],
     versiones: [],
     caso: {
       ...base.caso,

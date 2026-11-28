@@ -244,13 +244,13 @@ function construir() {
     const archivo = "eval/results/ejemplos_en_su_lugar/cifras.json";
     const doc = leer(archivo);
     const APROBADO =
-      "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331); René lo aprobó el 2026-11-26.";
+      "Escena armada con el mismo código de La escena, direcciones por las calles reales (#331); con lo medido como restricción del solver (#369), René lo aprobó el 2026-11-27.";
     const CRUCERO =
-      "Escena armada con el mismo código de La escena, direcciones por las calles reales y confirmadas como con el botón «Confirmar» de la app (#331); René lo aprobó el 2026-11-26.";
+      "Escena armada con el mismo código de La escena, direcciones por las calles reales y confirmadas como con el botón «Confirmar» de la app (#331); con lo medido como restricción del solver (#369), René lo aprobó el 2026-11-27.";
     const POSTE =
-      "Escena armada con el mismo código de La escena (#331), con el golpe contra el poste calculado y el derrape de 18.40 m como evidencia. Desde el 2026-11-26 (fix/w-poste-mazda), el Mazda quedó «1 metro al Oriente» (decía «8 metros al Norte», que la física no alcanza) y la revisión de «reposo inalcanzable» ya no se queda en un mínimo local: pendiente del visto bueno de René.";
+      "Escena armada con el mismo código de La escena (#331), con el golpe contra el poste calculado y el derrape de 18.40 m como evidencia. Desde el 2026-11-26 (fix/w-poste-mazda), el Mazda quedó «1 metro al Oriente» (decía «8 metros al Norte», que la física no alcanza) y la revisión de «reposo inalcanzable» ya no se queda en un mínimo local. Con lo medido como restricción del solver (#369), René lo aprobó el 2026-11-27.";
     const REVERSA =
-      "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más; el rango del Versa cambia por eso. René lo aprobó el 2026-11-26.";
+      "Escena armada con el mismo código de La escena (#331). La velocidad en reversa del CR-V pesa como supuesto con su rango (NHTSA, 3.06–9.07 km/h), porque la narración no da evidencia de más; el rango del Versa cambia por eso. Con lo medido como restricción del solver (#369), René lo aprobó el 2026-11-27.";
     for (const [clave, ejemplo, vehiculo, que, antes, motivo] of [
       [
         "ejemplos.crucero",
@@ -277,7 +277,7 @@ function construir() {
         APROBADO,
       ],
       [
-        "ejemplos.alcance_corolla",
+        "ejemplos.alcance_vento",
         "alcance-deformacion",
         "V2",
         "«alcance en carretera»: velocidad del Vento (B), el alcanzado, antes del impacto",
@@ -345,16 +345,17 @@ function construir() {
   // puede diferir hasta 1 km/h por dónde caen los toques. Las de los otros vehículos siguen siendo de
   // la tabla: el navegador no las mide.
   {
-    const archivo = "eval/results/t10/ejemplos.json";
+    const archivo = "eval/results/t11/ejemplos.json";
     const doc = leer(archivo);
-    const MOTIVO = "Medido en el navegador con Unity real (t10-final, 2026-11-26); René lo aprobó.";
+    const MOTIVO =
+      "Medido en el navegador con Unity real (t11-solver, 2026-11-27), con lo medido como restricción del solver (#369); René lo aprobó.";
     for (const [clave, ejemplo, que, extra] of [
       ["ejemplos.crucero", "crucero-noche", "«crucero de noche»: velocidad del Jetta (A)", ""],
       [
         "ejemplos.alcance",
         "alcance-deformacion",
         "«alcance en carretera»: velocidad de la NP300 (A), la que alcanza",
-        " La tabla da 53 (49–56): la diferencia es por dónde caen los toques.",
+        " La tabla da 53 (44–53): la diferencia es por dónde caen los toques.",
       ],
       [
         "ejemplos.carambola",
@@ -372,7 +373,7 @@ function construir() {
         "ejemplos.poste",
         "poste-terraceria",
         "«poste y terracería»: velocidad del Sentra (B)",
-        " Pendiente del arreglo del rango del solver: su extremo bajo incluye muestras en las que el Sentra no llega al poste; fuera de la demo hasta entonces.",
+        " Respeta el derrape de 18.40 m: sale del choque a 43 km/h o más (Fricke); vuelve a la demo (René, 2026-11-27).",
       ],
     ]) {
       const i = doc.ejemplos.findIndex((e) => e.clave === ejemplo);

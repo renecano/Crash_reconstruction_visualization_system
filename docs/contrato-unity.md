@@ -28,6 +28,8 @@ Para Alberto, que lleva todo lo de Unity (René, 2026-11-26): daños visuales, p
 
 **Lo medido manda en el 3D (René, 2026-11-26; contrato #345, solver #349):** si el daño trae `dano.medido_m` (C1–C6 que midió el perito, en metros, con la misma convención que `perfil_m`), **Unity dibuja lo medido**: es la evidencia del vehículo real. Sin `medido_m`, dibuja `perfil_m`, lo que calcula el solver con la energía del choque. Con lo medido se usan también `ancho_m` y `centro_m`, que ya vienen con el ancho medido. Los demás campos nuevos (`energia_medida_j` y `rigidez`, con `fuente` y `nota`) son para la web; Unity no los necesita. Cuando lo medido pide más energía de la que el choque puede dar (AXA: 223 kJ contra 62 kJ), la web lo avisa en Análisis; el 3D no cambia por eso.
 
+**Un roce sin deformación (René, 2026-11-26, la reversa):** si `perfil_m` viene en cero en todo el ancho, `energia_j` es mayor que cero y hay `cdc`, el choque fue un roce que no pasó el umbral de deformación de CRASH3 (A²/2B por `ancho_m`, con `rigidez`). Unity no hunde la carrocería (0 cm es lo correcto) y dibuja **rayones** en la zona del CDC, en `ancho_m` alrededor de `centro_m`, en la dirección del deslizamiento (`pdof_horas`). La web explica en Análisis por qué no hay deformación, con las dos energías. Es decoración: no entra a ninguna cifra.
+
 **Pedazos:** salen del punto del primer impacto (`resultado.punto_impacto`) en la dirección de `pdof_horas`; los de un impacto posterior, de donde está el vehículo en el `t` de su evento (`resultado.eventos[]`, con su `t` y sus `actores`). El área donde quedaron los restos, si la narración la da, viene en `escenario.evidencias`. Su cantidad escala con `energia_j`. Son decoración: no entran a ninguna cifra.
 
 ## 2. «¿Y si…?»

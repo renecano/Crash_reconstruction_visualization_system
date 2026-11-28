@@ -12,6 +12,7 @@ import {
   overpassQuery,
   recorteEnCirculo,
   redVialFrom,
+  detalleDe,
   rotateDeg,
   templateFromCrossing,
   type OverpassResponse,
@@ -157,7 +158,12 @@ describe("calles reales en producción (ADR 0040)", () => {
 
   it("la consulta es la misma que la del extracto versionado", () => {
     const m = MANIFEST.toluca_carranza_juarez!;
-    expect(overpassQuery(m.lat, m.lon, m.radio_m)).toBe(m.consulta);
+    // Desde el 2026-11-27 también trae las etiquetas de los nodos (semáforos y pasos peatonales):
+    // `out body` en vez de `out skel`. El extracto de Toluca se bajó antes y no se vuelve a bajar,
+    // para no mover las escenas y cifras que salen de él.
+    expect(overpassQuery(m.lat, m.lon, m.radio_m)).toBe(
+      m.consulta.replace("out skel qt;", "out body qt;"),
+    );
   });
 
   it("el cruce más cercano a unas coordenadas cerca de la esquina es el del extracto", () => {
@@ -197,5 +203,64 @@ describe("calles reales en producción (ADR 0040)", () => {
     expect(() =>
       applyMap(spec, RESP, { lat: ORIGEN.lat + 0.01, lon: ORIGEN.lon, radioM: 150 }),
     ).toThrow(/cruce/);
+  });
+});
+
+describe("el detalle de las calles de OSM (punto 9, 2026-11-27)", () => {
+  const via = (tags: Record<string, string>) => ({
+    type: "way" as const,
+    id: 1,
+    nodes: [1, 2],
+    tags: { highway: "primary", ...tags },
+  });
+  it("carriles por sentido, flechas y banquetas en el sentido de los puntos", () => {
+    expect(
+      detalleDe(
+        via({
+          "lanes:forward": "3",
+          "lanes:backward": "1",
+          "turn:lanes:forward": "left|through|through;right",
+          sidewalk: "right",
+        }),
+      ),
+    ).toEqual({
+      carriles_ida: 3,
+      carriles_vuelta: 1,
+      vueltas: ["left", "through", "through;right"],
+      banqueta: "derecha",
+    });
+  });
+  it("con oneway=-1 los puntos van al revés: se cambian ida y vuelta, izquierda y derecha", () => {
+    expect(
+      detalleDe(
+        via({ oneway: "-1", "lanes:forward": "2", "sidewalk:left": "yes", "turn:lanes": "left|" }),
+      ),
+    ).toEqual({ carriles_vuelta: 2, vueltas: ["left", ""], banqueta: "derecha" });
+  });
+  it("los semáforos y los pasos peatonales sobre las calles, en metros", () => {
+    const lat = 19.28;
+    const lon = -99.65;
+    const red = redVialFrom(
+      {
+        elements: [
+          {
+            type: "node",
+            id: 1,
+            lat,
+            lon,
+            tags: { highway: "traffic_signals", crossing: "traffic_signals" },
+          },
+          { type: "node", id: 2, lat: lat + 0.0005, lon },
+          { type: "node", id: 3, lat: lat + 0.001, lon, tags: { highway: "crossing" } },
+          { type: "way", id: 9, nodes: [1, 2], tags: { highway: "primary" } },
+        ],
+      },
+      { lat, lon, radioM: 150, rotacionDeg: 0 },
+    );
+    // El nodo 3 no está en ninguna calle: no entra.
+    expect(red.nodos).toEqual([
+      { id_osm: 1, tipo: "semaforo", x: 0, y: 0 },
+      { id_osm: 1, tipo: "paso_peatonal", x: 0, y: 0 },
+    ]);
   });
 });

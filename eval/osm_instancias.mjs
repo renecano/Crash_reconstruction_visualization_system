@@ -38,7 +38,7 @@ const m = JSON.parse(
 ).toluca_carranza_juarez;
 const lat = Number(m.lat.toFixed(5));
 const lon = Number(m.lon.toFixed(5));
-const consulta = `[out:json][timeout:25];way(around:${RADIO},${lat},${lon})["highway"];out body;>;out skel qt;`;
+const consulta = `[out:json][timeout:25];way(around:${RADIO},${lat},${lon})["highway"];out body;>;out body qt;`;
 
 const filas = [];
 for (const url of instancias) {

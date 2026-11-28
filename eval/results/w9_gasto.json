@@ -137,7 +137,17 @@
       "fecha": "2026-11-26T22:20:09.105Z",
       "que": "Ronda 2, C: lectura de la narración de ejemplo «poste-terraceria»",
       "usd": 0.036223
+    },
+    {
+      "fecha": "2026-11-27T03:24:46.274Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «arida-bahia-kino»",
+      "usd": 0.029803
+    },
+    {
+      "fecha": "2026-11-27T03:32:31.623Z",
+      "que": "Ronda 2, C: lectura de la narración de ejemplo «arida-bahia-kino»",
+      "usd": 0.030993
     }
   ],
-  "total_usd": 1.7649
+  "total_usd": 1.8257
 }

@@ -1,0 +1,17 @@
+{
+  "descripcion": "Narraciones de prueba que no son ejemplos de la app (René, 2026-11-26): el caso árido de Sonora para revisar el paisaje del 3D en la t11. Las escribió Croquis; no son de CESVI.",
+  "ejemplos": [
+    {
+      "clave": "arida-bahia-kino",
+      "titulo": "Alcance en la carretera a Bahía de Kino",
+      "linea": "Zona desértica de Sonora: para el paisaje árido del 3D",
+      "narracion": "El hecho se ubica en la carretera estatal número 100, tramo Hermosillo–Bahía de Kino, a la altura del km 105, a la entrada de Bahía de Kino, municipio de Hermosillo, Sonora, aproximadamente a las 15:40 horas. La carretera consta de un arroyo de dos carriles de concreto asfáltico, uno por sentido, con acotamiento de terracería de 1.50 metros a cada lado, en tramo recto y sensiblemente plano, en zona desértica con matorral. La superficie se encontraba seca y el cielo despejado.\n\nSe examinan el vehículo A, marca Chevrolet, tipo Silverado 1500, modelo 2019, color blanco, de servicio particular, que circulaba de Oriente a Poniente, y el vehículo B, marca Nissan, tipo March, modelo 2018, color rojo, de servicio particular, que circulaba delante del vehículo A en el mismo sentido y disminuyó su velocidad para incorporarse a un camino de terracería a su derecha. El vehículo A presenta en su parte frontal un hundimiento de adelante hacia atrás sobre defensa, parrilla y cofre. El vehículo B presenta en su parte posterior un hundimiento de atrás hacia adelante sobre defensa trasera, cajuela y calaveras. Las zonas de contacto corresponden: la parte frontal del vehículo A con la parte posterior del vehículo B.\n\nSe localizan restos de plástico y vidrio sobre el carril con sentido al Poniente, en una franja de 5 metros de largo. El vehículo A quedó sobre el carril, 6 metros al Poniente del inicio de los restos; el vehículo B quedó sobre el acotamiento de terracería del lado derecho, 15 metros al Poniente del inicio de los restos.",
+      "grabacion": "pruebas/arida-bahia-kino.json",
+      "lugar": {
+        "lat": 28.8287486,
+        "lon": -111.9102439,
+        "nota": "Carretera estatal 100 (SON 100), Hermosillo–Bahía de Kino, a la entrada de Bahía de Kino; cobertura de OpenStreetMap: arena (natural=sand)."
+      }
+    }
+  ]
+}
