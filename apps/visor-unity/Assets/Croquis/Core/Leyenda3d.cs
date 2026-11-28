@@ -26,7 +26,7 @@ namespace Croquis.Core
         /// piso del mapa real (ADR 0124), que el piso es una imagen del lugar, con el crédito que pide su
         /// licencia; con una versión superpuesta (ADR 0123), en otro renglón, cuál es la translúcida.
         /// </summary>
-        public static string Mensaje(bool entornoProcedural, string atribucionPiso = null, string etiquetaFantasma = null, bool danoMedido = false)
+        public static string Mensaje(bool entornoProcedural, string atribucionPiso = null, string etiquetaFantasma = null, bool danoMedido = false, bool? ocupanteNarrado = null)
         {
             var texto = "Reconstrucción ilustrativa";
             if (danoMedido)
@@ -44,6 +44,14 @@ namespace Croquis.Core
             else if (entornoProcedural)
             {
                 texto += " · entorno procedural: no es el lugar real";
+            }
+
+            if (ocupanteNarrado.HasValue)
+            {
+                // El motociclista o el ciclista que sale de su vehículo (René, 2026-11-28).
+                texto += ocupanteNarrado.Value
+                    ? "\nTrayectoria del ocupante: ilustrativa; su posición final es la narrada"
+                    : "\nTrayectoria del ocupante: ilustrativa; su posición final es supuesta (la narración no la dice)";
             }
 
             if (!string.IsNullOrWhiteSpace(etiquetaFantasma))

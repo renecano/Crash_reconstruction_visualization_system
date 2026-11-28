@@ -74,6 +74,12 @@ namespace Croquis.Visor
         private Mesh[] mallasFijas = new Mesh[0];
         private int poseFija = -1;
 
+        /// <summary>
+        /// El motociclista o el ciclista que sale de su vehículo: desde el impacto, su vuelo ilustrativo
+        /// (determinista) hasta su posición final narrada; null, solo la trayectoria del Resultado.
+        /// </summary>
+        public VueloOcupante Vuelo { get; set; }
+
         /// <summary>Peatón, ciclista o motociclista: va por su trayectoria.</summary>
         public static async Awaitable<PersonaVista> ConTrayectoriaAsync(
             Transform padre, ResultadoPersona p, Terreno terreno, CargadorCuerpos cuerpos)
@@ -310,14 +316,17 @@ namespace Croquis.Visor
                 return;
             }
 
-            var p = Personas.Pose(persona, t);
+            var enVuelo = Vuelo != null && t >= Vuelo.T0;
+            var p = enVuelo ? Vuelo.Pose(t) : Personas.Pose(persona, t);
             var x = (float)p.X;
             var y = (float)p.Y;
             var suelo = terreno != null && !terreno.Plano ? terreno.Z(x, y) : 0f;
             transform.SetPositionAndRotation(
                 new Vector3(x, suelo + (float)p.Z, y),
                 Quaternion.Euler(0f, 90f - (float)(p.Rumbo * Mathf.Rad2Deg), 0f));
-            cuerpo.localRotation = Quaternion.Euler((float)(p.Inclinacion * Mathf.Rad2Deg), 0f, 0f);
+            // Rodando por el suelo, el cuerpo gira sobre su eje de avance.
+            var rueda = enVuelo ? (float)(Vuelo.Giro(t) * Mathf.Rad2Deg) : 0f;
+            cuerpo.localRotation = Quaternion.AngleAxis(rueda, Vector3.forward) * Quaternion.Euler((float)(p.Inclinacion * Mathf.Rad2Deg), 0f, 0f);
             Posar(p.Postura, t);
         }
 
