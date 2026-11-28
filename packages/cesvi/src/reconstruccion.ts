@@ -1899,7 +1899,13 @@ export function interpretarResultado(
   return {
     ...rec,
     noCuadra,
-    velocidades: velocidades.map((v) => ({ ...v, previa: null, impacto: null })),
+    // Lo que midió un instrumento no es una cifra de Croquis: se sigue viendo (René, 2026-11-27); las
+    // demás no se presentan hasta que cuadre.
+    velocidades: velocidades.map((v) => ({
+      ...v,
+      previa: v.previa?.medida ? v.previa : null,
+      impacto: null,
+    })),
     limites: [
       ...limites,
       ...noCuadra.motivos.map((m) => `No cuadra: ${m}`),
