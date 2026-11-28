@@ -666,9 +666,8 @@ export function VisorUnity({
     const ponerModo = async (m: ModoVideo) => {
       modo = m;
       // Nivel y resolución fijos mientras se graba: en automático Unity los bajaba con los fps bajos
-      // del cuadro por cuadro (la escala de dibujo solo se fija con `depurar`).
-      puente.enviar("calidad", { nivel: m.nivel });
-      puente.enviar("depurar", { escala: 1 });
+      // del cuadro por cuadro y el video salía con bordes dentados.
+      puente.enviar("calidad", { nivel: m.nivel, escala: 1 });
       const tamano = lienzoDelVideo(window.devicePixelRatio || 1, m.escala);
       c.style.width = `${tamano.ancho}px`;
       c.style.height = `${tamano.alto}px`;
@@ -784,8 +783,7 @@ export function VisorUnity({
     } finally {
       c.style.width = antes.ancho;
       c.style.height = antes.alto;
-      puente.enviar("calidad", { nivel: "auto" });
-      puente.enviar("depurar", { escala: null });
+      puente.enviar("calidad", { nivel: "auto", escala: null });
       setConfirmacion(null);
       puente.minimapa(minimapa);
       grabando.current = false;

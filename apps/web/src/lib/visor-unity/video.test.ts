@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   ALTO_VIDEO,
   CODIFICADORES,
-  escalaMedida,
   SIN_VIDEO,
-  UMBRAL_DOBLE_MS,
+  UMBRAL_RAPIDO_MS,
+  elegirModo,
   ANCHO_VIDEO,
   instantesDelVideo,
   CAMARA_LENTA_VIDEO,
@@ -12,7 +12,7 @@ import {
   rotuloAcelerado,
   rotuloLenta,
   lienzoDelVideo,
-  modoDelVideo,
+  modosDelVideo,
   estimarVideo,
   guardarMedida,
   medidaGuardada,
@@ -75,24 +75,29 @@ describe("el antialiasing del video (René, 2026-11-26)", () => {
 });
 
 describe("el modo del video según la tarjeta (René, 2026-11-26: medido en la laptop de 8 GB)", () => {
-  it("integradas y por software, a 1× y automática; las dedicadas, «Rápido» a 1× en alta y «Máxima» al doble en ultra", () => {
+  it("«Rápido» prueba alta y luego media; «Máxima», el doble en ultra solo con tarjeta dedicada", () => {
+    const rapido = [
+      { escala: 1, nivel: "alta" },
+      { escala: 1, nivel: "media" },
+    ];
     for (const r of [
       "ANGLE (Intel, Intel(R) UHD Graphics 620 (0x00005917) Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)), SwiftShader driver)",
       null,
     ])
-      for (const c of ["rapido", "maxima"] as const)
-        expect(modoDelVideo(r, c)).toEqual({ escala: 1, calidad: null });
+      for (const c of ["rapido", "maxima"] as const) expect(modosDelVideo(r, c)).toEqual(rapido);
     for (const r of [
       "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (AMD, AMD Radeon RX 6700 XT Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (Intel, Intel(R) Arc(TM) A770 Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "Apple M2",
     ]) {
-      // René, 2026-11-28: 13 min por video era demasiado; «Rápido» es lo de siempre.
-      expect(modoDelVideo(r)).toEqual({ escala: 1, calidad: "alta" });
-      expect(modoDelVideo(r, "maxima")).toEqual({ escala: 2, calidad: "ultra" });
+      expect(modosDelVideo(r)).toEqual(rapido);
+      expect(modosDelVideo(r, "maxima")).toEqual([
+        { escala: 2, nivel: "ultra" },
+        { escala: 1, nivel: "alta" },
+      ]);
     }
     expect(tarjetaIntegrada("Intel(R) Iris(R) Xe Graphics")).toBe(true);
   });
@@ -103,13 +108,43 @@ describe("el modo del video según la tarjeta (René, 2026-11-26: medido en la l
     expect(lienzoDelVideo(1, 1)).toEqual({ ancho: 1920, alto: 1080 });
   });
 
-  it("al doble solo si los cuadros medidos salen a tiempo (no por el nombre de la tarjeta)", () => {
-    expect(escalaMedida(60)).toBe(2);
-    expect(escalaMedida(UMBRAL_DOBLE_MS)).toBe(2);
-    expect(escalaMedida(UMBRAL_DOBLE_MS + 1)).toBe(1);
-    // Ningún cuadro al doble (la Intel UHD): 1×.
-    expect(escalaMedida(Infinity)).toBe(1);
-    expect(escalaMedida(Number.NaN)).toBe(1);
+  it("elige con lo medido, no por el nombre de la tarjeta", () => {
+    const alta = { escala: 1, nivel: "alta" } as const;
+    const media = { escala: 1, nivel: "media" } as const;
+    const doble = { escala: 2, nivel: "ultra" } as const;
+    // Rápido: alta si sale a tiempo; si no, media; si ninguna, la más rápida.
+    expect(elegirModo([{ modo: alta, ms: 90 }], "rapido")?.modo).toBe(alta);
+    expect(
+      elegirModo(
+        [
+          { modo: alta, ms: 968 },
+          { modo: media, ms: UMBRAL_RAPIDO_MS },
+        ],
+        "rapido",
+      )?.modo,
+    ).toBe(media);
+    expect(
+      elegirModo(
+        [
+          { modo: alta, ms: 968 },
+          { modo: media, ms: 400 },
+        ],
+        "rapido",
+      )?.modo,
+    ).toBe(media);
+    // Máxima: el primero que dibuja, aunque tarde (se dice cuánto antes de empezar).
+    expect(elegirModo([{ modo: doble, ms: 2900 }], "maxima")?.modo).toBe(doble);
+    expect(
+      elegirModo(
+        [
+          { modo: doble, ms: Infinity },
+          { modo: alta, ms: 968 },
+        ],
+        "maxima",
+      )?.modo,
+    ).toBe(alta);
+    // Ninguno dibujó: nada (el video dice que no se pudo).
+    expect(elegirModo([{ modo: alta, ms: Infinity }], "rapido")).toBeNull();
   });
 
   it("si el codificador falla, reintenta por software antes de rendirse, con un mensaje claro", () => {
