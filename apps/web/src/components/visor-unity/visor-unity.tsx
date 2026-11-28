@@ -55,6 +55,12 @@ import {
   lienzoDelVideo,
   msPorCuadro,
   modoDelVideo,
+  estimarVideo,
+  guardarMedida,
+  medidaGuardada,
+  tarjetaIntegrada,
+  type CalidadVideo,
+  type MedicionVideo,
   nombreDelVideo,
   SIN_VIDEO,
   textoTarda,
@@ -623,6 +629,8 @@ export function VisorUnity({
   };
   // «Solo el choque» o «Desde el inicio» (el trayecto previo, René 2026-11-27).
   const [videoDesdeInicio, setVideoDesdeInicio] = useState(false);
+  // «Rápido» por omisión (René, 2026-11-28); «Máxima calidad», el supermuestreo de antes.
+  const [calidadVideo, setCalidadVideo] = useState<CalidadVideo>("rapido");
   const conPrevio = Boolean(
     intervalo?.reconstruccion !== undefined && intervalo.reconstruccion > intervalo.inicio + 0.5,
   );
@@ -651,7 +659,7 @@ export function VisorUnity({
     puente.enviar("camara", { modo: camaraVideo });
     // Con tarjeta dedicada, al doble y en `ultra` (antialiasing, René, 2026-11-26); con integrada,
     // como antes: 1× y la calidad automática (a 2× la laptop de 8 GB no dibujó ningún cuadro).
-    let modo = modoDelVideo(rendererDeLaTarjeta());
+    let modo = modoDelVideo(rendererDeLaTarjeta(), calidadVideo);
     const ponerModo = () => {
       if (modo.calidad) puente.enviar("calidad", { nivel: modo.calidad });
       const tamano = lienzoDelVideo(window.devicePixelRatio || 1, modo.escala);
@@ -710,6 +718,17 @@ export function VisorUnity({
               : null,
           signal: corte.signal,
           alProgreso: (hechos, total, ms) => setGrabacion({ hechos, total, ms }),
+          // Lo que tardó cada cuadro, para la estimación de la próxima vez (y para medir).
+          alMedir: (m: MedicionVideo) => {
+            guardarMedida(calidadVideo, m);
+            if (navigator.webdriver)
+              (window as unknown as Record<string, unknown>).__croquisVideoMedicion = {
+                ...m,
+                calidad: calidadVideo,
+                escala: modo.escala,
+                nivel: modo.calidad ?? "auto",
+              };
+          },
           confirmar: (ms) =>
             new Promise<boolean>((responder) => {
               // «Cancelar» o Esc mientras pregunta: no se queda esperando.
@@ -985,6 +1004,49 @@ export function VisorUnity({
                 lenta, y las posiciones finales desde arriba.
               </span>
             ) : null}
+            {(() => {
+              // La estimación antes de empezar, con lo que tardó cada cuadro aquí la última vez.
+              const d0 =
+                videoDesdeInicio && intervalo
+                  ? intervalo.inicio
+                  : (intervalo?.reconstruccion ?? intervalo?.inicio ?? 0);
+              const lenta = dialogoVideo === "automatica" ? CAMARA_LENTA_VIDEO : null;
+              const acel =
+                videoDesdeInicio && intervalo?.reconstruccion !== undefined && intervalo
+                  ? aceleradoDelVideo(d0, intervalo.reconstruccion, intervalo.fin, lenta)
+                  : null;
+              const cuadros = intervalo
+                ? instantesDelVideo(d0, intervalo.fin, FPS_VIDEO, lenta, acel).length
+                : 0;
+              const ms = estimarVideo(cuadros, medidaGuardada(calidadVideo));
+              const integrada = tarjetaIntegrada(rendererDeLaTarjeta());
+              return (
+                <fieldset className="flex flex-col gap-1" data-testid="video-calidad">
+                  <legend className="t-nota">Calidad</legend>
+                  {(["rapido", "maxima"] as const).map((cal) => (
+                    <label key={cal} className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="video-calidad"
+                        checked={calidadVideo === cal}
+                        onChange={() => setCalidadVideo(cal)}
+                        data-testid={`video-calidad-${cal}`}
+                      />
+                      {cal === "rapido"
+                        ? `Rápido: 1920×1080${integrada ? "" : ", con antialiasing"}`
+                        : integrada
+                          ? "Máxima calidad (con esta tarjeta de video, igual que Rápido)"
+                          : "Máxima calidad: más nítido, tarda varias veces más"}
+                    </label>
+                  ))}
+                  <span className="t-nota" data-testid="video-estimado">
+                    {ms !== null
+                      ? `${textoTarda(ms)} en esta computadora.`
+                      : "Se mide con los primeros cuadros; si va a tardar más de dos minutos, te pregunta antes de seguir."}
+                  </span>
+                </fieldset>
+              );
+            })()}
             <div className="flex gap-2 self-end">
               <button
                 type="button"

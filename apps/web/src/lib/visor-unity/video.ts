@@ -36,11 +36,64 @@ export function tarjetaIntegrada(renderer: string | null): boolean {
   return true;
 }
 
-/** Cómo se graba: el doble y `ultra` con tarjeta dedicada; 1× y automática con integrada. */
-export function modoDelVideo(renderer: string | null): { escala: 1 | 2; calidad: "ultra" | null } {
-  return tarjetaIntegrada(renderer)
-    ? { escala: 1, calidad: null }
-    : { escala: SUPERMUESTREO_VIDEO, calidad: "ultra" };
+/**
+ * Las dos formas de grabar (René, 2026-11-28: 13 min por video es demasiado para un perito):
+ * - `rapido` (por omisión): 1920×1080 tal cual; con tarjeta dedicada en calidad `alta` (antialiasing
+ *   MSAA ×4), con integrada en la automática.
+ * - `maxima`: con tarjeta dedicada, el doble en `ultra` (supermuestreo, lo de antes); con integrada,
+ *   igual que `rapido` (a 2× no dibuja).
+ */
+export type CalidadVideo = "rapido" | "maxima";
+
+/** Cómo se graba, según la calidad elegida y la tarjeta. */
+export function modoDelVideo(
+  renderer: string | null,
+  calidad: CalidadVideo = "rapido",
+): { escala: 1 | 2; calidad: "ultra" | "alta" | null } {
+  if (tarjetaIntegrada(renderer)) return { escala: 1, calidad: null };
+  return calidad === "maxima"
+    ? { escala: SUPERMUESTREO_VIDEO, calidad: "ultra" }
+    : { escala: 1, calidad: "alta" };
+}
+
+/** En qué se fue el tiempo de una grabación (ms), para medir y para estimar la siguiente. */
+export interface MedicionVideo {
+  cuadros: number;
+  ms_total: number;
+  /** Desde que se pide el instante hasta que Unity entrega su cuadro dibujado. */
+  ms_unity: number;
+  /** Componer el cuadro (reducirlo, el logo y los letreros). */
+  ms_componer: number;
+  /** Entregarlo al codificador H.264. */
+  ms_codificar: number;
+  /** Cerrar el archivo (lo que queda por codificar y el MP4). */
+  ms_cerrar: number;
+}
+
+/** Lo que tardó cada cuadro en esta computadora, por calidad: para estimar antes de empezar. */
+const CLAVE_MEDIDA = (c: CalidadVideo) => `croquis.video.msPorCuadro.${c}`;
+export function medidaGuardada(c: CalidadVideo): number | null {
+  try {
+    const v = Number(localStorage.getItem(CLAVE_MEDIDA(c)));
+    return Number.isFinite(v) && v > 0 ? v : null;
+  } catch {
+    return null;
+  }
+}
+export function guardarMedida(c: CalidadVideo, m: MedicionVideo) {
+  try {
+    if (m.cuadros > 0) localStorage.setItem(CLAVE_MEDIDA(c), String(m.ms_total / m.cuadros));
+  } catch {
+    /* sin almacenamiento: se mide al empezar */
+  }
+}
+
+/**
+ * La estimación antes de empezar: con lo que tardó cada cuadro la última vez en esta computadora; sin
+ * eso, `null` (se mide con los primeros cuadros y, si pasa de dos minutos, se pregunta).
+ */
+export function estimarVideo(cuadros: number, msPorCuadro: number | null): number | null {
+  return msPorCuadro === null ? null : Math.round(cuadros * msPorCuadro);
 }
 
 /** El tamaño del lienzo de Unity mientras se graba, en px de CSS (con su `devicePixelRatio`). */
@@ -222,6 +275,8 @@ export interface OpcionesGrabacion {
    * cuadros: si pasa de `AVISAR_DESDE_MS`, se pregunta y con `false` se cancela. Sin él, no se pregunta.
    */
   confirmar?: (msEstimados: number) => Promise<boolean>;
+  /** En qué se fue el tiempo, al terminar. */
+  alMedir?: (m: MedicionVideo) => void;
   /** La cámara lenta alrededor del impacto (con su letrero en el cuadro); sin ella, todo a 1×. */
   lenta?: CamaraLenta | null;
   /** El trayecto lejano acelerado (con su letrero en el cuadro). */
@@ -378,15 +433,19 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
       comment: o.leyenda,
     });
     const empezo = performance.now();
+    const med = { unity: 0, componer: 0, codificar: 0 };
     await output.start();
     try {
       for (let i = 0; i < instantes.length; i++) {
         if (o.signal?.aborted) throw new DOMException("Grabación cancelada", "AbortError");
+        const t0 = performance.now();
         o.fijar(instantes[i]!);
         // Dos cuadros: el primero puede ser del instante anterior.
         await l.esperar(i === 0 ? 4 : 2);
         const cuadro = l.ultimo();
         if (!cuadro) throw new VideoNoDisponible("El 3D no dibujó ningún cuadro.");
+        const t1 = performance.now();
+        med.unity += t1 - t0;
         dibujar(
           ctx,
           cuadro,
@@ -398,7 +457,10 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
               ? rotuloLenta(o.lenta)
               : null,
         );
+        const t2 = performance.now();
+        med.componer += t2 - t1;
         await source.add(i / FPS_VIDEO, 1 / FPS_VIDEO);
+        med.codificar += performance.now() - t2;
         o.alProgreso?.(i + 1, instantes.length, performance.now() - empezo);
         if (
           o.confirmar &&
@@ -412,7 +474,17 @@ export async function grabarVideoUnity(o: OpcionesGrabacion): Promise<Blob> {
             throw new DOMException("Grabación cancelada", "AbortError");
         }
       }
+      const t3 = performance.now();
       await output.finalize();
+      const ms = (x: number) => Math.round(x);
+      o.alMedir?.({
+        cuadros: instantes.length,
+        ms_total: ms(performance.now() - empezo),
+        ms_unity: ms(med.unity),
+        ms_componer: ms(med.componer),
+        ms_codificar: ms(med.codificar),
+        ms_cerrar: ms(performance.now() - t3),
+      });
     } catch (e) {
       await output.cancel().catch(() => undefined);
       throw e;

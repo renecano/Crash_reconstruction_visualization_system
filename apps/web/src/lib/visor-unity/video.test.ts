@@ -13,6 +13,9 @@ import {
   rotuloLenta,
   lienzoDelVideo,
   modoDelVideo,
+  estimarVideo,
+  guardarMedida,
+  medidaGuardada,
   tarjetaIntegrada,
   textoTarda,
   nombreDelVideo,
@@ -72,21 +75,25 @@ describe("el antialiasing del video (René, 2026-11-26)", () => {
 });
 
 describe("el modo del video según la tarjeta (René, 2026-11-26: medido en la laptop de 8 GB)", () => {
-  it("integradas y por software van como antes; las dedicadas, al doble y en ultra", () => {
+  it("integradas y por software, a 1× y automática; las dedicadas, «Rápido» a 1× en alta y «Máxima» al doble en ultra", () => {
     for (const r of [
       "ANGLE (Intel, Intel(R) UHD Graphics 620 (0x00005917) Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (AMD, AMD Radeon(TM) Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)), SwiftShader driver)",
       null,
     ])
-      expect(modoDelVideo(r)).toEqual({ escala: 1, calidad: null });
+      for (const c of ["rapido", "maxima"] as const)
+        expect(modoDelVideo(r, c)).toEqual({ escala: 1, calidad: null });
     for (const r of [
       "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (AMD, AMD Radeon RX 6700 XT Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "ANGLE (Intel, Intel(R) Arc(TM) A770 Graphics Direct3D11 vs_5_0 ps_5_0, D3D11)",
       "Apple M2",
-    ])
-      expect(modoDelVideo(r)).toEqual({ escala: 2, calidad: "ultra" });
+    ]) {
+      // René, 2026-11-28: 13 min por video era demasiado; «Rápido» es lo de siempre.
+      expect(modoDelVideo(r)).toEqual({ escala: 1, calidad: "alta" });
+      expect(modoDelVideo(r, "maxima")).toEqual({ escala: 2, calidad: "ultra" });
+    }
     expect(tarjetaIntegrada("Intel(R) Iris(R) Xe Graphics")).toBe(true);
   });
 
@@ -128,5 +135,24 @@ describe("el modo del video según la tarjeta (René, 2026-11-26: medido en la l
     expect(rotuloAcelerado(a)).toMatch(/^Trayecto ilustrativo · acelerado ×\d+$/);
     // Un trayecto corto no se acelera.
     expect(aceleradoDelVideo(-20, -3, 4, null)).toBeNull();
+  });
+
+  it("estima antes de empezar con lo que tardó cada cuadro la última vez", () => {
+    expect(estimarVideo(450, null)).toBeNull();
+    expect(estimarVideo(450, 120)).toBe(54_000);
+    expect(textoTarda(estimarVideo(450, 120)!)).toBe("Tarda menos de un minuto");
+    const m = {
+      cuadros: 450,
+      ms_total: 90_000,
+      ms_unity: 80_000,
+      ms_componer: 5_000,
+      ms_codificar: 4_000,
+      ms_cerrar: 1_000,
+    };
+    localStorage.removeItem("croquis.video.msPorCuadro.rapido");
+    expect(medidaGuardada("rapido")).toBeNull();
+    guardarMedida("rapido", m);
+    expect(medidaGuardada("rapido")).toBe(200);
+    expect(medidaGuardada("maxima")).toBeNull();
   });
 });
