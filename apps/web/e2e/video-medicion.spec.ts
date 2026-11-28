@@ -1,5 +1,5 @@
-import { appendFileSync, mkdirSync, readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { appendFileSync, copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { dirname, join, resolve } from "node:path";
 import { ALL_FORMATS, BufferSource, Input } from "mediabunny";
 import { expect, test } from "./base";
 import { irAPaso } from "./ayuda-recorrido";
@@ -97,6 +97,31 @@ test("cuánto tarda el video del choque, por calidad", async ({ page }) => {
       medicion,
     };
     appendFileSync(SALIDA, JSON.stringify(fila) + "\n");
+    // El MP4 y un cuadro cerca del impacto, para comparar lo que se ve (fuera del repo si es AXA).
+    const carpeta = process.env.CROQUIS_VIDEO_CARPETA;
+    if (carpeta) {
+      mkdirSync(carpeta, { recursive: true });
+      copyFileSync((await descarga.path())!, join(carpeta, `video-${calidad}.mp4`));
+      const jpg = await page.evaluate(
+        async ({ b64, t }) => {
+          const v = document.createElement("video");
+          v.muted = true;
+          v.src = URL.createObjectURL(
+            new Blob([Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))], { type: "video/mp4" }),
+          );
+          await new Promise((ok) => (v.onloadeddata = ok));
+          v.currentTime = t;
+          await new Promise((ok) => (v.onseeked = ok));
+          const c = document.createElement("canvas");
+          c.width = v.videoWidth;
+          c.height = v.videoHeight;
+          c.getContext("2d")!.drawImage(v, 0, 0);
+          return c.toDataURL("image/jpeg", 0.92).split(",")[1]!;
+        },
+        { b64: bytes.toString("base64"), t: fila.duracion_video_s * 0.45 },
+      );
+      writeFileSync(join(carpeta, `cuadro-${calidad}.jpg`), Buffer.from(jpg, "base64"));
+    }
     expect(fila.ancho).toBe(1920);
     expect(medicion).not.toBeNull();
     await expect(page.getByTestId("aviso-video")).toContainText("Listo", { timeout: 30_000 });
