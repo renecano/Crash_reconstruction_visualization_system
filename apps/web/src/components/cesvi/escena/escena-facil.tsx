@@ -650,6 +650,17 @@ export function EscenaFacil({
               // Varios lugares posibles (los cruces de las mismas dos calles): el perito elige.
               setResultados(res.opciones!.map(opcion));
               setEstadoBusqueda(res.explicacion);
+              // El mapa, donde están las opciones, no en su centro por omisión (René, 2026-11-28: quedó
+              // en la Ciudad de México con un resultado en Zinacantepec).
+              const lats = res.opciones!.map((o) => o.punto.lat);
+              const lons = res.opciones!.map((o) => o.punto.lon);
+              mapa.current?.fitBounds(
+                [
+                  [Math.min(...lons), Math.min(...lats)],
+                  [Math.max(...lons), Math.max(...lats)],
+                ],
+                { padding: 80, maxZoom: 16, duration: 600 },
+              );
             } else {
               setLugarNarrado(res.punto);
               setBusquedaNarrada({
