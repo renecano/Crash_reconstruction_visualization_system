@@ -2285,7 +2285,7 @@ export function EscenaFacil({
             <span className="text-[0.8125rem] font-semibold text-texto-2">
               {propuesta.segun === "narracion" || propuesta.segun === "a_la_altura"
                 ? "Croquis lo leyó en la narración"
-                : propuesta.segun === "una_calle"
+                : propuesta.segun === "una_calle" || propuesta.segun === "carretera"
                   ? "La narración dice"
                   : "Croquis propone el cruce más cercano al lugar del caso"}
             </span>
@@ -2303,6 +2303,11 @@ export function EscenaFacil({
                 {propuesta.calles[0]} y {propuesta.calles[1]} no se cruzan a nivel (un paso a
                 desnivel): Croquis propone el choque sobre {propuesta.calles[0]}, a la altura de{" "}
                 {propuesta.calles[1]}.
+              </p>
+            ) : propuesta.segun === "carretera" ? (
+              <p className="t-nota" data-testid="propuesta-carretera">
+                Croquis propone el choque sobre <b className="text-texto">{propuesta.calles[0]}</b>,
+                en su punto más cercano al lugar encontrado.
               </p>
             ) : propuesta.segun === "cercania" && propuesta.calles.length ? (
               <p className="font-semibold">{propuesta.calles.slice(0, 2).join(" y ")}</p>
