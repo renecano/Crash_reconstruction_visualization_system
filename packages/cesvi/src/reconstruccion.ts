@@ -82,7 +82,6 @@ import { terrenoDeEscena, terrenoReconstruido, type TerrenoReconstruido } from "
 import { limiteDeCobertura } from "./cobertura";
 import { iluminacionDeHora } from "./iluminacion";
 import { distanciaProyeccion, OBJETO_PERSONA, personaDelAtropello } from "./personas";
-import { conObjetosNarrados } from "./objetos-narrados";
 import { grados, kmhConUnidad, metros, rangoKmh } from "./formato";
 
 type Json = Record<string, unknown>;
@@ -194,13 +193,10 @@ const ATRAVESADOS = new Set(["muro", "barda", "barrera", "guarnicion"]);
 /** Lo que el perito coloca va como declarado en la escena v1. */
 const DEL_PERITO = { fuente: "usuario", confianza: 0.9 } as const;
 /**
- * Qué tan cerca del punto de un choque intermedio pasa el centro del vehículo (m): medio vehículo más
- * medio objeto y una holgura, es decir, que lo toca. Era 2 m fijos (René, 2026-11-28): un Sentra que
- * queda con el frente contra el poste tiene su centro a 2.5 m de él, y el caso no cuadraba.
+ * Qué tan cerca del punto de un choque intermedio pasa el centro del vehículo (m): medio vehículo.
+ * Es la precisión del punto de paso que lleva a la inversión hasta ese lugar.
  */
-const HOLGURA_CHOQUE_M = 0.5;
-const precisionDelChoque = (v: Expediente["vehiculos"][number]) =>
-  Math.round((medidasDe(v).largo / 2 + HOLGURA_CHOQUE_M) * 100) / 100;
+const PRECISION_CHOQUE_M = 2;
 /** Sin posición inicial del perito, el vehículo empieza 12 m antes del impacto en su rumbo. */
 const ANTES_DEL_IMPACTO_M = 12;
 /** m: lo que avanza derecho después de la vuelta, antes del choque, si no hay calles guardadas. */
@@ -409,12 +405,8 @@ export function especDeExpediente(e0: Expediente, specId = "caso-nuevo"): Escena
   // La velocidad DECLARADA por el perito (conductor, testigo) nunca entra al solver (René,
   // 2026-11-28): solo se compara con la física. Para el solver es como «No sé»: la típica de la vía.
   // (En el poste, la declarada del Sentra tiraba del ajuste y lo dejaba dentro de un edificio.)
-  // Y el objeto que nombra la narración, donde quedó su vehículo si el perito no lo marcó (René,
-  // 2026-11-28): así el solver calcula ese golpe y el 3D lo dibuja.
-  const { expediente: e, colocados: objetosColocados } = conObjetosNarrados(
-    sinDeclaradasDelPerito(e0),
-  );
-  const limites: string[] = objetosColocados.map((c) => c.texto);
+  const e = sinDeclaradasDelPerito(e0);
+  const limites: string[] = [];
   const impactos = [...(e.impactos ?? [])].sort((a, b) => a.orden - b.orden);
   const primero = impactos.find((i) => i.orden === 1) ?? impactos[0];
   // Los vehículos del primer impacto van primero (A, B…), como los ordena la escena v1.
@@ -1017,7 +1009,6 @@ export function especDeExpediente(e0: Expediente, specId = "caso-nuevo"): Escena
       // Choque intermedio contra un objeto (C1): el objeto va donde el perito lo marcó, y el
       // solver hace que el impacto ocurra ahí, cuando el vehículo lo toca.
       const tipo = OBJETO_INTERMEDIO.find(([rx]) => rx.test(imp.objeto_fijo!))?.[1] ?? "otro";
-      const colocadoPorCroquis = objetosColocados.some((c) => c.orden === imp.orden);
       const pos = local(imp.punto);
       const objetoId = `obj-choque-${imp.orden}`;
       const entorno = spec.entorno as Json & { objetos?: Json[] };
@@ -1035,9 +1026,7 @@ export function especDeExpediente(e0: Expediente, specId = "caso-nuevo"): Escena
         ...MEDIDAS_OBJETO[tipo],
         procedencia: {
           ...DEL_PERITO,
-          nota: colocadoPorCroquis
-            ? "Croquis lo puso donde quedó el vehículo (la narración no dice dónde está); sus medidas son las típicas (supuesto)."
-            : "El perito lo marcó en el mapa; sus medidas son las típicas (supuesto).",
+          nota: "El perito lo marcó en el mapa; sus medidas son las típicas (supuesto).",
         },
       });
       ordenEvento += 1;
@@ -1059,15 +1048,13 @@ export function especDeExpediente(e0: Expediente, specId = "caso-nuevo"): Escena
           id: `pp-choque-${imp.orden}`,
           orden: previos.length + 1,
           posicion: pos,
-          precision_m: precisionDelChoque(vehiculos[orden.indexOf(par[0]!)]!),
-          nota: colocadoPorCroquis
-            ? "Lugar del choque intermedio donde quedó el vehículo (supuesto de Croquis)."
-            : "Lugar del choque intermedio que marcó el perito.",
+          precision_m: PRECISION_CHOQUE_M,
+          nota: "Lugar del choque intermedio que marcó el perito.",
           procedencia: { ...DEL_PERITO },
         },
       ];
       limites.push(
-        `El objeto del impacto ${imp.orden} (${imp.objeto_fijo}) va con medidas típicas${atravesado !== null ? " y atravesado al avance del vehículo" : ""}: ${colocadoPorCroquis ? "dónde está es un supuesto de Croquis" : "el perito marcó dónde está"}, no cómo es (supuesto).`,
+        `El objeto del impacto ${imp.orden} (${imp.objeto_fijo}) va con medidas típicas${atravesado !== null ? " y atravesado al avance del vehículo" : ""}: el perito marcó dónde está, no cómo es (supuesto).`,
       );
       continue;
     }
