@@ -357,7 +357,11 @@ function construir() {
         "ejemplos.alcance",
         "alcance-deformacion",
         "«alcance en carretera»: velocidad de la NP300 (A), la que alcanza",
-        " La tabla da 53 (44–53): la diferencia es por dónde caen los toques.",
+        "",
+        // Medida dos veces en el navegador en producción, la misma cifra que la tabla. René lo aprobó el
+        // 2026-11-28. Antes, 54 (44–54), del navegador en la t11.
+        "eval/results/verif-produccion/ejemplos-2026-11-28.json",
+        "Medido en el navegador en producción (2026-11-28) dos veces, con las calles fijas del ejemplo (#400); igual que la tabla; René lo aprobó. Antes, 54 km/h (44–54), del navegador en la t11.",
       ],
       [
         "ejemplos.carambola",

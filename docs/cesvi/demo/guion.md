@@ -74,7 +74,7 @@ Croquis reconstruye un hecho de tránsito con física a partir de lo que narra e
 | Ejemplo                                         | Qué muestra                                                                 | Lo que da                                                                |
 | ----------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | Crucero de noche en Iztapalapa                  | Lectura con citas y preguntas; de noche                                     | A · Jetta a <!--cifra:ejemplos.crucero-->20 km/h (1–27)<!--/cifra-->     |
-| Alcance en carretera con la deformación medida  | Las medidas C1–C6 de los dos vehículos, su energía y su cambio de velocidad | A · NP300 a <!--cifra:ejemplos.alcance-->54 km/h (44–54)<!--/cifra-->    |
+| Alcance en carretera con la deformación medida  | Las medidas C1–C6 de los dos vehículos, su energía y su cambio de velocidad | A · NP300 a <!--cifra:ejemplos.alcance-->53 km/h (44–53)<!--/cifra-->    |
 | Carambola de noche con lluvia                   | Tres vehículos, dos impactos en orden, pavimento mojado                     | A · Ranger a <!--cifra:ejemplos.carambola-->24 km/h (20–32)<!--/cifra--> |
 | Reversa en una calle con tope                   | La reversa como supuesto con su fuente; un tope con las medidas de la norma | B · Versa a <!--cifra:ejemplos.reversa-->20 km/h (17–26)<!--/cifra-->    |
 | Choque en un entronque y salida contra un poste | Punto de paso, terracería y un objeto fijo                                  | B · Sentra a <!--cifra:ejemplos.poste-->50 km/h (47–57)<!--/cifra-->     |

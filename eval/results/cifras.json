@@ -243,15 +243,15 @@
     },
     "ejemplos.alcance": {
       "que": "Ejemplo «alcance en carretera»: velocidad de la NP300 (A), la que alcanza antes del impacto, en la app (navegador con Unity real)",
-      "mejor": 54,
+      "mejor": 53,
       "p10": 44,
-      "p90": 54,
+      "p90": 53,
       "unidad": "km/h",
       "juego_de_muestras": "producción",
-      "texto": "54 km/h (44–54)",
-      "fuente": "eval/results/t11/ejemplos.json",
+      "texto": "53 km/h (44–53)",
+      "fuente": "eval/results/verif-produccion/ejemplos-2026-11-28.json",
       "campo": "ejemplos.1",
-      "motivo": "Medido en el navegador con Unity real (t11-solver, 2026-11-27), con lo medido como restricción del solver (#369); René lo aprobó. La tabla da 53 (44–53): la diferencia es por dónde caen los toques."
+      "motivo": "Medido en el navegador en producción (2026-11-28) dos veces, con las calles fijas del ejemplo (#400); igual que la tabla; René lo aprobó. Antes, 54 km/h (44–54), del navegador en la t11."
     },
     "ejemplos.carambola": {
       "que": "Ejemplo «carambola con lluvia»: velocidad de la Ranger (A) antes del primer impacto antes del impacto, en la app (navegador con Unity real)",
