@@ -1754,3 +1754,5 @@ En local, con #413 y la caché vacía:
   - La barra saltaba de centésima en centésima (`step=0.01`); ahora es continua.
 
   La prueba `e2e/maqueta-suave.spec.ts` (`@flujo`, croquis pericial y maqueta) mide cuadro a cuadro que cada vehículo avanza hacia adelante y parejo, y que la barra avanza lo que pasó de reloj. Antes, la barra se desfasaba hasta 0.0068 s en un cuadro; después, menos de 0.002 s en todos. 2/2 en verde en local.
+
+- **2026-11-28 · El video del 3D, rápido** (ADR 0148; PR `feat/w-video-rapido`). En la Mac M1, el choque de AXA con la cámara automática (13.23 s de video) tardaba 16.6 min en producción y ahora tarda **124 s en «Rápido»** y **7.4 min en «Máxima calidad»** (`eval/results/video_medicion.jsonl`). La mayor parte del tiempo se iba en leer todos los cuadros de Unity: ahora se toma solo uno por instante, y codificar bajó de 476 a 4 ms por cuadro. El nivel y la resolución quedan fijos mientras se graba (puente `calidad.escala`, #416), y el modo se mide antes de grabar con una meta de 2 min en «Rápido» y 10 min en «Máxima». Pendiente: medir en la laptop con tarjeta integrada con `e2e/video-medicion.spec.ts`.

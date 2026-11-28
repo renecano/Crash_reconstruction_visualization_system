@@ -354,6 +354,9 @@ export const CODIFICADORES = [
   { aceleracion: "prefer-software", calidad: "media" },
 ] as const;
 
+/** Cuánto se espera a que llegue un cuadro antes de decir que el 3D no dibuja (ms). */
+export const ESPERA_CUADRO_MS = 10_000;
+
 /**
  * Cuántos cuadros se miden de cada modo antes de elegirlo. El nombre de la tarjeta no basta: en
  * laptops híbridas Chrome reporta la NVIDIA y dibuja en la Intel.
@@ -393,14 +396,16 @@ function lectorDeCuadros(lienzo: HTMLCanvasElement) {
      * El cuadro del instante que se acaba de fijar: se dejan pasar `vueltas` cuadros del navegador y
      * se pide uno solo. Con una basta: `requestFrame` toma el siguiente cuadro que se pinte, y Unity ya
      * tiene el instante nuevo (`fijarTiempo` es síncrono). Antes se esperaban dos cuadros completos
-     * de Unity por instante. false si no llega en 3 s.
+     * de Unity por instante. false si no llega en `ESPERA_CUADRO_MS`.
      */
     tomar: async (vueltas: number) => {
       for (let k = 0; k < vueltas; k++) await vuelta();
       const meta = llegados + 1;
       const llego = new Promise<void>((ok) => (espera.aviso = ok));
       pista.requestFrame!();
-      await Promise.race([llego, new Promise((ok) => setTimeout(ok, 3000))]);
+      // Al doble en `ultra` un cuadro puede tardar varios segundos (Mac M1: 1.5 s en promedio): con
+      // 3 s de espera, uno lento se tomaba como «el 3D no dibuja» y la grabación bajaba de modo.
+      await Promise.race([llego, new Promise((ok) => setTimeout(ok, ESPERA_CUADRO_MS))]);
       espera.aviso = null;
       return llegados >= meta;
     },

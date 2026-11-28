@@ -2465,6 +2465,8 @@ Rama `feat/r11-render-retomable`. El colaborador cerró la corrida del 2026-11-0
 
 ### Endurecimiento pendiente
 
+- **El video del 3D en la laptop con tarjeta integrada** (ADR 0148, 2026-11-28): en la Mac M1 «Rápido» tardó 124 s para 13 s de video; en la Intel UHD no se ha medido con la captura bajo pedido. La prueba ya está: `CROQUIS_URL=http://localhost:3000 CROQUIS_CANAL=msedge pnpm exec playwright test -c playwright.produccion.config.ts e2e/video-medicion.spec.ts --headed` con la demo local. Necesita la computadora de demo de René.
+
 - **El rango corto por arriba en choques laterales** (René, 2026-11-27, después de la demo): con lo medido como restricción (#369), la cobertura pasó de 410/578 a 404/579; de los 34 casos que salen del rango, 28 son laterales y en 23 de ellos la verdad queda por encima del p90 (`eval/results/t3_cobertura_detalle/`). Revisar el muestreo del rango contra lo medido y los nominales asimétricos (restitución, arrastre).
 
 - **Colonias para ordenar los cruces donde OSM no las tiene** (René, 2026-11-27, después de la demo): el catálogo de colonias por código postal de SEPOMEX o el Marco Geoestadístico del INEGI, registrado en `data/SOURCES.md`. Hoy, con varios cruces de las mismas calles, la app ordena por «centro» o por la colonia si OSM la tiene, y si no, lo dice y el perito elige (#388).
